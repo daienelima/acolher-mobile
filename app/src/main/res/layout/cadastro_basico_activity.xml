@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
-    tools:context=".CadastroActivity">
+    tools:context=".view.CadastroActivity">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

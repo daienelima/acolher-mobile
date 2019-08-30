@@ -1,19 +1,18 @@
-package br.com.acolher;
+package br.com.acolher.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
+
+import br.com.acolher.R;
 
 public class CadastroActivity extends AppCompatActivity{
 

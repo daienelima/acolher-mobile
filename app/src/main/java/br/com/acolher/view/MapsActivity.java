@@ -1,4 +1,4 @@
-package br.com.acolher;
+package br.com.acolher.view;
 
 import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import br.com.acolher.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
