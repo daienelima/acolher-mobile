@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="lightGrey"><!--#DDD-->#FAFAFF</color>
     <color name="buttonCadastroProsseguir">#7a91ca</color>
+    <color name="corLink">#FF7A91CA</color>
 </resources>

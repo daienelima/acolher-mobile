@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,6 +51,13 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     Button pesquisarEndereco;
     FusedLocationProviderClient fusedLocation;
 
+    private TextInputLayout rua;
+    private TextInputLayout cep;
+    private TextInputLayout numero;
+    private TextInputLayout bairro;
+    private Spinner estado;
+    private Spinner cidade;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +73,10 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         pesquisarEndereco = (Button) findViewById(R.id.btnSearchLocale);
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
+        rua = (TextInputLayout) findViewById(R.id.inputRua);
+        cep = (TextInputLayout) findViewById(R.id.inputCep);
+        bairro = (TextInputLayout) findViewById(R.id.inputBairro);
+
         if(googleApiClient == null){
 
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -78,15 +91,33 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onClick(View view) {
                 if (GetLocalization(CadastroEndereco.this)) {
-                    if (ActivityCompat.checkSelfPermission(CadastroEndereco.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(CadastroEndereco.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(CadastroEndereco.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(CadastroEndereco.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         return;
                     }else{
-                        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        //location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        fusedLocation.getLastLocation().addOnSuccessListener(CadastroEndereco.this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if(location != null){
+                                    latitude = location.getLatitude();
+                                    longitude = location.getLongitude();
+                                    try {
+                                        address = buscarEndereco(latitude, longitude);
+                                        rua.getEditText().setText(address.getThoroughfare());
+                                        cep.getEditText().setText(address.getPostalCode());
+                                        bairro.getEditText().setText(address.getSubLocality());
+                                    }catch (IOException e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
-                    if(location != null){
+                    /*if(location != null){
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
                         Log.i("getCoordenadas", latitude + "-" + longitude);
@@ -94,10 +125,15 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                     try{
                         address = buscarEndereco(latitude, longitude);
-                        Toast.makeText(CadastroEndereco.this, address.getLocality(), Toast.LENGTH_LONG).show();
+                        if(address != null){
+                          rua.getEditText().setText(address.getThoroughfare());
+                          cep.getEditText().setText(address.getPostalCode());
+                          bairro.getEditText().setText(address.getSubLocality());
+                        }
+                        //Toast.makeText(CadastroEndereco.this, address.getLocality(), Toast.LENGTH_LONG).show();
                     }catch (IOException e){
                         e.printStackTrace();
-                    }
+                    }*/
 
                     /*fusedLocation.getLastLocation().addOnSuccessListener(CadastroEndereco.this, new OnSuccessListener<Location>() {
                         @Override
