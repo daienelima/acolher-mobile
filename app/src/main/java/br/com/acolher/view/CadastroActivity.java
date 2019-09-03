@@ -3,8 +3,11 @@ package br.com.acolher.view;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ public class CadastroActivity extends AppCompatActivity{
 
     TextInputLayout inputDataNasc;
     ImageButton btnCalendar;
+    Button continuarCadastro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,7 @@ public class CadastroActivity extends AppCompatActivity{
         inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
         //inputDataNasc.setEnabled(false);
         btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
+        continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +56,15 @@ public class CadastroActivity extends AppCompatActivity{
                 }
             }
         });
+
+        continuarCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
+                startActivity(intentEndereco);
+            }
+        });
+
     }
 
     public void openCalendar(){
