@@ -2,15 +2,14 @@ package br.com.acolher.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.Toast;
+import br.com.acolher.helper.MaskWatcher;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -25,7 +24,11 @@ public class CadastroActivity extends AppCompatActivity{
 
     TextInputLayout inputDataNasc;
     ImageButton btnCalendar;
+    ImageButton showPassword;
     Button continuarCadastro;
+    TextInputLayout inputPassword;
+    TextInputLayout inputTelefone;
+    TextInputLayout inputCpf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,17 @@ public class CadastroActivity extends AppCompatActivity{
         setContentView(R.layout.cadastro_basico_activity);
 
         inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
-        //inputDataNasc.setEnabled(false);
+        showPassword = (ImageButton) findViewById(R.id.btnShowPassword);
         btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
+        inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+
+        inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+
+        inputCpf = (TextInputLayout) findViewById(R.id.inputCPF);
+        inputCpf.getEditText().addTextChangedListener(new MaskWatcher("###.###.###-##"));
+
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +73,17 @@ public class CadastroActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
                 startActivity(intentEndereco);
+            }
+        });
+
+        showPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(inputPassword.getEditText().getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD){
+                    inputPassword.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+                }else{
+                    inputPassword.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                }
             }
         });
 

@@ -10,7 +10,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_margin="20dp"
         app:cardCornerRadius="6dp"
         android:minHeight="200dp">
 
@@ -39,7 +39,7 @@
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
                 android:textSize="18dp"
-                android:text="Localizar endereço pelo GPS" />
+                android:text="@string/button_localizacao" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputRua"
@@ -55,7 +55,7 @@
                     android:id="@+id/labelRua"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Rua" />
+                    android:hint="@string/label_rua" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -78,7 +78,7 @@
                         android:id="@+id/labelCep"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="CEP" />
+                        android:hint="@string/label_cep" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -96,8 +96,7 @@
                         android:id="@+id/labelNumero"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Numero
-" />
+                        android:hint="@string/label_numero"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -143,7 +142,7 @@
                     android:id="@+id/labelBairro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Bairro" />
+                    android:hint="@string/label_bairro" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
