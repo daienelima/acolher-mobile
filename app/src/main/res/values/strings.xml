@@ -9,4 +9,11 @@
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
     <string name="label_button_continuar_cadastro">Prosseguir com o cadastro</string>
     <string name="label_return_login">↵ Voltar para a tela de login</string>
+
+    <!-- label de instituicao. -->
+    <string name="label_save_alteracao">salvar dados</string>
+    <string name="label_nome_instituicao">nome da instituicao</string>
+    <string name="label_button_salvar_dados">salvar dados</string>
+    <string name="label_return_home"> voltar para a tela principal</string>
+
 </resources>
