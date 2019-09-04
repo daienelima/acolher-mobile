@@ -17,6 +17,8 @@
     <string name="label_numero">Numero</string>
     <string name="button_localizacao">Utilizar endereço atual</string>
 
+    <string name="error_nome_completo">Insira o seu nome completo</string>
+
     <string-array name="spinner_estados">
         <item>Estado</item>
         <item>Acre</item>

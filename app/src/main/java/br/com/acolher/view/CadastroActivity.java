@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import br.com.acolher.helper.MaskWatcher;
 
@@ -24,11 +25,12 @@ public class CadastroActivity extends AppCompatActivity{
 
     TextInputLayout inputDataNasc;
     ImageButton btnCalendar;
-    ImageButton showPassword;
     Button continuarCadastro;
     TextInputLayout inputPassword;
     TextInputLayout inputTelefone;
     TextInputLayout inputCpf;
+    TextInputLayout textInputNome;
+    EditText inputNome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +41,15 @@ public class CadastroActivity extends AppCompatActivity{
         setContentView(R.layout.cadastro_basico_activity);
 
         inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
-        showPassword = (ImageButton) findViewById(R.id.btnShowPassword);
         btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
-
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
         inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+
+        textInputNome = (TextInputLayout) findViewById(R.id.inputNomeCompleto);
+        inputNome = (EditText) findViewById(R.id.labelNomeCompleto);
+
 
         inputCpf = (TextInputLayout) findViewById(R.id.inputCPF);
         inputCpf.getEditText().addTextChangedListener(new MaskWatcher("###.###.###-##"));
@@ -71,19 +75,9 @@ public class CadastroActivity extends AppCompatActivity{
         continuarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                startActivity(intentEndereco);
-            }
-        });
-
-        showPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(inputPassword.getEditText().getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD){
-                    inputPassword.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
-                }else{
-                    inputPassword.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                }
+                validateForm();
+                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
+                //startActivity(intentEndereco);
             }
         });
 
@@ -102,6 +96,17 @@ public class CadastroActivity extends AppCompatActivity{
             }
         }, year, month, day);
         datePickerDialog.show();
+    }
+
+    public boolean validateForm(){
+        if(inputNome.getText().toString().isEmpty()){
+            //textInputNome.setErrorTextAppearance();
+            inputNome.setError(getString(R.string.error_nome_completo));
+            return false;
+        }else{
+            textInputNome.setErrorEnabled(false);
+        }
+        return true;
     }
 
 }
