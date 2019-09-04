@@ -13,4 +13,9 @@
     <string name="label_nova_senha">Nova Senha</string>
     <string name="label_confirmar_nova_senha">Confirmar Nova Senha</string>
     <string name="label_button_confirmar_nova_senha">Alterar Senha</string>
+    <!-- label de instituicao. -->
+    <string name="label_save_alteracao">salvar dados</string>
+    <string name="label_nome_instituicao">nome da instituicao</string>
+    <string name="label_button_salvar_dados">salvar dados</string>
+    <string name="label_return_home"> voltar para a tela principal</string>
 </resources>
