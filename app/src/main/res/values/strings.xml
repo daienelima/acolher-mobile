@@ -9,4 +9,8 @@
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
     <string name="label_button_continuar_cadastro">Prosseguir com o cadastro</string>
     <string name="label_return_login">↵ Voltar para a tela de login</string>
+    <string name="label_senha_atual">Senha Atual</string>
+    <string name="label_nova_senha">Nova Senha</string>
+    <string name="label_confirmar_nova_senha">Confirmar Nova Senha</string>
+    <string name="label_button_confirmar_nova_senha">Alterar Senha</string>
 </resources>
