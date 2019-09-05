@@ -51,12 +51,13 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     Button pesquisarEndereco;
     FusedLocationProviderClient fusedLocation;
 
-    private TextInputLayout rua;
-    private TextInputLayout cep;
-    private TextInputLayout numero;
-    private TextInputLayout bairro;
-    private Spinner estado;
-    private Spinner cidade;
+    TextInputLayout rua;
+    TextInputLayout cep;
+    TextInputLayout numero;
+    TextInputLayout bairro;
+    TextInputLayout til;
+    Spinner estado;
+    Spinner cidade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,10 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         rua = (TextInputLayout) findViewById(R.id.inputRua);
         cep = (TextInputLayout) findViewById(R.id.inputCep);
         bairro = (TextInputLayout) findViewById(R.id.inputBairro);
+
+        til = (TextInputLayout) findViewById(R.id.text_input_layout);
+        til.setError("You need to enter a name");
+
 
         if(googleApiClient == null){
 
