@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.CadastroEndereco"></activity>
+        <activity android:name=".view.login"></activity>
+        <activity android:name=".view.AlterarSenha" />
+        <activity android:name=".view.CadastroEndereco" />
         <activity android:name=".view.MapsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
