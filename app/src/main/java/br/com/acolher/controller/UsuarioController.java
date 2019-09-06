@@ -3,7 +3,7 @@ package br.com.acolher.controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import br.com.acolher.helper.ValidaCPF;
+import br.com.acolher.helper.Validacoes;
 
 public class UsuarioController {
 
@@ -39,7 +39,7 @@ public class UsuarioController {
             return "Campo obrigatorio!";
         }
 
-        if(telefone.length() > 11){
+        if(telefone.length() < 10 || telefone.length() > 11){
             return "favor preencher o DDD + 9 Digitos!";
         }
 
@@ -54,7 +54,7 @@ public class UsuarioController {
             return "Campo obrigatório!";
         }
 
-        if(!email.matches(regexEmail)){
+        if(!Validacoes.validaEmail(email)){
             return "formato de email inválido!";
         }
 
@@ -64,7 +64,12 @@ public class UsuarioController {
 
     public String validaPassword(String password){
 
-        String regexPassword = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$";
+        String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%=+-_]).{4,})";
+        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+        Matcher matcher = pattern.matcher(password);
+
+
+        //String regexPassword = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%!]).{4,20})";
 
         if(password == null || password.isEmpty() || password == ""){
             return "Campo obrigatório!";
@@ -74,7 +79,7 @@ public class UsuarioController {
             return "A senha deve ter no mínimo 4 caracteres!";
         }
 
-        if(!password.matches(regexPassword)){
+        if(!matcher.matches()){
             return "Senha fraca!";
         }
 
@@ -102,7 +107,7 @@ public class UsuarioController {
             return "CPF muito curto!";
         }
 
-        if (!ValidaCPF.isCPF(cpf)){
+        if (!Validacoes.isCPF(cpf)){
             return "CPF inválido!";
         }
 
