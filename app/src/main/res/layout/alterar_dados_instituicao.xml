@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
-    tools:context=".view.CadastroInstituicao">
+    tools:context=".view.alterarDadosInstituicao">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -112,9 +112,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
         <Button
             android:id="@+id/buttonAlterarSenha"
             android:layout_width="match_parent"
@@ -123,10 +120,8 @@
             android:layout_marginTop="15dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_weight="60dp"
             android:textColor="#FFF"
             android:background="@drawable/button_salvar_dados"
-
             />
 
 
