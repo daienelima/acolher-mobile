@@ -38,7 +38,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/labelNomeCompleto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
