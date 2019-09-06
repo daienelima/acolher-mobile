@@ -2,26 +2,21 @@ package br.com.acolher.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 
 import br.com.acolher.R;
-import br.com.acolher.helper.ValidaCPF;
+import br.com.acolher.helper.Validacoes;
 
 public class CadastroActivity extends AppCompatActivity{
 
@@ -45,16 +40,23 @@ public class CadastroActivity extends AppCompatActivity{
 
         //Configurações da activity
         setContentView(R.layout.cadastro_basico_activity);
+
         inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
+
         btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
+
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
+
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+
         inputCpf = (TextInputLayout) findViewById(R.id.inputCPF);
-        inputCpf.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
         inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
 
         inputNome = (TextInputLayout) findViewById(R.id.inputNomeCompleto);
+
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -110,8 +112,8 @@ public class CadastroActivity extends AppCompatActivity{
         String data = inputDataNasc.getEditText().getText().toString();
         String email = inputEmail.getEditText().getText().toString();
         String password = inputPassword.getEditText().getText().toString();
-        String cpf = inputCpf.getEditText().getText().toString();
-        String telefone = inputTelefone.getEditText().getText().toString();
+        String cpf = Validacoes.cleanCPF(inputCpf.getEditText().getText().toString());
+        String telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
 
         if(uc.validarNome(nome) != ""){
             inputNome.getEditText().setError(uc.validarNome(nome));
@@ -134,11 +136,12 @@ public class CadastroActivity extends AppCompatActivity{
         }
 
         if(uc.validarTelefone(telefone) != ""){
-            inputTelefone.getEditText().setError(uc.validaPassword(password));
+            inputTelefone.getEditText().setError(uc.validarTelefone(telefone));
+            return false;
         }
 
-        if(uc.validaCpf(ValidaCPF.cleanCPF(cpf)) != ""){
-            inputCpf.getEditText().setError(uc.validaCpf(ValidaCPF.cleanCPF(cpf)));
+        if(uc.validaCpf(cpf) != ""){
+            inputCpf.getEditText().setError(uc.validaCpf(cpf));
             return false;
         }
 

@@ -2,7 +2,7 @@ package br.com.acolher.helper;
 
 import java.util.InputMismatchException;
 
-public class ValidaCPF {
+public class Validacoes {
 
     public static boolean isCPF(String CPF) {
         // considera-se erro CPF's formados por uma sequencia de numeros iguais
@@ -67,6 +67,14 @@ public class ValidaCPF {
 
     public static String cleanCPF(String cpf){
         return cpf.replaceAll("[.-]","");
+    }
+
+    public static boolean validaEmail(String emailValida) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
+    }
+
+    public static String cleanTelefone(String telefone){
+        return telefone.replaceAll("[-() ]","");
     }
 
 }
