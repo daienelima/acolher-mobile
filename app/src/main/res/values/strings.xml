@@ -1,14 +1,13 @@
 <resources>
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
-    <string name="label_cadastro_nome">Nome completo</string>
+    <string name="label_cadastro_nome">Nome completo*</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
+    <string name="label_cadastro_CRM">CRM</string>
     <string name="label_cadastro_password">Senha</string>
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
-    <string name="label_button_continuar_cadastro">Prosseguir com o cadastro</string>
-    <string name="label_return_login">↵ Voltar para a tela de login</string>
     <string name="label_senha_atual">Senha Atual</string>
     <string name="label_senha">Senha</string>
     <string name="label_nova_senha">Nova Senha</string>
@@ -20,4 +19,46 @@
     <string name="label_nome_instituicao">nome da instituicao</string>
     <string name="label_button_salvar_dados">salvar dados</string>
     <string name="label_return_home"> voltar para a tela principal</string>
+    <string name="label_button_continuar_cadastro">Continuar cadastro</string>
+    <string name="label_return_login">Voltar para a tela de login</string>
+    <string name="label_rua">Rua</string>
+    <string name="label_cep">Cep</string>
+    <string name="label_bairro">Bairro</string>
+    <string name="label_numero">Numero</string>
+    <string name="button_localizacao">Utilizar endereço atual</string>
+
+    <string name="error_nome_completo">Insira o seu nome completo</string>
+
+    <!-- Spinner Estados -->
+    <string-array name="spinner_estados">
+        <item>Estado</item>
+        <item>Acre</item>
+        <item>Alagoas</item>
+        <item>Amapá</item>
+        <item>Amazonas</item>
+        <item>Bahia</item>
+        <item>Ceará</item>
+        <item>Distrito Federal</item>
+        <item>Espírito Santo</item>
+        <item>Goiás</item>
+        <item>Maranhão</item>
+        <item>Mato Grosso</item>
+        <item>Mato Grosso do Sul</item>
+        <item>Minas Gerais</item>
+        <item>Pará</item>
+        <item>Paraíba</item>
+        <item>Paraná</item>
+        <item>Pernambuco</item>
+        <item>Piauí</item>
+        <item>Rio de Janeiro</item>
+        <item>Rio Grande do Norte</item>
+        <item>Rio Grande do Sul</item>
+        <item>Rondônia</item>
+        <item>Roraima</item>
+        <item>Santa Catarina</item>
+        <item>São Paulo</item>
+        <item>Sergipe</item>
+        <item>Tocantins</item>
+        <item>Estrangeiro</item>
+    </string-array>
 </resources>
