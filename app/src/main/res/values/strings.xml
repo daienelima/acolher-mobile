@@ -15,6 +15,17 @@
     <string name="label_button_confirmar_nova_senha">Alterar Senha</string>
     <string name="label_button_entrar">Entrar</string>
     <!-- label de instituicao. -->
+    <string name="label_cadastro_instituicao_nome">Nome da instituição</string>
+    <string name="label_cadastro_instituicao_cnpj">CNPJ</string>
+    <string name="label_cadastro_instituicao_email">Email</string>
+    <string name="label_cadastro_instituicao_password">Senha</string>
+    <string name="label_cadastro_instituicao_telefone">Telefone</string>
+    <string name="error_instituicao_nome">Insira o nome da instituição</string>
+    <string name="error_instituicao_cnpj">Insira o cnpj da instituição</string>
+    <string name="error_instituicao_email">Insira o email da instituição</string>
+    <string name="error_instituicao_email_invalido">Insira um email válido</string>
+    <string name="error_instituicao_senha">Insira o senha da instituição</string>
+    <string name="error_instituicao_telefone">Insira o telefone da instituição</string>
     <string name="label_save_alteracao">salvar dados</string>
     <string name="label_nome_instituicao">nome da instituicao</string>
     <string name="label_button_salvar_dados">salvar dados</string>

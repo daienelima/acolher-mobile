@@ -24,6 +24,9 @@ public class MaskWatcher implements TextWatcher {
     public static MaskWatcher buildCpf() {
         return new MaskWatcher("###.###.###-##");
     }
+    public static MaskWatcher buildCnpj() {
+        return new MaskWatcher("##.###.###/####-##");
+    }
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
