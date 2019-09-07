@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.controller.EnderecoController;
+import br.com.acolher.helper.MaskWatcher;
+import br.com.acolher.helper.Validacoes;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -45,19 +48,23 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private Location location;
     private double latitude;
     private double longitude;
+
     Spinner spinnerEstados;
     ArrayAdapter<CharSequence> adapterSpinnerEstados;
     GoogleApiClient googleApiClient;
     Button pesquisarEndereco;
     FusedLocationProviderClient fusedLocation;
-
     TextInputLayout rua;
-    TextInputLayout cep;
+    TextInputLayout inputCep;
     TextInputLayout numero;
     TextInputLayout bairro;
     TextInputLayout til;
     Spinner estado;
     Spinner cidade;
+    Button btnFinalizarCadastro;
+
+    EnderecoController ec;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,12 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
         rua = (TextInputLayout) findViewById(R.id.inputRua);
-        cep = (TextInputLayout) findViewById(R.id.inputCep);
+
+        inputCep = (TextInputLayout) findViewById(R.id.inputCep);
+        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+
+        btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
+
         bairro = (TextInputLayout) findViewById(R.id.inputBairro);
 
         til = (TextInputLayout) findViewById(R.id.text_input_layout);
@@ -112,7 +124,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                                     try {
                                         address = buscarEndereco(latitude, longitude);
                                         rua.getEditText().setText(address.getThoroughfare());
-                                        cep.getEditText().setText(address.getPostalCode());
+                                        inputCep.getEditText().setText(address.getPostalCode());
                                         bairro.getEditText().setText(address.getSubLocality());
                                     }catch (IOException e){
                                         e.printStackTrace();
@@ -148,6 +160,14 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                         }
                     });*/
                 }
+            }
+        });
+
+        btnFinalizarCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ec = new EnderecoController();
+                validateForm();
             }
         });
 
@@ -235,6 +255,17 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         }
 
         return  address;
+    }
+
+    public boolean validateForm(){
+
+        String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+
+        if(ec.validaCep(cep) != ""){
+            inputCep.getEditText().setError(ec.validaCep(cep));
+        }
+
+        return true;
     }
 
 }

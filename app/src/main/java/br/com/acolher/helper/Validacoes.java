@@ -73,6 +73,10 @@ public class Validacoes {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
 
+    public static String cleanCep(String cep){
+        return cep.replaceAll("[.-]","");
+    }
+
     public static String cleanTelefone(String telefone){
         return telefone.replaceAll("[-() ]","");
     }

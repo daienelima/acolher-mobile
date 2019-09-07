@@ -9,10 +9,9 @@ public class UsuarioController {
 
     public String validarNome(String nome){
 
-        //String regexNome = @"^[aA-zZ]+((\s[aA-zZ]+)+)?$";
-        //Pattern pattern = Pattern.compile(regexNome);
-        //Matcher matcher = pattern.matcher(nome);
-        //boolean nomeValido = nome.matches("/[A-Z][a-z]* [A-Z][a-z]*/");
+        /*String regexNome = "/^[a-zA-ZéúíóáÉÚÍÓÁèùìòàçÇÈÙÌÒÀõãñÕÃÑêûîôâÊÛÎÔÂëÿüïöäËYÜÏÖÄ\\-\\ \\s]+$/";
+        Pattern pattern = Pattern.compile(regexNome);
+        Matcher matcher = pattern.matcher(nome);*/
 
         if(nome == null || nome.isEmpty() || nome == "") {
             return "Campo obrigatorio!";
@@ -26,7 +25,7 @@ public class UsuarioController {
             return "O nome deve conter seu nome e sobrenome";
         }
 
-        /*if(!matcher.find()){
+        /*if(!matcher.matches()){
             return "Insira apenas letras!";
         }*/
 

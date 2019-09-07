@@ -61,4 +61,7 @@
         <item>Tocantins</item>
         <item>Estrangeiro</item>
     </string-array>
+
+    <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
+
 </resources>
