@@ -2,6 +2,7 @@ package br.com.acolher.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -80,9 +81,10 @@ public class CadastroActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 uc = new UsuarioController();
-                validateForm();
-                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                //startActivity(intentEndereco);
+                if(validateForm()){
+                    Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
+                    startActivity(intentEndereco);
+                }
             }
         });
 

@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -54,13 +55,11 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     GoogleApiClient googleApiClient;
     Button pesquisarEndereco;
     FusedLocationProviderClient fusedLocation;
-    TextInputLayout rua;
+    TextInputLayout inputRua;
     TextInputLayout inputCep;
-    TextInputLayout numero;
-    TextInputLayout bairro;
-    TextInputLayout til;
-    Spinner estado;
-    Spinner cidade;
+    TextInputLayout inputNumero;
+    TextInputLayout inputBairro;
+
     Button btnFinalizarCadastro;
 
     EnderecoController ec;
@@ -74,25 +73,22 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
         spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
         adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);
-
         adapterSpinnerEstados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEstados.setAdapter(adapterSpinnerEstados);
 
         pesquisarEndereco = (Button) findViewById(R.id.btnSearchLocale);
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
-        rua = (TextInputLayout) findViewById(R.id.inputRua);
+        inputRua = (TextInputLayout) findViewById(R.id.inputRua);
 
         inputCep = (TextInputLayout) findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
 
         btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
 
-        bairro = (TextInputLayout) findViewById(R.id.inputBairro);
+        inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
 
-        til = (TextInputLayout) findViewById(R.id.text_input_layout);
-        til.setError("You need to enter a name");
-
+        inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
 
         if(googleApiClient == null){
 
@@ -123,9 +119,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                                     longitude = location.getLongitude();
                                     try {
                                         address = buscarEndereco(latitude, longitude);
-                                        rua.getEditText().setText(address.getThoroughfare());
+                                        inputRua.getEditText().setText(address.getThoroughfare());
                                         inputCep.getEditText().setText(address.getPostalCode());
-                                        bairro.getEditText().setText(address.getSubLocality());
+                                        inputBairro.getEditText().setText(address.getSubLocality());
                                     }catch (IOException e){
                                         e.printStackTrace();
                                     }
@@ -260,9 +256,28 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     public boolean validateForm(){
 
         String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+        String rua = inputRua.getEditText().getText().toString();
+        String numero = inputNumero.getEditText().getText().toString();
+        String bairro = inputBairro.getEditText().getText().toString();
 
         if(ec.validaCep(cep) != ""){
             inputCep.getEditText().setError(ec.validaCep(cep));
+        }
+
+        if(ec.validaBairro(bairro) != ""){
+            inputBairro.getEditText().setError(ec.validaBairro(bairro));
+        }
+
+        if(ec.validaNumero(numero) != ""){
+            inputNumero.getEditText().setError(ec.validaNumero(numero));
+        }
+
+        if(ec.validaRua(rua) != ""){
+            inputRua.getEditText().setError(ec.validaRua(rua));
+        }
+
+        if(ec.validaEstado(spinnerEstados.getSelectedItem().toString()) != ""){
+            ((TextView)spinnerEstados.getSelectedView()).setError(ec.validaEstado(spinnerEstados.getSelectedItem().toString()));
         }
 
         return true;

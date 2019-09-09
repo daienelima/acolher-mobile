@@ -81,4 +81,13 @@ public class Validacoes {
         return telefone.replaceAll("[-() ]","");
     }
 
+    public static boolean hasString(String data){
+
+        if(data.isEmpty() || data == null || data == ""){
+            return false;
+        }
+
+        return true;
+    }
+
 }
