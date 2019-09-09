@@ -64,13 +64,14 @@ public class MeusDadosActivity extends AppCompatActivity {
 
         //Mocando dados para futura integração
         inputCodigo.getEditText().setText("1");
+        inputCodigo.setEnabled(false);;
         inputNome.getEditText().setText("Alysson Alves");
         inputEmail.getEditText().setText("alyssonalves1993@hotmail.com");
         inputDataNasc.getEditText().setText("18/10/1990");
         inputPassword.getEditText().setText("Teste@teste123");
-        inputTelefone.getEditText().setText("819884658978");
-        inputCpf.getEditText().setText("11589632147");
-        inputCpf.getEditText().setText("11589632147");
+        inputTelefone.getEditText().setText("(81)988465897");
+        inputCpf.getEditText().setText("329.019.100-17");
+
 
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +96,8 @@ public class MeusDadosActivity extends AppCompatActivity {
             public void onClick(View view) {
                 uc = new UsuarioController();
                 validateForm();
-                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
+
+                //      Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
                 //startActivity(intentEndereco);
             }
         });
