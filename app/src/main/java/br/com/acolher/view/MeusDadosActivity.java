@@ -15,6 +15,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 
+import android.content.Intent;
+
 import br.com.acolher.R;
 import br.com.acolher.helper.Validacoes;
 
@@ -95,10 +97,11 @@ public class MeusDadosActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 uc = new UsuarioController();
-                validateForm();
+                if(validateForm()) {
 
-                //      Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                //startActivity(intentEndereco);
+                    Intent intentEndereco = new Intent(MeusDadosActivity.this, CadastroEndereco.class);
+                    startActivity(intentEndereco);
+                }
             }
         });
 
