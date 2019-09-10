@@ -35,6 +35,7 @@ public class login extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public boolean validaEmail(String emailValida) {

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import br.com.acolher.R;
 
-public class alterarDadosInstituicao extends AppCompatActivity {
+public class AlterarDadosInstituicao extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

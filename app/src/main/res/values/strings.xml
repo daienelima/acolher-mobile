@@ -47,6 +47,8 @@
     <string name="labelCodigoNome">Código</string>
 
     <!-- Spinner Estados -->
+    <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
+
     <string-array name="spinner_estados">
         <item>Estado</item>
         <item>Acre</item>
@@ -78,7 +80,5 @@
         <item>Tocantins</item>
         <item>Estrangeiro</item>
     </string-array>
-
-    <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
 
 </resources>
