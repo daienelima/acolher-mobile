@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="Home"/>
+
+    <item
+        android:id="@+id/agenda"
+        android:icon="@drawable/ic_agenda"
+        android:title="Agenda"/>
+
+    <item
+        android:id="@+id/chat"
+        android:icon="@drawable/ic_chat"
+        android:title="Feed"/>
+
+    <item
+        android:id="@+id/conta"
+        android:icon="@drawable/ic_person"
+        android:title="Minha conta"/>
+</menu>
