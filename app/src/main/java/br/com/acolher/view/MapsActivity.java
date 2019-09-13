@@ -1,9 +1,13 @@
 package br.com.acolher.view;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -20,12 +24,15 @@ import br.com.acolher.R;
 public class MapsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
+
         loadFragment(new HomeMapFragment());
 
         /*setContentView(R.layout.activity_main);
