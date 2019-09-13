@@ -14,10 +14,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Instituicao;
+import retrofit2.Call;
 
 public class CadastroInstituicao extends AppCompatActivity{
 
@@ -28,6 +31,13 @@ public class CadastroInstituicao extends AppCompatActivity{
     TextInputLayout inputNome;
     TextInputLayout inputEmail;
     InstituicaoController ic;
+    private RetrofitInit retrofitInit;
+    private Instituicao instituicao = new Instituicao();
+    private String nome;
+    private String email;
+    private String password;
+    private String cnpj;
+    private String telefone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +65,9 @@ public class CadastroInstituicao extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 ic = new InstituicaoController();
-                validateForm();
+                if(validateForm()){
+                    montarInstituicao();
+                }
                 //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
                 //startActivity(intentEndereco);
             }
@@ -63,13 +75,22 @@ public class CadastroInstituicao extends AppCompatActivity{
 
     }
 
+    private void montarInstituicao() {
+        instituicao.setAtivo(true);
+        instituicao.setNome(nome);
+        instituicao.setCnpj(cnpj);
+        instituicao.setEmail(email);
+        instituicao.setSenha(password);
+        instituicao.setTelefone(telefone);
+    }
+
     public boolean validateForm(){
 
-        String nome = inputNome.getEditText().getText().toString();
-        String email = inputEmail.getEditText().getText().toString();
-        String password = inputPassword.getEditText().getText().toString();
-        String cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
-        String telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
+        nome = inputNome.getEditText().getText().toString();
+        email = inputEmail.getEditText().getText().toString();
+        password = inputPassword.getEditText().getText().toString();
+        cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
+        telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
 
         if(ic.validarNome(nome) != ""){
             inputNome.getEditText().setError(ic.validarNome(nome));
@@ -97,5 +118,11 @@ public class CadastroInstituicao extends AppCompatActivity{
         return true;
 
     }
+
+    private void cadastroInstituicao(Instituicao instituicao){
+        //Instituicao cadastro = new RetrofitInit().getService().cadastroInstituicao(instituicao);
+
+    }
+
 
 }
