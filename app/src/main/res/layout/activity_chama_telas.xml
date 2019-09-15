@@ -61,8 +61,18 @@
         android:onClick="trocarTela"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Cadastrar disponibilidade"
+        android:id="@+id/cadastrarDisponibilidade">
+    </Button>
+
+    <Button
+        android:onClick="trocarTela"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Alterar Dados Instituiçao"
         android:id="@+id/alterarDadosInstituicao">
     </Button>
+
+    x
 
 </LinearLayout>
