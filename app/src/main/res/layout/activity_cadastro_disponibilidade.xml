@@ -126,16 +126,6 @@
                         android:hint="@string/label_cadastro_horas" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageButton
-                    android:id="@+id/btnHoras"
-                    android:layout_width="58dp"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/button_cadastro_radius"
-                    android:scaleType="centerInside" />
-                    android:src="@drawable/calendar" />
-
             </LinearLayout>
 
             <Button

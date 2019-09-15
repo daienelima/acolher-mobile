@@ -68,7 +68,6 @@ public class chamaTelas extends AppCompatActivity {
                 intent = new Intent(chamaTelas.this, AlterarDadosInstituicao.class);
                 startActivity(intent);
 
-
             default:
                 return;
         }
