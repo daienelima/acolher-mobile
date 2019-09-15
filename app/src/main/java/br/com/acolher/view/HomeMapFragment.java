@@ -1,6 +1,5 @@
 package br.com.acolher.view;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -60,7 +57,9 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         LatLng sydney = new LatLng(-34, 151);
         mMap = googleMap;
-        MarkerOptions myMarker = new MarkerOptions().position(sydney).title("Marker in Sydney");
+        MarkerOptions myMarker = new MarkerOptions().position(sydney)
+                .title("Marker in Sydney")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.heart_pin));
         // Add a marker in Sydney and move the camera
         mMap.addMarker(myMarker);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));

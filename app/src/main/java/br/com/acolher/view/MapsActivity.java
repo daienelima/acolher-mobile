@@ -4,19 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import br.com.acolher.R;
@@ -34,6 +28,9 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
 
         loadFragment(new HomeMapFragment());
+
+        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
+        navigationView.setOnNavigationItemSelectedListener(this);
 
         /*setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -57,7 +54,27 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        return false;
+
+        Fragment fragment = null;
+
+        switch (menuItem.getItemId()){
+            case R.id.home :
+                fragment = new HomeMapFragment();
+                break;
+            case R.id.agenda :
+                fragment = new ConsultasFragment();
+                break;
+            case R.id.chat :
+                fragment = new ChatFragment();
+                break;
+            case R.id.conta :
+                fragment = new MinhaContaFragment();
+                break;
+            default:
+                break;
+        }
+
+        return loadFragment(fragment);
     }
 
 
