@@ -69,7 +69,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.cadastro_endereco_activity);
+        setContentView(R.layout.activity_cadastro_endereco);
 
         spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
         adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);

@@ -1,5 +1,6 @@
 package br.com.acolher.view;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +16,17 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import br.com.acolher.R;
 
-public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
+public class HomeMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     GoogleMap mMap;
     MapView mMapView;
     View mView;
+    Marker myMarker;
 
     @Nullable
     @Override
@@ -57,11 +60,21 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         LatLng sydney = new LatLng(-34, 151);
         mMap = googleMap;
-        MarkerOptions myMarker = new MarkerOptions().position(sydney)
+        myMarker = mMap.addMarker(new MarkerOptions()
+                .position(sydney)
                 .title("Marker in Sydney")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.heart_pin));
-        // Add a marker in Sydney and move the camera
-        mMap.addMarker(myMarker);
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.heart_pin)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if(marker.equals(myMarker)){
+            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+            View mView = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
+            mBuilder.setView(mView);
+            final AlertDialog dialog = mBuilder.create();
+        }
+        return false;
     }
 }
