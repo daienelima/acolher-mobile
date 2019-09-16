@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +33,6 @@ public class CadastroInstituicao extends AppCompatActivity{
     TextInputLayout inputEmail;
     InstituicaoController ic;
     private RetrofitInit retrofitInit;
-    private Instituicao instituicao = new Instituicao();
     private String nome;
     private String email;
     private String password;
@@ -66,22 +66,17 @@ public class CadastroInstituicao extends AppCompatActivity{
             public void onClick(View view) {
                 ic = new InstituicaoController();
                 if(validateForm()){
-                    montarInstituicao();
+                    Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
+                    intentEndereco.putExtra("nomeInstituicao", nome);
+                    intentEndereco.putExtra("cnpjInstituicao", cnpj);
+                    intentEndereco.putExtra("telefoneInstituicao", telefone);
+                    intentEndereco.putExtra("emailInstituicao", email);
+                    intentEndereco.putExtra("passwordInstituicao", password);
+                    startActivity(intentEndereco);
                 }
-                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                //startActivity(intentEndereco);
             }
         });
 
-    }
-
-    private void montarInstituicao() {
-        instituicao.setAtivo(true);
-        instituicao.setNome(nome);
-        instituicao.setCnpj(cnpj);
-        instituicao.setEmail(email);
-        instituicao.setSenha(password);
-        instituicao.setTelefone(telefone);
     }
 
     public boolean validateForm(){
@@ -118,11 +113,5 @@ public class CadastroInstituicao extends AppCompatActivity{
         return true;
 
     }
-
-    private void cadastroInstituicao(Instituicao instituicao){
-        //Instituicao cadastro = new RetrofitInit().getService().cadastroInstituicao(instituicao);
-
-    }
-
 
 }

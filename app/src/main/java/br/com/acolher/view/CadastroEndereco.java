@@ -41,6 +41,8 @@ import br.com.acolher.R;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -63,6 +65,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     Button btnFinalizarCadastro;
 
     EnderecoController ec;
+    Endereco endereco = new Endereco();
 
 
     @Override
@@ -163,7 +166,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onClick(View v) {
                 ec = new EnderecoController();
-                validateForm();
+                if (validateForm()){
+
+                }
             }
         });
 
@@ -262,25 +267,36 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
         if(ec.validaCep(cep) != ""){
             inputCep.getEditText().setError(ec.validaCep(cep));
+            return false;
         }
 
         if(ec.validaBairro(bairro) != ""){
             inputBairro.getEditText().setError(ec.validaBairro(bairro));
+            return false;
         }
 
         if(ec.validaNumero(numero) != ""){
             inputNumero.getEditText().setError(ec.validaNumero(numero));
+            return false;
         }
 
         if(ec.validaRua(rua) != ""){
             inputRua.getEditText().setError(ec.validaRua(rua));
+            return false;
         }
 
         if(ec.validaEstado(spinnerEstados.getSelectedItem().toString()) != ""){
             ((TextView)spinnerEstados.getSelectedView()).setError(ec.validaEstado(spinnerEstados.getSelectedItem().toString()));
+            return false;
         }
 
         return true;
+    }
+
+
+    private void cadastroInstituicao(Instituicao instituicao){
+        //Instituicao cadastro = new RetrofitInit().getService().cadastroInstituicao(instituicao);
+
     }
 
 }
