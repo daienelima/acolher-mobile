@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,11 +28,13 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     MapView mMapView;
     View mView;
     Marker myMarker;
+    TextView btnClose;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_home_maps, null);
+
         return mView;
     }
 
@@ -63,18 +66,40 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         myMarker = mMap.addMarker(new MarkerOptions()
                 .position(sydney)
                 .title("Marker in Sydney")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.heart_pin)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                if(marker.equals(myMarker)){
+
+                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
+                    mBuilder.setView(viewDialog);
+                    final AlertDialog dialog = mBuilder.create();
+
+                    TextView btnClose = (TextView) viewDialog.findViewById(R.id.closeDialogDisp);
+
+                    btnClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
+
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if(marker.equals(myMarker)){
-            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-            View mView = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
-            mBuilder.setView(mView);
-            final AlertDialog dialog = mBuilder.create();
-        }
         return false;
     }
 }

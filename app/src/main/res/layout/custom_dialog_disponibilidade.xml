@@ -23,6 +23,7 @@
             android:textColor="#FFF"/>
 
         <TextView
+            android:id="@+id/closeDialogDisp"
             android:layout_width="0dp"
             android:layout_weight="1.5"
             android:layout_height="wrap_content"
@@ -95,6 +96,7 @@
             android:drawableLeft="@drawable/ic_phone"
             android:drawablePadding="-15dp"
             android:paddingLeft="15dp"
+            android:layout_marginBottom="20dp"
             android:textColor="@android:color/background_light"
             android:textSize="20sp" />
 
