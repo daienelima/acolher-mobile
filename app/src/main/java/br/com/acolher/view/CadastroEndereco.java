@@ -38,11 +38,15 @@ import java.io.IOException;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -66,6 +70,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
     EnderecoController ec;
     Endereco endereco = new Endereco();
+    Instituicao instituicao = new Instituicao();
 
 
     @Override
@@ -167,6 +172,26 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onClick(View v) {
                 ec = new EnderecoController();
                 if (validateForm()){
+                    endereco.setBairro(inputBairro.toString());
+                    endereco.setCep(inputCep.toString());
+                    //endereco.setCidade();
+                    endereco.setEstado(spinnerEstados.getSelectedItem().toString());
+                    endereco.setLatitude(Double.toString(latitude));
+                    endereco.setLongitude(Double.toString(longitude));
+                    endereco.setRua(inputRua.toString());
+                    endereco.setNumero(inputNumero.toString());
+
+                    cadastroEndereco(endereco);
+
+                    Intent intent = getIntent();
+                    instituicao.setAtivo(true);
+                    instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
+                    instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
+                    instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
+                    instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
+                    instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
+
+                    cadastroInstituicao(instituicao);
 
                 }
             }
@@ -293,10 +318,47 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         return true;
     }
 
+    private void cadastroEndereco(Endereco endereco){
+        Call<Endereco> cadastroEndereco = new RetrofitInit().getService().cadastroEndereco(endereco);
+        cadastroEndereco.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if (response.isSuccessful()) {
+                    int status = response.code();
+                    Log.d("testeEndereco", String.valueOf(status));
+                    instituicao.setEndereco(response.body());
+                } else {
+                    Log.d("testeEndereco", "erro");
+                    Log.d("testeEndereco", String.valueOf(response.code()));
+                }
+            }
 
-    private void cadastroInstituicao(Instituicao instituicao){
-        //Instituicao cadastro = new RetrofitInit().getService().cadastroInstituicao(instituicao);
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+
+            }
+        });
 
     }
 
+    private void cadastroInstituicao(Instituicao instituicao){
+        Call<Instituicao> cadastroInstituicao = new RetrofitInit().getService().cadastroInstituicao(instituicao);
+        cadastroInstituicao.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if (response.isSuccessful()) {
+                    int status = response.code();
+                    Log.d("testeInstituicao", String.valueOf(status));
+                    Log.d("testeInstituicao", "erro");
+                    Log.d("testeInstituicao", String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
+    }
 }
