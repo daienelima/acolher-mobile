@@ -70,9 +70,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     Button btnFinalizarCadastro;
 
     EnderecoController ec;
-    Endereco endereco = new Endereco();
-    Instituicao instituicao = new Instituicao();
-
+    private Endereco endereco = new Endereco();
+    private Instituicao instituicao = new Instituicao();
+    private RetrofitInit retrofitInit = new RetrofitInit();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +173,8 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onClick(View v) {
                 ec = new EnderecoController();
                 if (validateForm()){
+                    Endereco endereco = new Endereco();
+
                     endereco.setBairro(inputBairro.toString());
                     endereco.setCep(inputCep.toString());
                     //endereco.setCidade();
@@ -181,6 +183,8 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     endereco.setLongitude(Double.toString(longitude));
                     endereco.setRua(inputRua.toString());
                     endereco.setNumero(inputNumero.toString());
+
+                    Log.d(ERRO, endereco.toString());
 
                     cadastroEndereco(endereco);
 
@@ -320,7 +324,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     }
 
     private void cadastroEndereco(Endereco endereco){
-        Call<Endereco> cadastroEndereco = new RetrofitInit().getService().cadastroEndereco(endereco);
+        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(endereco);
         cadastroEndereco.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
@@ -343,7 +347,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     }
 
     private void cadastroInstituicao(Instituicao instituicao){
-        Call<Instituicao> cadastroInstituicao = new RetrofitInit().getService().cadastroInstituicao(instituicao);
+        Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
         cadastroInstituicao.enqueue(new Callback<Instituicao>() {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {

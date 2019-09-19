@@ -1,5 +1,7 @@
 package br.com.acolher.model;
 
+import androidx.annotation.NonNull;
+
 public class Endereco {
 
     private String cep;
@@ -88,5 +90,11 @@ public class Endereco {
 
     public void setLatitude(String latitude) {
         this.latitude = latitude;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+    return " "+ getBairro() + " " + getCep() + " " + getCidade() + " " + getEstado() + " " + getLatitude() + " " + getLongitude() + " " + getNumero() + " " + getRua();
     }
 }
