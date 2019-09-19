@@ -3,4 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="lightGrey"><!--#DDD-->#FAFAFF</color>
+    <color name="buttonCadastroProsseguir">#7a91ca</color>
+    <color name="buttonSalvarDados">#7a91ca</color>
+    <color name="blue">#3232CD</color>
+    <color name="corLink">#FF7A91CA</color>
 </resources>
