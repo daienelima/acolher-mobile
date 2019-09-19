@@ -1,5 +1,6 @@
 package br.com.acolher.service;
 
+import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Instituicao;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -9,4 +10,8 @@ public interface ServiceApi {
 
     @POST("/instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
+
+    @POST("disponibilidade")
+    Call<Consulta> cadastroConsulta(@Body Consulta consulta);
+    
 }

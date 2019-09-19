@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,17 +15,28 @@ import android.widget.TimePicker;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.model.Consulta;
+import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Status;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
-     //Declarando
-     Calendar calendar;
-     DatePickerDialog datePickerDialog;
+    //Declarando
+    private RetrofitInit retrofitInit = new RetrofitInit();
+    public static final String TAG = "api";
+    Calendar calendar;
+    DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
 
-     TextInputLayout inputCodigo;
+    TextInputLayout inputCodigo;
     TextInputLayout inputNome;
     TextInputLayout inputData;
     ImageButton btnCalendar;
@@ -33,7 +45,10 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
     int currentMinute;
     String amPm;
 
-
+    private LocalDateTime  data;
+    private String hora;
+    private Endereco endereco;
+    private Status statusConsulta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +143,48 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    private void cadastroConsulta(Consulta consulta){
+
+        Call<Consulta> cadastro = retrofitInit.getService().cadastroConsulta(consulta);
+
+        cadastro.enqueue(new Callback<Consulta>() {
+            @Override
+            public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                if (response.isSuccessful()) {
+                    int status = response.code();
+                    Log.d(TAG, String.valueOf(status));
+                } else {
+                    Log.d(TAG, "erro");
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Consulta> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private  void montaConsulta(Consulta consulta){
+        consulta.setData(data);
+        consulta.setHora(hora);
+        consulta.setEndereco(endereco);
+        statusConsulta = Status.DISPONIVEL;
+        consulta.setStatusConsulta(statusConsulta);
+    }
+
+    public boolean validateForm(){
+
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("");
+
+        String sData = inputData.getEditText().getText().toString();
+
+        //LocalDateTime formatDateTime = LocalDateTime.parse(sData);
+
+
+
 
     }
+}
 

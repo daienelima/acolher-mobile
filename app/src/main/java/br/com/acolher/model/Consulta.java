@@ -11,11 +11,11 @@ public class Consulta {
     private Usuario profissional;
     private Instituicao instituicao;
     private Usuario paciente;
-    private String statusConsulta;
+    private Status statusConsulta;
 
     public Consulta(){super();}
 
-    public Consulta(Integer codigo, LocalDateTime data, String hora, Endereco endereco, Usuario profissional, Instituicao instituicao, Usuario paciente, String statusConsulta) {
+    public Consulta(Integer codigo, LocalDateTime data, String hora, Endereco endereco, Usuario profissional, Instituicao instituicao, Usuario paciente, Status statusConsulta) {
         this.codigo = codigo;
         this.data = data;
         this.hora = hora;
@@ -82,11 +82,14 @@ public class Consulta {
         this.paciente = paciente;
     }
 
-    public String getStatusConsulta() {
+    public Status getStatusConsulta() {
         return statusConsulta;
     }
 
-    public void setStatusConsulta(String statusConsulta) {
+    public void setStatusConsulta(Status statusConsulta) {
         this.statusConsulta = statusConsulta;
     }
+
 }
+
+
