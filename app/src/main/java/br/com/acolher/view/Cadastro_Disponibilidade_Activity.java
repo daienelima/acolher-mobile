@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,6 +19,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.controller.DisponibilidadeController;
+import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.Validacoes;
 
 public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
      //Declarando
@@ -29,9 +34,12 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
     TextInputLayout inputData;
     ImageButton btnCalendar;
     TextInputLayout inputHora;
+    Button concluirCadastro;
     int currentHour;
     int currentMinute;
     String amPm;
+    UsuarioController uc;
+    DisponibilidadeController dc;
 
 
 
@@ -47,6 +55,7 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         inputData = (TextInputLayout) findViewById(R.id.inputDataNasc);
         btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
         inputHora = (TextInputLayout) findViewById(R.id.inputHora);
+        concluirCadastro = (Button) findViewById(R.id.buttonConcluirCadastro);
 
 
         //Mocando dados para futura integração
@@ -56,6 +65,16 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         inputNome.setEnabled(false);;
         inputData.getEditText().setText("18/10/1990");
         inputHora.getEditText().setText("08:00");
+
+        concluirCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uc = new UsuarioController();
+                dc = new DisponibilidadeController();
+                validateForm();
+            }
+        });
+
 
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +145,36 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         }, currentHour, currentMinute, true);
 
         timePickerDialog.show();
+    }
+
+    public boolean validateForm(){
+
+        String codigo = inputCodigo.getEditText().getText().toString();
+        String nome = inputNome.getEditText().getText().toString();
+        String data = inputData.getEditText().getText().toString();
+        String hora = inputHora.getEditText().getText().toString();
+
+        if(codigo == null || codigo.isEmpty() || codigo == ""){
+            inputCodigo.getEditText().setError("Campo obrigatorio!");
+            return false;
+        }
+        if(uc.validarNome(nome) != ""){
+            inputNome.getEditText().setError(uc.validarNome(nome));
+            return false;
+        }
+        if(dc.validarData(data) != ""){
+            inputNome.getEditText().setError(dc.validarData(data));
+            return false;
+        }
+
+        if(dc.validarData(hora) != ""){
+            inputNome.getEditText().setError(dc.validarData(hora));
+            return false;
+        }
+
+
+        return true;
+
     }
 
 
