@@ -50,6 +50,7 @@ import retrofit2.Response;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
+    public static final String ERRO = "ERRO";
     private LocationManager locationManager;
     private Address address;
     private Location location;
@@ -325,17 +326,17 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
                     int status = response.code();
-                    Log.d("testeEndereco", String.valueOf(status));
+                    Log.d(ERRO, String.valueOf(status));
                     instituicao.setEndereco(response.body());
                 } else {
-                    Log.d("testeEndereco", "erro");
-                    Log.d("testeEndereco", String.valueOf(response.code()));
+                    Log.d(ERRO, "erro");
+                    Log.d(ERRO, String.valueOf(response.code()));
                 }
             }
 
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-
+                Log.d(ERRO, t.getMessage());
             }
         });
 
