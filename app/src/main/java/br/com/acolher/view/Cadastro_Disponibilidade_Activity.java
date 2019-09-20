@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -15,20 +16,29 @@ import android.widget.ImageButton;
 import android.widget.TimePicker;
 
 import com.google.android.material.textfield.TextInputLayout;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import br.com.acolher.R;
 import br.com.acolher.controller.DisponibilidadeController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.model.Consulta;
+import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Status;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
     //Declarando
+    private RetrofitInit retrofitInit = new RetrofitInit();
+    public static final String TAG = "api";
     Calendar calendar;
     DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
-
     TextInputLayout inputCodigo;
     TextInputLayout inputNome;
     TextInputLayout inputData;
@@ -40,7 +50,6 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
     String amPm;
     UsuarioController uc;
     DisponibilidadeController dc;
-
 
 
     @Override
@@ -60,9 +69,9 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
         //Mocando dados para futura integração
         inputCodigo.getEditText().setText("1");
-        inputCodigo.setEnabled(false);;
+        inputCodigo.setEnabled(false);
         inputNome.getEditText().setText("Alysson Alves");
-        inputNome.setEnabled(false);;
+        inputNome.setEnabled(false);
         inputData.getEditText().setText("18/10/1990");
         inputHora.getEditText().setText("08:00");
 
@@ -71,7 +80,30 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
             public void onClick(View view) {
                 uc = new UsuarioController();
                 dc = new DisponibilidadeController();
-                validateForm();
+
+                if ( validateForm() ){
+                    Consulta novaConsulta = new Consulta();
+                    Endereco endereco = new Endereco();
+                    Status statusConsulta;
+                    String codigo = inputCodigo.getEditText().getText().toString();
+                    String nome = inputNome.getEditText().getText().toString();
+                    String hora = inputHora.getEditText().getText().toString();
+                    String sData = inputData.getEditText().getText().toString();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+                    LocalDateTime data = LocalDateTime.parse(sData,formatter);
+
+
+                    novaConsulta.setData(data);
+                    novaConsulta.setHora(hora);
+                    statusConsulta = Status.DISPONIVEL;
+                    novaConsulta.setStatusConsulta(statusConsulta);
+                    endereco = enderecoMocado();
+                    novaConsulta.setEndereco(endereco);
+
+                    cadastroConsulta(novaConsulta);
+
+                }
+
             }
         });
 
@@ -178,4 +210,30 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
     }
 
 
+    private void cadastroConsulta(Consulta consulta){
+
+        Call<Consulta> cadastro = retrofitInit.getService().cadastroConsulta(consulta);
+
+        cadastro.enqueue(new Callback<Consulta>() {
+            @Override
+            public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                if (response.isSuccessful()) {
+                    int status = response.code();
+                    Log.d(TAG, String.valueOf(status));
+                } else {
+                    Log.d(TAG, "erro");
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Consulta> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private Endereco enderecoMocado(){
+        return new Endereco("51330270", "RUA DAS NINFAS",  "RECIFE",  "PE",  "COHAB", "35",  "0000",  "0000");
+    }
 }
