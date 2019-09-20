@@ -8,9 +8,9 @@ import retrofit2.http.POST;
 
 public interface ServiceApi {
 
-    @POST("instituicao")
-    Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
-
     @POST("endereco")
     Call<Endereco> cadastroEndereco(@Body Endereco endereco);
+
+    @POST("instituicao")
+    Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
 }

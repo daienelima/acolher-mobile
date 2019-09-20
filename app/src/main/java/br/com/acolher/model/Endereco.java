@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 public class Endereco {
 
+    private Integer codigo;
     private String cep;
     private String rua;
     private String cidade;
@@ -17,7 +18,8 @@ public class Endereco {
         super();
     }
 
-    public Endereco(String cep, String rua, String cidade, String estado, String bairro, String numero, String longitude, String latitude) {
+    public Endereco(Integer codigo, String cep, String rua, String cidade, String estado, String bairro, String numero, String longitude, String latitude) {
+        this.codigo = codigo;
         this.cep = cep;
         this.rua = rua;
         this.cidade = cidade;
@@ -26,6 +28,14 @@ public class Endereco {
         this.numero = numero;
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+    public Integer getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
     }
 
     public String getCep() {

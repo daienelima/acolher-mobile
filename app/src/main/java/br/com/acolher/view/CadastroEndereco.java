@@ -73,12 +73,13 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private Endereco endereco = new Endereco();
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
+    private Integer idEndereco;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.cadastro_endereco_activity);
+        setContentView(R.layout.activity_cadastro_endereco);
 
         spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
         adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);
@@ -177,8 +178,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                     endereco.setBairro(inputBairro.toString());
                     endereco.setCep(inputCep.toString());
-                    //endereco.setCidade();
-                    endereco.setEstado(spinnerEstados.getSelectedItem().toString());
+                    endereco.setCidade("aa");
+                    //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
+                endereco.setEstado("asdiofh");
                     endereco.setLatitude(Double.toString(latitude));
                     endereco.setLongitude(Double.toString(longitude));
                     endereco.setRua(inputRua.toString());
@@ -190,6 +192,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                     Intent intent = getIntent();
                     instituicao.setAtivo(true);
+                    instituicao.getEndereco().setCodigo(idEndereco);
                     instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
                     instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
                     instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
@@ -331,7 +334,8 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 if (response.isSuccessful()) {
                     int status = response.code();
                     Log.d(ERRO, String.valueOf(status));
-                    instituicao.setEndereco(response.body());
+
+                    idEndereco = response.body().getCodigo();
                 } else {
                     Log.d(ERRO, "erro");
                     Log.d(ERRO, String.valueOf(response.code()));
