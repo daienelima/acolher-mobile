@@ -50,7 +50,7 @@ import retrofit2.Response;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-    public static final String ERRO = "ERRO";
+    public static final String TAG = "API";
     private LocationManager locationManager;
     private Address address;
     private Location location;
@@ -185,23 +185,23 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     endereco.setUf("PE");
                     endereco.setLatitude(Double.toString(latitude));
                     endereco.setLongitude(Double.toString(longitude));
-                    endereco.setLogradouro(inputRua.toString());
-                    endereco.setNumero(inputNumero.toString());
-
-
-                    cadastroEndereco(endereco);
+                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());
 
                     Intent intent = getIntent();
                     Endereco codigoEndereco = new Endereco();
                     codigoEndereco.setCodigo(idEndereco);
                     instituicao.setAtivo(true);
                     //instituicao.getEndereco().setCodigo(idEndereco);
-                    instituicao.setEndereco(codigoEndereco);
+                    //instituicao.setEndereco(codigoEndereco);
                     instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
                     instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
                     instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
                     instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
                     instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
+
+                    cadastroEndereco(endereco, instituicao);
+
 
                     //cadastroInstituicao(instituicao);
 
@@ -330,25 +330,26 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         return true;
     }
 
-    private void cadastroEndereco(Endereco endereco){
+    private void cadastroEndereco(Endereco endereco, final Instituicao instituicao){
         Call<Endereco> c = retrofitInit.getService().cadastroEndereco(endereco);
         c.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
                     int status = response.code();
-                    Log.d(ERRO, String.valueOf(status));
+                    Log.d(TAG, String.valueOf(status));
 
-                    idEndereco = response.body().getCodigo();
+                    //idEndereco = response.body().getCodigo();
+                    instituicao.getEndereco().setCodigo(response.body().getCodigo());
+                    cadastroInstituicao(instituicao);
                 } else {
-                    Log.d(ERRO, "erro");
-                    Log.d(ERRO, String.valueOf(response.code()));
+                    Log.d(TAG, String.valueOf(response.code()));
                 }
             }
 
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.d(ERRO, t.getMessage());
+                Log.d(TAG, t.getMessage());
             }
         });
 
@@ -361,9 +362,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 if (response.isSuccessful()) {
                     int status = response.code();
-                    Log.d("testeInstituicao", String.valueOf(status));
-                    Log.d("testeInstituicao", "erro");
-                    Log.d("testeInstituicao", String.valueOf(response.code()));
+                    Log.d(TAG, String.valueOf(response.code()));
                 }
             }
 
