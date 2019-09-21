@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -38,38 +39,44 @@ import java.io.IOException;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
+    public static final String TAG = "API";
     private LocationManager locationManager;
     private Address address;
     private Location location;
     private double latitude;
     private double longitude;
 
-    Spinner spinnerEstados;
-    ArrayAdapter<CharSequence> adapterSpinnerEstados;
-    GoogleApiClient googleApiClient;
-    Button pesquisarEndereco;
-    FusedLocationProviderClient fusedLocation;
-    TextInputLayout inputRua;
-    TextInputLayout inputCep;
-    TextInputLayout inputNumero;
-    TextInputLayout inputBairro;
-
-    Button btnFinalizarCadastro;
-
-    EnderecoController ec;
-
+    private Spinner spinnerEstados;
+    private ArrayAdapter<CharSequence> adapterSpinnerEstados;
+    private GoogleApiClient googleApiClient;
+    private Button pesquisarEndereco;
+    private FusedLocationProviderClient fusedLocation;
+    private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro;
+    private Button btnFinalizarCadastro;
+    private EnderecoController ec;
+    private Instituicao instituicao = new Instituicao();
+    private RetrofitInit retrofitInit = new RetrofitInit();
+    private Endereco enderecoResponse = new Endereco();
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.cadastro_endereco_activity);
+        setContentView(R.layout.activity_cadastro_endereco);
 
         spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
         adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);
@@ -80,15 +87,19 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
         inputRua = (TextInputLayout) findViewById(R.id.inputRua);
+        inputRua.getEditText().setText("asudihf");
 
         inputCep = (TextInputLayout) findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        inputCep.getEditText().setText("89989098");
 
         btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
 
         inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
+        inputBairro.getEditText().setText("Beberibe");
 
         inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
+        inputNumero.getEditText().setText("9");
 
         if(googleApiClient == null){
 
@@ -163,7 +174,31 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onClick(View v) {
                 ec = new EnderecoController();
-                validateForm();
+                if (validateForm()){
+                    Endereco endereco = new Endereco();
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCep(inputCep.getEditText().getText().toString());
+                    endereco.setCidade("Recife");
+                    //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
+                    endereco.setUf("PE");
+                    endereco.setLatitude(Double.toString(latitude));
+                    endereco.setLongitude(Double.toString(longitude));
+                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());
+
+                    Intent intent = getIntent();
+                    instituicao.setAtivo(true);
+                    instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
+                    instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
+                    instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
+                    instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
+                    instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
+
+                    cadastroEndereco(endereco);
+                    enderecoResponse.setCodigo(getCodigo());
+                    cadastroInstituicao(instituicao);
+
+                }
             }
         });
 
@@ -262,25 +297,85 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
         if(ec.validaCep(cep) != ""){
             inputCep.getEditText().setError(ec.validaCep(cep));
+            return false;
         }
 
         if(ec.validaBairro(bairro) != ""){
             inputBairro.getEditText().setError(ec.validaBairro(bairro));
+            return false;
         }
 
         if(ec.validaNumero(numero) != ""){
             inputNumero.getEditText().setError(ec.validaNumero(numero));
+            return false;
         }
 
         if(ec.validaRua(rua) != ""){
             inputRua.getEditText().setError(ec.validaRua(rua));
+            return false;
         }
 
         if(ec.validaEstado(spinnerEstados.getSelectedItem().toString()) != ""){
             ((TextView)spinnerEstados.getSelectedView()).setError(ec.validaEstado(spinnerEstados.getSelectedItem().toString()));
+            return false;
         }
 
         return true;
     }
 
+    private void cadastroEndereco(Endereco endereco){
+        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(endereco);
+        cadastroEndereco.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    salvarCodigo(response.body().getCodigo());
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+
+    }
+
+    public void salvarCodigo(Integer codigo){
+        sharedPreferences = this.getSharedPreferences("codigo", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt("codigo", codigo);
+        editor.apply();
+    }
+
+    public Integer getCodigo(){
+        sharedPreferences = getSharedPreferences("codigo", MODE_PRIVATE);
+        Integer  codigo =sharedPreferences.getInt("codigo", 0);
+        return  codigo;
+    }
+
+    private void cadastroInstituicao(Instituicao instituicao){
+        Log.d(TAG, enderecoResponse.toString());
+        instituicao.setEndereco(enderecoResponse);
+        Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
+        cadastroInstituicao.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
+    }
 }
