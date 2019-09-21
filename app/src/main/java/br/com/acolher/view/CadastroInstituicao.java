@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,10 +15,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Instituicao;
+import retrofit2.Call;
 
 public class CadastroInstituicao extends AppCompatActivity{
 
@@ -28,6 +32,12 @@ public class CadastroInstituicao extends AppCompatActivity{
     TextInputLayout inputNome;
     TextInputLayout inputEmail;
     InstituicaoController ic;
+    private RetrofitInit retrofitInit;
+    private String nome;
+    private String email;
+    private String password;
+    private String cnpj;
+    private String telefone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +50,34 @@ public class CadastroInstituicao extends AppCompatActivity{
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
 
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        inputPassword.getEditText().setText("RayGa!vao96");
 
         inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
         inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
+        inputCnpj.getEditText().setText("81819662000190");
 
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
-        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) ####-####"));
-
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputTelefone.getEditText().setText("87998106737");
         inputNome = (TextInputLayout) findViewById(R.id.inputNome);
+        inputNome.getEditText().setText("ausheif");
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+        inputEmail.getEditText().setText("heloisa@gmail.com");
 
         continuarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ic = new InstituicaoController();
-                validateForm();
-                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                //startActivity(intentEndereco);
+                if(validateForm()){
+                    Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
+                    intentEndereco.putExtra("nomeInstituicao", nome);
+                    intentEndereco.putExtra("cnpjInstituicao", cnpj);
+                    intentEndereco.putExtra("telefoneInstituicao", telefone);
+                    intentEndereco.putExtra("emailInstituicao", email);
+                    intentEndereco.putExtra("passwordInstituicao", password);
+                    startActivity(intentEndereco);
+                }
             }
         });
 
@@ -65,11 +85,11 @@ public class CadastroInstituicao extends AppCompatActivity{
 
     public boolean validateForm(){
 
-        String nome = inputNome.getEditText().getText().toString();
-        String email = inputEmail.getEditText().getText().toString();
-        String password = inputPassword.getEditText().getText().toString();
-        String cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
-        String telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
+        nome = inputNome.getEditText().getText().toString();
+        email = inputEmail.getEditText().getText().toString();
+        password = inputPassword.getEditText().getText().toString();
+        cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
+        telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
 
         if(ic.validarNome(nome) != ""){
             inputNome.getEditText().setError(ic.validarNome(nome));
