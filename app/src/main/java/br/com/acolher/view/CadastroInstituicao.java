@@ -50,16 +50,20 @@ public class CadastroInstituicao extends AppCompatActivity{
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
 
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        inputPassword.getEditText().setText("RayGa!vao96");
 
         inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
         inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
+        inputCnpj.getEditText().setText("81819662000190");
 
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
-        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) ####-####"));
-
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputTelefone.getEditText().setText("87998106737");
         inputNome = (TextInputLayout) findViewById(R.id.inputNome);
+        inputNome.getEditText().setText("ausheif");
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+        inputEmail.getEditText().setText("heloisa@gmail.com");
 
         continuarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -90,15 +90,19 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
         inputRua = (TextInputLayout) findViewById(R.id.inputRua);
+        inputRua.getEditText().setText("asudihf");
 
         inputCep = (TextInputLayout) findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        inputCep.getEditText().setText("89989098");
 
         btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
 
         inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
+        inputBairro.getEditText().setText("Beberibe");
 
         inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
+        inputNumero.getEditText().setText("9");
 
         if(googleApiClient == null){
 
@@ -178,9 +182,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                     endereco.setBairro(inputBairro.toString());
                     endereco.setCep(inputCep.toString());
-                    endereco.setCidade("aa");
+                    endereco.setCidade("Recife");
                     //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
-                endereco.setEstado("asdiofh");
+                    endereco.setEstado("PE");
                     endereco.setLatitude(Double.toString(latitude));
                     endereco.setLongitude(Double.toString(longitude));
                     endereco.setRua(inputRua.toString());
@@ -191,8 +195,11 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     cadastroEndereco(endereco);
 
                     Intent intent = getIntent();
+                    Endereco codigoEndereco = new Endereco();
+                    codigoEndereco.setCodigo(idEndereco);
                     instituicao.setAtivo(true);
-                    instituicao.getEndereco().setCodigo(idEndereco);
+                    //instituicao.getEndereco().setCodigo(idEndereco);
+                    instituicao.setEndereco(codigoEndereco);
                     instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
                     instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
                     instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
