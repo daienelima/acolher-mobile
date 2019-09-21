@@ -70,7 +70,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     Button btnFinalizarCadastro;
 
     EnderecoController ec;
-    private Endereco endereco = new Endereco();
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Integer idEndereco;
@@ -179,18 +178,16 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 ec = new EnderecoController();
                 if (validateForm()){
                     Endereco endereco = new Endereco();
-
-                    endereco.setBairro(inputBairro.toString());
-                    endereco.setCep(inputCep.toString());
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCep(inputCep.getEditText().getText().toString());
                     endereco.setCidade("Recife");
                     //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
-                    endereco.setEstado("PE");
+                    endereco.setUf("PE");
                     endereco.setLatitude(Double.toString(latitude));
                     endereco.setLongitude(Double.toString(longitude));
-                    endereco.setRua(inputRua.toString());
+                    endereco.setLogradouro(inputRua.toString());
                     endereco.setNumero(inputNumero.toString());
 
-                    Log.d(ERRO, endereco.toString());
 
                     cadastroEndereco(endereco);
 
@@ -206,7 +203,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
                     instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
 
-                    cadastroInstituicao(instituicao);
+                    //cadastroInstituicao(instituicao);
 
                 }
             }
@@ -334,8 +331,8 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     }
 
     private void cadastroEndereco(Endereco endereco){
-        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(endereco);
-        cadastroEndereco.enqueue(new Callback<Endereco>() {
+        Call<Endereco> c = retrofitInit.getService().cadastroEndereco(endereco);
+        c.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {

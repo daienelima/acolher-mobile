@@ -1,29 +1,25 @@
 package br.com.acolher.model;
 
-import androidx.annotation.NonNull;
-
 public class Endereco {
 
     private Integer codigo;
     private String cep;
-    private String rua;
+    private String logradouro;
     private String cidade;
-    private String estado;
+    private String uf;
     private String bairro;
     private String numero;
     private String longitude;
     private String latitude;
 
-    public Endereco(){
-        super();
-    }
+   public Endereco(){}
 
-    public Endereco(Integer codigo, String cep, String rua, String cidade, String estado, String bairro, String numero, String longitude, String latitude) {
+    public Endereco(Integer codigo, String cep, String logradouro, String cidade, String uf, String bairro, String numero, String longitude, String latitude) {
         this.codigo = codigo;
         this.cep = cep;
-        this.rua = rua;
+        this.logradouro = logradouro;
         this.cidade = cidade;
-        this.estado = estado;
+        this.uf = uf;
         this.bairro = bairro;
         this.numero = numero;
         this.longitude = longitude;
@@ -46,12 +42,12 @@ public class Endereco {
         this.cep = cep;
     }
 
-    public String getRua() {
-        return rua;
+    public String getLogradouro() {
+        return logradouro;
     }
 
-    public void setRua(String rua) {
-        this.rua = rua;
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
     }
 
     public String getCidade() {
@@ -62,12 +58,12 @@ public class Endereco {
         this.cidade = cidade;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getUf() {
+        return uf;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setUf(String uf) {
+        this.uf = uf;
     }
 
     public String getBairro() {
@@ -100,11 +96,5 @@ public class Endereco {
 
     public void setLatitude(String latitude) {
         this.latitude = latitude;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-    return " "+ getBairro() + " " + getCep() + " " + getCidade() + " " + getEstado() + " " + getLatitude() + " " + getLongitude() + " " + getNumero() + " " + getRua();
     }
 }
