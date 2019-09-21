@@ -16,9 +16,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.Cadastro_Disponibilidade_Activity"></activity>
         <activity android:name=".chamaTelas">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
+          <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- <activity android:name=".view.MeusDadosActivity"></activity> -->
