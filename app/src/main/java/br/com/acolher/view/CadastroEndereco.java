@@ -87,19 +87,15 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
         inputRua = (TextInputLayout) findViewById(R.id.inputRua);
-        inputRua.getEditText().setText("asudihf");
 
         inputCep = (TextInputLayout) findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
-        inputCep.getEditText().setText("89989098");
 
         btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
 
         inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
-        inputBairro.getEditText().setText("Beberibe");
 
         inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
-        inputNumero.getEditText().setText("9");
 
         if(googleApiClient == null){
 
@@ -175,7 +171,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onClick(View v) {
                 ec = new EnderecoController();
                 if (validateForm()){
-                    Endereco endereco = new Endereco();
+                   /* Endereco endereco = new Endereco();
                     endereco.setBairro(inputBairro.getEditText().getText().toString());
                     endereco.setCep(inputCep.getEditText().getText().toString());
                     endereco.setCidade("Recife");
@@ -184,7 +180,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     endereco.setLatitude(Double.toString(latitude));
                     endereco.setLongitude(Double.toString(longitude));
                     endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());*/
 
                     Intent intent = getIntent();
                     instituicao.setAtivo(true);
@@ -194,10 +190,10 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
                     instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
 
-                    cadastroEndereco(endereco);
-                    enderecoResponse.setCodigo(getCodigo());
+                    //cadastroEndereco(endereco);
+                    //enderecoResponse.setCodigo(getCodigo());
+                    enderecoResponse.setCodigo(1);
                     cadastroInstituicao(instituicao);
-
                 }
             }
         });
@@ -368,6 +364,13 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        msgJaCadastrado("CNPJ");
+                    }
                 }
             }
 
@@ -377,5 +380,19 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             }
         });
 
+    }
+
+    public void msgJaCadastrado(String campo){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroEndereco.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(campo + " " + "já cadastrado.");
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+            }
+        });
+
+        // visualizacao do dialogo
+        alertDialog.show();
     }
 }
