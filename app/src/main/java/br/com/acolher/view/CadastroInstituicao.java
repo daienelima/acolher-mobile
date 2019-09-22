@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +33,6 @@ public class CadastroInstituicao extends AppCompatActivity{
     TextInputLayout inputEmail;
     InstituicaoController ic;
     private RetrofitInit retrofitInit;
-    private Instituicao instituicao = new Instituicao();
     private String nome;
     private String email;
     private String password;
@@ -50,38 +50,37 @@ public class CadastroInstituicao extends AppCompatActivity{
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
 
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        inputPassword.getEditText().setText("RayGa!vao96");
 
         inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
         inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
+        inputCnpj.getEditText().setText("81819662000190");
 
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
-        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) ####-####"));
-
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputTelefone.getEditText().setText("87998106737");
         inputNome = (TextInputLayout) findViewById(R.id.inputNome);
+        inputNome.getEditText().setText("ausheif");
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+        inputEmail.getEditText().setText("heloisa@gmail.com");
 
         continuarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ic = new InstituicaoController();
                 if(validateForm()){
-                    montarInstituicao();
+                    Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
+                    intentEndereco.putExtra("nomeInstituicao", nome);
+                    intentEndereco.putExtra("cnpjInstituicao", cnpj);
+                    intentEndereco.putExtra("telefoneInstituicao", telefone);
+                    intentEndereco.putExtra("emailInstituicao", email);
+                    intentEndereco.putExtra("passwordInstituicao", password);
+                    startActivity(intentEndereco);
                 }
-                //Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
-                //startActivity(intentEndereco);
             }
         });
 
-    }
-
-    private void montarInstituicao() {
-        instituicao.setAtivo(true);
-        instituicao.setNome(nome);
-        instituicao.setCnpj(cnpj);
-        instituicao.setEmail(email);
-        instituicao.setSenha(password);
-        instituicao.setTelefone(telefone);
     }
 
     public boolean validateForm(){
@@ -118,11 +117,5 @@ public class CadastroInstituicao extends AppCompatActivity{
         return true;
 
     }
-
-    private void cadastroInstituicao(Instituicao instituicao){
-        //Instituicao cadastro = new RetrofitInit().getService().cadastroInstituicao(instituicao);
-
-    }
-
 
 }

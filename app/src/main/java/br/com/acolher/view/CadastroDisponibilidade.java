@@ -1,30 +1,27 @@
 package br.com.acolher.view;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TimePicker;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textfield.TextInputLayout;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.DisponibilidadeController;
 import br.com.acolher.controller.UsuarioController;
-import br.com.acolher.helper.Validacoes;
-import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Status;
@@ -32,24 +29,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
-    //Declarando
+public class CadastroDisponibilidade extends AppCompatActivity {
+
     private RetrofitInit retrofitInit = new RetrofitInit();
-    public static final String TAG = "api";
-    Calendar calendar;
-    DatePickerDialog datePickerDialog;
-    TimePickerDialog timePickerDialog;
-    TextInputLayout inputCodigo;
-    TextInputLayout inputNome;
-    TextInputLayout inputData;
-    ImageButton btnCalendar;
-    TextInputLayout inputHora;
-    Button concluirCadastro;
-    int currentHour;
-    int currentMinute;
-    String amPm;
-    UsuarioController uc;
-    DisponibilidadeController dc;
+    private static final String TAG = "api";
+    private Calendar calendar;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePickerDialog;
+    private TextInputLayout inputNome, inputData, inputHora, inputCPR_CRM;
+    private ImageButton btnCalendar;
+    private Button concluirCadastro;
+    private int currentHour;
+    private int currentMinute;
+    private String amPm;
+    private UsuarioController uc;
+    private DisponibilidadeController dc;
 
 
     @Override
@@ -58,21 +52,17 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_cadastro_disponibilidade);
 
-        //Buscar botões em layout
-        inputCodigo = (TextInputLayout) findViewById(R.id.inputCodigo);
-        inputNome = (TextInputLayout) findViewById(R.id.inputNomeCompleto);
-        inputData = (TextInputLayout) findViewById(R.id.inputDataNasc);
-        btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
-        inputHora = (TextInputLayout) findViewById(R.id.inputHora);
-        concluirCadastro = (Button) findViewById(R.id.buttonConcluirCadastro);
+        pegaIdCampos();
 
 
-        //Mocando dados para futura integração
-        inputCodigo.getEditText().setText("1");
-        inputCodigo.setEnabled(false);
-        inputNome.getEditText().setText("Alysson Alves");
+        /**
+         * Moca dados na tela
+         */
+        inputCPR_CRM.getEditText().setText("8454654");
+        inputCPR_CRM.setEnabled(false);
+        inputNome.getEditText().setText("Medico");
         inputNome.setEnabled(false);
-        inputData.getEditText().setText("18/10/1990");
+        inputData.getEditText().setText("18/10/2019");
         inputHora.getEditText().setText("08:00");
 
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
@@ -83,21 +73,15 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
-                    Endereco endereco = new Endereco();
-                    Status statusConsulta;
-                    String codigo = inputCodigo.getEditText().getText().toString();
-                    String nome = inputNome.getEditText().getText().toString();
+                    Endereco endereco = new Endereco(1,"52000000","R rua","Recife","PE", "Bairro", "150","00000","0000");
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
                     LocalDateTime data = LocalDateTime.parse(sData,formatter);
 
-
                     novaConsulta.setData(data);
                     novaConsulta.setHora(hora);
-                    statusConsulta = Status.DISPONIVEL;
-                    novaConsulta.setStatusConsulta(statusConsulta);
-                    endereco = enderecoMocado();
+                    novaConsulta.setStatusConsulta(Status.DISPONIVEL);
                     novaConsulta.setEndereco(endereco);
 
                     cadastroConsulta(novaConsulta);
@@ -106,8 +90,6 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
             }
         });
-
-
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +120,14 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
     }
 
-    //Metodos a serem chamados:
+    private void pegaIdCampos() {
+        inputCPR_CRM = findViewById(R.id.inputCRP_CRM);
+        inputNome = findViewById(R.id.inputNomeCompleto);
+        inputData = findViewById(R.id.inputDataNasc);
+        btnCalendar = findViewById(R.id.btnCalendar);
+        inputHora = findViewById(R.id.inputHora);
+        concluirCadastro = findViewById(R.id.buttonConcluirCadastro);
+    }
 
     public void openCalendar(){
 
@@ -149,7 +138,7 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
 
-        datePickerDialog = new DatePickerDialog(Cadastro_Disponibilidade_Activity.this, new DatePickerDialog.OnDateSetListener() {
+        datePickerDialog = new DatePickerDialog(CadastroDisponibilidade.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int mYear, int mMonth, int mDay) {
                 inputData.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear);
@@ -163,15 +152,9 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
         currentHour = calendar.get(Calendar.HOUR_OF_DAY);
         currentMinute = calendar.get(Calendar.MINUTE);
 
-        timePickerDialog = new TimePickerDialog(Cadastro_Disponibilidade_Activity.this, new TimePickerDialog.OnTimeSetListener() {
+        timePickerDialog = new TimePickerDialog(CadastroDisponibilidade.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
-                // Formatar para Am Pm caso nescessario
-                /*if (hourOfDay >= 12) {
-                    amPm = "PM";
-                } else {
-                    amPm = "AM";
-                }*/
                 inputHora.getEditText().setText(String.format("%02d:%02d", hourOfDay, minutes));
             }
         }, currentHour, currentMinute, true);
@@ -181,15 +164,10 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
     public boolean validateForm(){
 
-        String codigo = inputCodigo.getEditText().getText().toString();
         String nome = inputNome.getEditText().getText().toString();
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-        if(codigo == null || codigo.isEmpty() || codigo == ""){
-            inputCodigo.getEditText().setError("Campo obrigatorio!");
-            return false;
-        }
         if(uc.validarNome(nome) != ""){
             inputNome.getEditText().setError(uc.validarNome(nome));
             return false;
@@ -231,9 +209,5 @@ public class Cadastro_Disponibilidade_Activity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private Endereco enderecoMocado(){
-        return new Endereco("51330270", "RUA DAS NINFAS",  "RECIFE",  "PE",  "COHAB", "35",  "0000",  "0000");
     }
 }
