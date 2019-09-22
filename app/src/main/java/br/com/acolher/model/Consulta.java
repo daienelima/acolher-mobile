@@ -10,6 +10,7 @@ public class Consulta {
     private String hora;
     private Endereco endereco;
     private Usuario profissional;
+    private Instituicao instituicao;
     private Usuario paciente;
     private Status status;
 
@@ -17,12 +18,13 @@ public class Consulta {
 
     }
 
-    public Consulta(Integer codigo, LocalDateTime data, String hora, Endereco endereco, Usuario profissional, Usuario paciente, Status status) {
+    public Consulta(Integer codigo, LocalDateTime data, String hora, Endereco endereco, Usuario profissional, Instituicao instituicao, Usuario paciente, Status status) {
         this.codigo = codigo;
         this.data = data;
         this.hora = hora;
         this.endereco = endereco;
         this.profissional = profissional;
+        this.instituicao = instituicao;
         this.paciente = paciente;
         this.status = status;
     }
@@ -65,6 +67,14 @@ public class Consulta {
 
     public void setProfissional(Usuario profissional) {
         this.profissional = profissional;
+    }
+
+    public Instituicao getInstituicao() {
+        return instituicao;
+    }
+
+    public void setInstituicao(Instituicao instituicao) {
+        this.instituicao = instituicao;
     }
 
     public Usuario getPaciente() {
