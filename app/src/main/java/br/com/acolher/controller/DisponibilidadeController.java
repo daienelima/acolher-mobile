@@ -17,5 +17,4 @@ public class DisponibilidadeController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         return LocalDateTime.parse(dataHora, formatter);
     }
-
 }
