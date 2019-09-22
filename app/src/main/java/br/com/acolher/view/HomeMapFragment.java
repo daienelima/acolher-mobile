@@ -87,17 +87,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         }
 
-        List<Consulta> consultas = new ArrayList<Consulta>();
-
-
-        Consulta c1 = new Consulta();
-        c1.setData(new Date());
-        c1.setHora("10:00");
-        c1.setStatus(Status.DISPONIVEL);
-        c1.setCodigoPaciente(1000);
-        c1.setCodigoProfissional(1000);
-        c1.setCodigoEndereco(1000);
-
     }
 
     /**
