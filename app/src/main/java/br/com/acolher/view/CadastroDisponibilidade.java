@@ -32,7 +32,7 @@ import retrofit2.Response;
 public class CadastroDisponibilidade extends AppCompatActivity {
 
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private static final String TAG = "api";
+    private static final String TAG = "API";
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
@@ -41,10 +41,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Button concluirCadastro;
     private int currentHour;
     private int currentMinute;
-    private String amPm;
-    private UsuarioController uc;
-    private DisponibilidadeController dc;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +50,10 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
         pegaIdCampos();
 
-
         /**
          * Moca dados na tela
          */
+
         inputCPR_CRM.getEditText().setText("8454654");
         inputCPR_CRM.setEnabled(false);
         inputNome.getEditText().setText("Medico");
@@ -68,18 +64,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uc = new UsuarioController();
-                dc = new DisponibilidadeController();
-
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     Endereco endereco = new Endereco(1,"52000000","R rua","Recife","PE", "Bairro", "150","00000","0000");
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
-                    LocalDateTime data = LocalDateTime.parse(sData,formatter);
 
-                    novaConsulta.setData(data);
+                    String horaMocada = "08:00:00";
+                    novaConsulta.setData(DisponibilidadeController.localDateTime(sData, horaMocada));
                     novaConsulta.setHora(hora);
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
                     novaConsulta.setEndereco(endereco);
@@ -168,23 +160,11 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-        if(uc.validarNome(nome) != ""){
-            inputNome.getEditText().setError(uc.validarNome(nome));
+        if(!DisponibilidadeController.empty(nome)){
+            inputNome.getEditText().setError("Nome não dede ficar em branco");
             return false;
         }
-        if(dc.validarData(data) != ""){
-            inputNome.getEditText().setError(dc.validarData(data));
-            return false;
-        }
-
-        if(dc.validarData(hora) != ""){
-            inputNome.getEditText().setError(dc.validarData(hora));
-            return false;
-        }
-
-
         return true;
-
     }
 
 
@@ -196,8 +176,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 if (response.isSuccessful()) {
-                    int status = response.code();
-                    Log.d(TAG, String.valueOf(status));
+                    Log.d(TAG, String.valueOf(response.code()));
                 } else {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));
