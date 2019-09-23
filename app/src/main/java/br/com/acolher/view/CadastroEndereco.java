@@ -42,6 +42,7 @@ import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -350,8 +351,14 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
-                        msgJaCadastrado("CNPJ");
+                        if(response.errorBody().contentLength() == 19) {
+                            msgJaCadastrado("CNPJ");
+                        }
+                        if(response.errorBody().contentLength() == 21) {
+                            msgJaCadastrado("E-mail");
+                        }
                     }
+
                 }
             }
 
