@@ -399,7 +399,12 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
-                        msgJaCadastrado("CPF");
+                        if(response.errorBody().contentLength() == 18){
+                            msgJaCadastrado("CPF");
+                        }
+                        if(response.errorBody().contentLength() == 21){
+                            msgJaCadastrado("E-mail");
+                        }
                     }
                 }
             }

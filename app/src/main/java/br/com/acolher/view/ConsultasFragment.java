@@ -35,11 +35,11 @@ public class ConsultasFragment extends Fragment {
         consultas = new ArrayList<>();
 
         Usuario u = new Usuario();
-        u.setNomeCompleto("Pedro Paulo");
+        u.setNome_completo("Pedro Paulo");
         u.setCpf("10436594471");
 
         Usuario d = new Usuario();
-        d.setNomeCompleto("Ricardo Nobrega");
+        d.setNome_completo("Ricardo Nobrega");
         d.setCrm_crp("23123123123");
 
         Endereco e = new Endereco();

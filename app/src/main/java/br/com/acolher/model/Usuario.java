@@ -12,37 +12,44 @@ public class Usuario {
     private String cpf;
     private String crm_crp;
     private boolean ativo;
-    private Integer codigo;
 
-    public Usuario() {
-    }
-  
-    public Usuario(String nomeCompleto, String telefone, String email, String password, String dtNascimento, boolean ativo, String cpf, String crm_crp, Integer codigo) {
-        this.nomeCompleto = nomeCompleto;
-        this.telefone = telefone;
+    public Usuario() {}
+
+    public Usuario(Integer codigo, String nome_completo, String data_nascimento, String email, String password, Endereco endereco, String telefone, String cpf, String crm_crp, boolean ativo) {
+        this.codigo = codigo;
+        this.nome_completo = nome_completo;
+        this.data_nascimento = data_nascimento;
         this.email = email;
         this.password = password;
-        this.dtNascimento = dtNascimento;
-        this.ativo = ativo;
+        this.endereco = endereco;
+        this.telefone = telefone;
         this.cpf = cpf;
         this.crm_crp = crm_crp;
+        this.ativo = ativo;
+    }
+
+    public Integer getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(Integer codigo) {
         this.codigo = codigo;
     }
-  
-   public String getNomeCompleto() {
-        return nomeCompleto;
+
+    public String getNome_completo() {
+        return nome_completo;
     }
 
-    public void setNomeCompleto(String nomeCompleto) {
-        this.nomeCompleto = nomeCompleto;
+    public void setNome_completo(String nome_completo) {
+        this.nome_completo = nome_completo;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getData_nascimento() {
+        return data_nascimento;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setData_nascimento(String data_nascimento) {
+        this.data_nascimento = data_nascimento;
     }
 
     public String getEmail() {
@@ -61,20 +68,20 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getDtNascimento() {
-        return dtNascimento;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public void setDtNascimento(String dtNascimento) {
-        this.dtNascimento = dtNascimento;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
-    public boolean isAtivo() {
-        return ativo;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getCpf() {
@@ -93,12 +100,11 @@ public class Usuario {
         this.crm_crp = crm_crp;
     }
 
-    public Integer getCodigo() {
-        return codigo;
+    public boolean isAtivo() {
+        return ativo;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
-    
 }

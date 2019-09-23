@@ -43,11 +43,11 @@ public class AdapterConsultas extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final View view = act.getLayoutInflater().inflate(R.layout.listview_consultas, parent, false);
 
-        TextView nome = (TextView)view.findViewById(R.id.nome);
-        TextView data = (TextView)view.findViewById(R.id.data);
-        TextView hora = (TextView)view.findViewById(R.id.hora);
-        TextView endereco = (TextView)view.findViewById(R.id.endereco);
-        TextView cod = (TextView) view.findViewById(R.id.cod);
+        TextView nome = view.findViewById(R.id.nome);
+        TextView data = view.findViewById(R.id.data);
+        TextView hora = view.findViewById(R.id.hora);
+        TextView endereco = view.findViewById(R.id.endereco);
+        TextView cod =  view.findViewById(R.id.cod);
 
         String tipo = "pacientee";
 
@@ -55,9 +55,9 @@ public class AdapterConsultas extends BaseAdapter {
 
 
         if(tipo.equals("paciente")) {
-            nome.setText(consulta.getProfissional().getNomeCompleto());
+            nome.setText(consulta.getProfissional().getNome_completo());
         }else{
-            nome.setText(consulta.getPaciente().getNomeCompleto());
+            nome.setText(consulta.getPaciente().getNome_completo());
         }
         hora.setText(consulta.getHora());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
