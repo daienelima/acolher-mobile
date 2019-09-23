@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+
 import br.com.acolher.R;
 import br.com.acolher.model.Consulta;
 
@@ -65,7 +66,7 @@ public class AdapterConsultas extends BaseAdapter {
             data.setText(format.format(date));
         }
         hora.setText(consulta.getHora());
-        endereco.setText(consulta.getEndereco().getRua()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
+        endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
         cod.setText(""+consulta.getCodigo().toString());
         return view;
     }

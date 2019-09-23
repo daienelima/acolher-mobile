@@ -1,14 +1,11 @@
 package br.com.acolher.view;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,13 +15,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
-import br.com.acolher.controller.InstituicaoController;
-import br.com.acolher.helper.MaskWatcher;
-import br.com.acolher.helper.Validacoes;
-import br.com.acolher.model.Consulta;
 
 public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
