@@ -2,7 +2,6 @@ package br.com.acolher.model;
 
 import java.time.LocalDateTime;
 
-
 public class Consulta {
 
     private Integer codigo;
