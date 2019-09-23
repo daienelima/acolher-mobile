@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
-    <string name="label_cadastro_nome">Nome completo*</string>
+    <string name="label_cadastro_nome">Nome completo Profissional</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
@@ -51,7 +51,7 @@
     <!-- label de Cadastro de disponibilidade. -->
 
     <string name="label_cadastro_data">Data</string>
-    <string name="label_button_concluir_cadastro">Concluir Cadastro</string>
+    <string name="label_button_concluir_cadastro">Continuar Cadastro</string>
     <string name="label_cadastro_horas">Hora</string>
 
     <!-- Spinner Estados -->
