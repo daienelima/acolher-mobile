@@ -1,24 +1,22 @@
 package br.com.acolher.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 public class Consulta {
 
     private Integer codigo;
-    private LocalDateTime data;
+    private String data;
     private String hora;
     private Endereco endereco;
     private Usuario profissional;
     private Instituicao instituicao;
     private Usuario paciente;
-    private Status status;
+    private Status statusConsulta;
 
-    public Consulta() {
+   public Consulta(){ }
 
-    }
-
-    public Consulta(Integer codigo, LocalDateTime data, String hora, Endereco endereco, Usuario profissional, Instituicao instituicao, Usuario paciente, Status status) {
+    public Consulta(Integer codigo, String data, String hora, Endereco endereco, Usuario profissional, Instituicao instituicao, Usuario paciente, Status statusConsulta) {
         this.codigo = codigo;
         this.data = data;
         this.hora = hora;
@@ -26,7 +24,7 @@ public class Consulta {
         this.profissional = profissional;
         this.instituicao = instituicao;
         this.paciente = paciente;
-        this.status = status;
+        this.statusConsulta = statusConsulta;
     }
 
     public Integer getCodigo() {
@@ -37,11 +35,11 @@ public class Consulta {
         this.codigo = codigo;
     }
 
-    public LocalDateTime getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(LocalDateTime data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -85,11 +83,11 @@ public class Consulta {
         this.paciente = paciente;
     }
 
-    public Status getStatus() {
-        return status;
+    public Status getStatusConsulta() {
+        return statusConsulta;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatusConsulta(Status statusConsulta) {
+        this.statusConsulta = statusConsulta;
     }
 }
