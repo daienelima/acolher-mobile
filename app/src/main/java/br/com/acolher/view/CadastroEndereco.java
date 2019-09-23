@@ -1,16 +1,10 @@
 package br.com.acolher.view;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,10 +17,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,8 +66,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Endereco enderecoResponse = new Endereco();
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,24 +73,24 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         getSupportActionBar().hide();
         setContentView(R.layout.activity_cadastro_endereco);
 
-        spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
+        spinnerEstados  =  findViewById(R.id.listaEstados);
         adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);
         adapterSpinnerEstados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEstados.setAdapter(adapterSpinnerEstados);
 
-        pesquisarEndereco = (Button) findViewById(R.id.btnSearchLocale);
+        pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
-        inputRua = (TextInputLayout) findViewById(R.id.inputRua);
+        inputRua = findViewById(R.id.inputRua);
 
-        inputCep = (TextInputLayout) findViewById(R.id.inputCep);
+        inputCep =  findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
 
-        btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
+        btnFinalizarCadastro = findViewById(R.id.btnFinalizarCadastro);
 
-        inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
+        inputBairro = findViewById(R.id.inputBairro);
 
-        inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
+        inputNumero = findViewById(R.id.inputNumero);
 
         if(googleApiClient == null){
 
@@ -291,23 +286,23 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         String numero = inputNumero.getEditText().getText().toString();
         String bairro = inputBairro.getEditText().getText().toString();
 
-        if(ec.validaCep(cep) != ""){
-            inputCep.getEditText().setError(ec.validaCep(cep));
+        if(!EnderecoController.empty(rua)){
+            inputRua.setError("Campo Obrigatorio");
             return false;
         }
 
-        if(ec.validaBairro(bairro) != ""){
-            inputBairro.getEditText().setError(ec.validaBairro(bairro));
+        if(ec.validaCep(cep) != ""){
+            inputCep.setError(ec.validaCep(cep));
+            return false;
+        }
+
+        if(!EnderecoController.empty(bairro)){
+            inputBairro.setError("Campo Obrigatorio");
             return false;
         }
 
         if(ec.validaNumero(numero) != ""){
-            inputNumero.getEditText().setError(ec.validaNumero(numero));
-            return false;
-        }
-
-        if(ec.validaRua(rua) != ""){
-            inputRua.getEditText().setError(ec.validaRua(rua));
+            inputNumero.setError(ec.validaNumero(numero));
             return false;
         }
 
@@ -326,7 +321,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
-                    salvarCodigo(response.body().getCodigo());
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
@@ -339,19 +333,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             }
         });
 
-    }
-
-    public void salvarCodigo(Integer codigo){
-        sharedPreferences = this.getSharedPreferences("codigo", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putInt("codigo", codigo);
-        editor.apply();
-    }
-
-    public Integer getCodigo(){
-        sharedPreferences = getSharedPreferences("codigo", MODE_PRIVATE);
-        Integer  codigo =sharedPreferences.getInt("codigo", 0);
-        return  codigo;
     }
 
     private void cadastroInstituicao(Instituicao instituicao){

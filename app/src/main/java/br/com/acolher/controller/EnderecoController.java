@@ -4,6 +4,18 @@ import br.com.acolher.helper.Validacoes;
 
 public class EnderecoController {
 
+    /**
+     * Valida se uma String é vazia ou nula
+     * @param s
+     * @return
+     */
+    public static boolean empty(String s){
+        if(s == null){
+            return false;
+        }
+        return s.trim().length() > 0;
+    }
+
     public String validaCep(String cep){
 
         if(!Validacoes.hasString(cep)){
