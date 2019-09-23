@@ -33,7 +33,12 @@ public class CadastroActivity extends AppCompatActivity{
     TextInputLayout inputNome;
     TextInputLayout inputEmail;
     UsuarioController uc;
-
+    String nome;
+    String data;
+    String email;
+    String password;
+    String cpf;
+    String telefone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +88,13 @@ public class CadastroActivity extends AppCompatActivity{
                 uc = new UsuarioController();
                 if(validateForm()){
                     Intent intentEndereco = new Intent(CadastroActivity.this, CadastroEndereco.class);
+                    intentEndereco.putExtra("telaOrigem", "usuario");
+                    intentEndereco.putExtra("nomeUsuario",nome);
+                    intentEndereco.putExtra("dataUsuario", data);
+                    intentEndereco.putExtra("emailUsuario", email);
+                    intentEndereco.putExtra("passwordUsuario", password);
+                    intentEndereco.putExtra("cpfUsuario", cpf);
+                    intentEndereco.putExtra("telefoneUsuario", telefone);
                     startActivity(intentEndereco);
                 }
             }
@@ -110,12 +122,12 @@ public class CadastroActivity extends AppCompatActivity{
 
     public boolean validateForm(){
 
-        String nome = inputNome.getEditText().getText().toString();
-        String data = inputDataNasc.getEditText().getText().toString();
-        String email = inputEmail.getEditText().getText().toString();
-        String password = inputPassword.getEditText().getText().toString();
-        String cpf = Validacoes.cleanCPF(inputCpf.getEditText().getText().toString());
-        String telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
+        nome = inputNome.getEditText().getText().toString();
+        data = inputDataNasc.getEditText().getText().toString();
+        email = inputEmail.getEditText().getText().toString();
+        password = inputPassword.getEditText().getText().toString();
+        cpf = Validacoes.cleanCPF(inputCpf.getEditText().getText().toString());
+        telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
 
         if(uc.validarNome(nome) != ""){
             inputNome.getEditText().setError(uc.validarNome(nome));

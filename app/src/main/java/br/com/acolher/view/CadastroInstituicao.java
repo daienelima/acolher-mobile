@@ -66,6 +66,7 @@ public class CadastroInstituicao extends AppCompatActivity{
                 ic = new InstituicaoController();
                 if(validateForm()){
                     Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
+                    intentEndereco.putExtra("telaOrigem", "instituicao");
                     intentEndereco.putExtra("nomeInstituicao", nome);
                     intentEndereco.putExtra("cnpjInstituicao", cnpj);
                     intentEndereco.putExtra("telefoneInstituicao", telefone);
