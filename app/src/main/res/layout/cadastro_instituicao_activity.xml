@@ -135,7 +135,7 @@
                     android:singleLine="true"
                     android:padding="0dp"
                     android:inputType="phone"
-                    android:maxLength="14"
+                    android:maxLength="15"
                     android:drawableLeft="@drawable/phone"
                     android:hint="@string/label_cadastro_telefone" />
             </com.google.android.material.textfield.TextInputLayout>
