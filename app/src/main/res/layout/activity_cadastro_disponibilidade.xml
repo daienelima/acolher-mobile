@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
-    tools:context=".view.Cadastro_Disponibilidade_Activity">
+    tools:context=".view.CadastroDisponibilidade">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -26,10 +26,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:gravity="center_horizontal"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCodigo"
+                android:id="@+id/input_CRP_CRM"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
@@ -38,12 +38,12 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCodigo"
+                    android:id="@+id/labelCRP_CRM"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:singleLine="true"
                     android:padding="0dp"
-                    android:hint="@string/labelCodigoNome" />
+                    android:hint="CRM ou CRP" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -51,6 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="20dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
@@ -128,27 +129,38 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/buttonConcluirCadastro"
-                android:layout_width="220dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
-                android:textColor="#FFF"
-                android:background="@drawable/button_cadastro_radius"
-                android:textSize="18dp"
-                android:text="@string/label_button_concluir_cadastro" />
-
-            <TextView
-                android:id="@+id/labelRetornarLogin"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center_horizontal"
-                android:text="@string/label_return_login"
-                android:textColor="@color/corLink"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:layout_height="101dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:padding="20dp">
+
+                <Button
+                    android:id="@+id/buttonConcluirCadastro"
+                    android:layout_width="206dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/button_cadastro_radius"
+                    android:text="@string/label_button_concluir_cadastro"
+                    android:textColor="#FFF"
+                    android:textSize="18dp" />
+
+                <Button
+                    android:id="@+id/buttonCancelar"
+                    android:layout_width="109dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="18dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/btn_cancelar"
+                    android:text="Cancelar"
+                    android:textColor="#FFF"
+                    android:textSize="18dp" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

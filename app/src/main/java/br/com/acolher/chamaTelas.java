@@ -12,7 +12,7 @@ import br.com.acolher.view.AlterarSenha;
 import br.com.acolher.view.CadastroActivity;
 import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
-import br.com.acolher.view.Cadastro_Disponibilidade_Activity;
+import br.com.acolher.view.CadastroDisponibilidade;
 import br.com.acolher.view.MeusDadosActivity;
 import br.com.acolher.view.login;
 
@@ -60,7 +60,7 @@ public class chamaTelas extends AppCompatActivity {
                 break;
 
             case R.id.cadastrarDisponibilidade:
-                intent = new Intent(chamaTelas.this, Cadastro_Disponibilidade_Activity.class);
+                intent = new Intent(chamaTelas.this, CadastroDisponibilidade.class);
                 startActivity(intent);
                 break;
 
