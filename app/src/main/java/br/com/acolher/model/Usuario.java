@@ -10,6 +10,7 @@ public class Usuario {
     private boolean ativo;
     private String cpf;
     private String crm_crp;
+    private Integer codigo;
 
 
     public Usuario() {
@@ -90,4 +91,8 @@ public class Usuario {
     public void setCrm_crp(String crm_crp) {
         this.crm_crp = crm_crp;
     }
+
+    public Integer getCodigo() { return codigo; }
+
+    public void setCodigo(Integer codigo) { this.codigo = codigo; }
 }

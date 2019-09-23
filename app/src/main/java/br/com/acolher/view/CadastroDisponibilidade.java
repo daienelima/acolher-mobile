@@ -25,6 +25,7 @@ import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Status;
+import br.com.acolher.model.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,6 +68,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     Endereco endereco = new Endereco(1,"52000000","R rua","Recife","PE", "Bairro", "150","00000","0000");
+                    Usuario profissional = new Usuario();
+                    profissional.setCodigo(1);
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
@@ -75,6 +78,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     novaConsulta.setHora(hora);
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
                     novaConsulta.setEndereco(endereco);
+                    novaConsulta.setProfissional(profissional);
 
                     cadastroConsulta(novaConsulta);
 
@@ -113,7 +117,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     }
 
     private void pegaIdCampos() {
-        inputCPR_CRM = findViewById(R.id.inputCRP_CRM);
+        inputCPR_CRM = findViewById(R.id.input_CRP_CRM);
         inputNome = findViewById(R.id.inputNomeCompleto);
         inputData = findViewById(R.id.inputDataNasc);
         btnCalendar = findViewById(R.id.btnCalendar);
