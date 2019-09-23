@@ -2,19 +2,21 @@ package br.com.acolher.model;
 
 public class Usuario {
 
-    private String nomeCompleto;
-    private String telefone;
+    private Integer codigo;
+    private String nome_completo;
+    private String data_nascimento;
     private String email;
     private String password;
-    private String dtNascimento;
-    private boolean ativo;
+    private Endereco endereco;
+    private String telefone;
     private String cpf;
     private String crm_crp;
+    private boolean ativo;
     private Integer codigo;
 
     public Usuario() {
     }
-
+  
     public Usuario(String nomeCompleto, String telefone, String email, String password, String dtNascimento, boolean ativo, String cpf, String crm_crp, Integer codigo) {
         this.nomeCompleto = nomeCompleto;
         this.telefone = telefone;
@@ -26,8 +28,8 @@ public class Usuario {
         this.crm_crp = crm_crp;
         this.codigo = codigo;
     }
-
-    public String getNomeCompleto() {
+  
+   public String getNomeCompleto() {
         return nomeCompleto;
     }
 
@@ -98,4 +100,5 @@ public class Usuario {
     public void setCodigo(Integer codigo) {
         this.codigo = codigo;
     }
+    
 }

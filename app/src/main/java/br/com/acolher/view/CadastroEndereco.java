@@ -42,6 +42,7 @@ import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Usuario;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,6 +65,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro;
     private Button btnFinalizarCadastro;
     private EnderecoController ec;
+    private Usuario usuario = new Usuario();
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Endereco enderecoResponse = new Endereco();
@@ -179,17 +181,29 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     endereco.setNumero(inputNumero.getEditText().getText().toString());*/
 
                     Intent intent = getIntent();
-                    instituicao.setAtivo(true);
-                    instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
-                    instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
-                    instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
-                    instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
-                    instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
+                    if(intent.getStringExtra("telaOrigem").contentEquals("usuario")){
+                        usuario.setNome_completo(intent.getStringExtra("nomeUsuario"));
+                        usuario.setData_nascimento(intent.getStringExtra("dataUsuario"));
+                        usuario.setEmail(intent.getStringExtra("emailUsuario"));
+                        usuario.setPassword(intent.getStringExtra("passwordUsuario"));
+                        usuario.setTelefone(intent.getStringExtra("telefoneUsuario"));
+                        usuario.setCpf(intent.getStringExtra("cpfUsuario"));
+                        usuario.setCrm_crp(" ");
+                        enderecoResponse.setCodigo(1);
+                        cadastroUsuario(usuario);
+                    }else{
+                        instituicao.setAtivo(true);
+                        instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
+                        instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
+                        instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
+                        instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
+                        instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
 
-                    //cadastroEndereco(endereco);
-                    //enderecoResponse.setCodigo(getCodigo());
-                    enderecoResponse.setCodigo(1);
-                    cadastroInstituicao(instituicao);
+                        //cadastroEndereco(endereco);
+                        //enderecoResponse.setCodigo(getCodigo());
+                        enderecoResponse.setCodigo(1);
+                        cadastroInstituicao(instituicao);
+                    }
                 }
             }
         });
@@ -368,6 +382,33 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             }
         });
 
+    }
+
+    private void cadastroUsuario(Usuario usuario){
+        Log.d(TAG, enderecoResponse.toString());
+        usuario.setEndereco(enderecoResponse);
+        Call<Usuario> cadastroUsuario = retrofitInit.getService().cadastroUsuario(usuario);
+        cadastroUsuario.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        msgJaCadastrado("CPF");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+
+            }
+        });
     }
 
     public void msgJaCadastrado(String campo){
