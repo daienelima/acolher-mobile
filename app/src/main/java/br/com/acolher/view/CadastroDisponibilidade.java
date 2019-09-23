@@ -2,6 +2,7 @@ package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -59,8 +61,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         inputCPR_CRM.setEnabled(false);
         inputNome.getEditText().setText("Medico");
         inputNome.setEnabled(false);
-        inputData.getEditText().setText("18/10/2019");
-        inputHora.getEditText().setText("08:00");
+        inputData.getEditText().setText("23/10/2019");
+        //inputHora.getEditText().setText("08:00");
 
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,8 +75,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
-                    String horaMocada = "08:00:00";
-                    novaConsulta.setData(DisponibilidadeController.localDateTime(sData, horaMocada));
+
+                    novaConsulta.setData(sData);
                     novaConsulta.setHora(hora);
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
                     novaConsulta.setEndereco(endereco);
@@ -165,9 +167,21 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         String hora = inputHora.getEditText().getText().toString();
 
         if(!DisponibilidadeController.empty(nome)){
-            inputNome.getEditText().setError("Nome não dede ficar em branco");
+            inputNome.setError("Nome não dede ficar em branco");
             return false;
         }
+
+        if(!DisponibilidadeController.empty(data)){
+            inputData.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!DisponibilidadeController.empty(hora)){
+            inputHora.setError("Campo Obrigatorio");
+            return false;
+        }
+
+
         return true;
     }
 
@@ -181,6 +195,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
+                    Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
+                    startActivity(home);
                 } else {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));

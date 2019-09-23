@@ -2,7 +2,6 @@
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
     <string name="label_cadastro_nome">Nome completo Profissional</string>
-    <string name="label_CRM_CRP">CRM ou CRP</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
