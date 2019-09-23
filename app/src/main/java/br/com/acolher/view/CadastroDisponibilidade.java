@@ -41,7 +41,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private TimePickerDialog timePickerDialog;
     private TextInputLayout inputNome, inputData, inputHora, inputCPR_CRM;
     private ImageButton btnCalendar;
-    private Button concluirCadastro;
+    private Button concluirCadastro, buttonCancelar;
     private int currentHour;
     private int currentMinute;
 
@@ -53,16 +53,11 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
         pegaIdCampos();
 
-        /**
-         * Moca dados na tela
-         */
-
         inputCPR_CRM.getEditText().setText("8454654");
         inputCPR_CRM.setEnabled(false);
         inputNome.getEditText().setText("Medico");
         inputNome.setEnabled(false);
         inputData.getEditText().setText("23/10/2019");
-        //inputHora.getEditText().setText("08:00");
 
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +81,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
                 }
 
+            }
+        });
+
+        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
+                startActivity(home);
             }
         });
 
@@ -124,6 +127,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         inputData = findViewById(R.id.inputDataNasc);
         btnCalendar = findViewById(R.id.btnCalendar);
         inputHora = findViewById(R.id.inputHora);
+        buttonCancelar = findViewById(R.id.buttonCancelar);
         concluirCadastro = findViewById(R.id.buttonConcluirCadastro);
     }
 

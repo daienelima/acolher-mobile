@@ -53,9 +53,7 @@ public class ConsultasFragment extends Fragment {
         c.setProfissional(d);
         c.setHora("14:00");
         c.setEndereco(e);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            c.setData(LocalDateTime.of(2018,01,01,01,01));
-        }
+        c.setData("25/10/2019");
         consultas.add(c);
 
 
@@ -65,9 +63,7 @@ public class ConsultasFragment extends Fragment {
         cc.setProfissional(d);
         cc.setHora("19:00");
         cc.setEndereco(e);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            cc.setData(LocalDateTime.of(2019,01,01,01,01));
-        }
+        cc.setData("25/10/2019");
         consultas.add(cc);
 
         ListView listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);

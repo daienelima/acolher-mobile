@@ -59,12 +59,6 @@ public class AdapterConsultas extends BaseAdapter {
         }else{
             nome.setText(consulta.getPaciente().getNomeCompleto());
         }
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Date date = Date.from(consulta.getData().atZone( ZoneId.systemDefault()).toInstant());
-            Format format = new SimpleDateFormat("dd/MM/yyyy");
-            data.setText(format.format(date));
-        }
         hora.setText(consulta.getHora());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
         cod.setText(""+consulta.getCodigo().toString());
