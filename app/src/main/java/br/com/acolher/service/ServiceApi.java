@@ -19,7 +19,7 @@ public interface ServiceApi {
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
   
-    @GET("consulta")
+    @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")

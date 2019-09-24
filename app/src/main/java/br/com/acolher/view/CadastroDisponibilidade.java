@@ -64,7 +64,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             public void onClick(View view) {
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
-                    Endereco endereco = new Endereco(1,"52000000","R rua","Recife","PE", "Bairro", "150","00000","0000");
+                    Endereco endereco = new Endereco(4,"52000000","R rua","Recife","PE", "Bairro", "150","-34.91507716476917","-8.149791409918464");
                     Usuario profissional = new Usuario();
                     profissional.setCodigo(1);
                     String hora = inputHora.getEditText().getText().toString();
