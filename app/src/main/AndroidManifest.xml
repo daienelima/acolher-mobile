@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.CadastroDisponibilidade"></activity>
         <activity android:name=".chamaTelas">
-          <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -30,7 +30,6 @@
         <activity android:name=".view.MapsActivity">
         </activity>
         <activity android:name=".view.Consultas" />
-        <activity android:name=".view.MapsActivity" />
         <activity
             android:name=".view.MeusDadosActivity"
             android:label="@string/title_activity_maps" />

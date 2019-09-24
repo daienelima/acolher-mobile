@@ -197,8 +197,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                Toast.makeText(getContext(), "Index - " + marker.getId(), Toast.LENGTH_LONG).show();
-
+                //Toast.makeText(getContext(), "Index - " + marker.getId(), Toast.LENGTH_LONG).show();
+                //openModal(Integer.parseInt(marker.getTitle()));
                 /*if(marker.equals(myMarker)){
 
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
@@ -286,6 +286,23 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     }
 
     public void openModal(int index){
-        
+
+        Consulta consulta = consultas.get(index);
+
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
+        mBuilder.setView(viewDialog);
+        final AlertDialog dialog = mBuilder.create();
+
+        TextView btnClose = (TextView) viewDialog.findViewById(R.id.closeDialogDisp);
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }
