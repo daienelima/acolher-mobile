@@ -16,10 +16,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.CadastroDisponibilidade"></activity>
         <activity android:name=".chamaTelas">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity> <!-- <activity android:name=".view.MeusDadosActivity"></activity> -->
         <activity android:name=".view.login" />
         <activity android:name=".view.AlterarSenha" />
@@ -28,6 +25,10 @@
         <activity android:name=".view.AlterarDadosInstituicao" />
         <activity android:name=".view.CadastroInstituicao" />
         <activity android:name=".view.MapsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".view.Consultas" />
         <activity
