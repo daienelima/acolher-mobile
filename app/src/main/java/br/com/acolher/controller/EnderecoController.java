@@ -1,7 +1,5 @@
 package br.com.acolher.controller;
 
-import br.com.acolher.helper.Validacoes;
-
 public class EnderecoController {
 
     /**
@@ -16,9 +14,14 @@ public class EnderecoController {
         return s.trim().length() > 0;
     }
 
+    /**
+     * Validação de CEP
+     * @param cep
+     * @return
+     */
     public String validaCep(String cep){
 
-        if(!Validacoes.hasString(cep)){
+        if(!empty(cep)){
             return "Campo Obrigatório!";
         }
 
@@ -33,9 +36,14 @@ public class EnderecoController {
         return "";
     }
 
+    /**
+     * Validação numero
+     * @param numero
+     * @return
+     */
     public String validaNumero(String numero){
 
-        if(!Validacoes.hasString(numero)){
+        if(!empty(numero)){
             return "Campo obrigatorio!";
         }
 
@@ -46,37 +54,14 @@ public class EnderecoController {
         return "";
     }
 
-    public String validaRua(String rua){
+    public static String validaUF(String UF){
 
-        if(!Validacoes.hasString(rua)){
-            return "Campo Obrigatorio";
+        if(!empty(UF)){
+            return "Campo obrigatorio!";
         }
 
-        return "";
-    }
-
-    public String validaCidade(String cidade){
-
-        if(!Validacoes.hasString(cidade)){
-            return "Campo Obrigatorio";
-        }
-
-        return "";
-    }
-
-    public String validaEstado(String estado){
-
-        if(!Validacoes.hasString(estado)){
-            return "Campo Obrigatorio";
-        }
-
-        return "";
-    }
-
-    public String validaBairro(String bairro){
-
-        if(!Validacoes.hasString(bairro)){
-            return "Campo Obrigatorio";
+        if(UF.trim().length()!= 2){
+            return "O campo deve conter duas letras";
         }
 
         return "";

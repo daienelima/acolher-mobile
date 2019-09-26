@@ -25,8 +25,7 @@
                 android:text="Dados de endereço"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
-                android:textSize="22dp"
-                />
+                android:textSize="22dp"/>
 
             <Button
                 android:id="@+id/btnSearchLocale"
@@ -34,29 +33,13 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_height="50dp"
+                android:layout_marginBottom="20dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="25dp"
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
                 android:textSize="18dp"
                 android:text="@string/button_localizacao" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputRua"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelRua"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/label_rua" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,41 +49,32 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputCep"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginTop="10dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_marginTop="5dp"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/labelCep"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="10"
-                        android:hint="@string/label_cep" />
+                        android:hint="@string/label_cep"
+                        android:maxLength="10" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputNumero"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
+                <Button
+                    android:id="@+id/btnBuscaCep"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    app:counterMaxLength="10"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:errorEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/labelNumero"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:hint="@string/label_numero"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:background="@drawable/button_cadastro_radius"
+                    android:text="Search"
+                    android:textColor="#FFF" />
 
             </LinearLayout>
 
@@ -108,45 +82,110 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:weightSum="4">
 
-                <Spinner
-                    android:id="@+id/listaEstados"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="2"
-                    android:layout_marginRight="10dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputRua"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/spinner_border"/>
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:errorEnabled="true">
 
-                <Spinner
-                    android:id="@+id/listaCidades"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="2"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/labelRua"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/label_rua" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputNumero"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/spinner_border"/>
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/labelNumero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="N°" />
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputBairro"
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal"
+               android:weightSum="4">
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/inputBairro"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginRight="20dp"
+                   android:layout_marginTop="10dp"
+                   style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                   app:errorEnabled="true">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/labelBairro"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:hint="@string/label_bairro" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+           </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
+                android:orientation="horizontal"
+                android:weightSum="4">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelBairro"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputCidade"
+                    android:layout_width="220dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/label_bairro" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/labelCidade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="10"
+                        android:hint="Cidade" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputUF"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/labelUF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="2"
+                        android:hint="UF"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnFinalizarCadastro"
@@ -155,7 +194,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="10dp"
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
                 android:textSize="18dp"
