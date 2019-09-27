@@ -152,16 +152,16 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                 ec = new EnderecoController();
                 if (validateForm()){
-                   /* Endereco endereco = new Endereco();
-                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    Endereco endereco = new Endereco();
+
                     endereco.setCep(inputCep.getEditText().getText().toString());
-                    endereco.setCidade("Recife");
-                    //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
-                    endereco.setUf("PE");
-                    endereco.setLatitude(Double.toString(latitude));
-                    endereco.setLongitude(Double.toString(longitude));
                     endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());*/
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCidade(inputCidade.getEditText().getText().toString());
+                    endereco.setUf(inputUF.getEditText().getText().toString());
+
+                    cadastroEndereco(endereco);
 
                     Intent intent = getIntent();
                     if(intent.getStringExtra("telaOrigem").contentEquals("usuario")){
@@ -359,6 +359,9 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
+                    //terminar
+                    Intent continuarCadastro = new Intent(CadastroEndereco.this, CadastroInstituicao.class);
+                    continuarCadastro.putExtra("codigoEndereco", response.body().getCodigo());
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
