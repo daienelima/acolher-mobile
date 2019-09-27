@@ -8,8 +8,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".view.Cadastro_Disponibilidade_Activity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".view.MeusDadosInstituicaoActivity"></activity>
+        <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +25,8 @@
         <activity android:name=".view.CadastroActivity" />
         <activity android:name=".view.AlterarDadosInstituicao" />
         <activity android:name=".view.CadastroInstituicao" />
-        <activity android:name=".view.MapsActivity" />
+        <activity android:name=".view.MapsActivity"></activity>
+        <activity android:name=".view.Consultas" />
         <activity
             android:name=".view.MeusDadosActivity"
             android:label="@string/title_activity_maps" />

@@ -1,32 +1,23 @@
 package br.com.acolher.view;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.Calendar;
-
 import br.com.acolher.R;
-import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.InstituicaoController;
-import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
-import br.com.acolher.model.Instituicao;
-import retrofit2.Call;
 
-public class CadastroInstituicao extends AppCompatActivity{
+public class MeusDadosInstituicaoActivity extends AppCompatActivity{
 
-    Button continuarCadastro;
-    TextInputLayout inputPassword;
+    Button continuarAlteracao;
+    Button alterarSenha;
     TextInputLayout inputTelefone;
     TextInputLayout inputCnpj;
     TextInputLayout inputNome;
@@ -44,11 +35,10 @@ public class CadastroInstituicao extends AppCompatActivity{
         getSupportActionBar().hide();
 
         //Configurações da activity
-        setContentView(R.layout.cadastro_instituicao_activity);
+        setContentView(R.layout.activity_meus_dados_instituicao);
 
-        continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
-
-        inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        continuarAlteracao = (Button) findViewById(R.id.buttonContinuarAlteracao);
+        alterarSenha = (Button) findViewById(R.id.buttonAlterarSenha);
 
         inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
         inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
@@ -59,13 +49,13 @@ public class CadastroInstituicao extends AppCompatActivity{
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
 
-        continuarCadastro.setOnClickListener(new View.OnClickListener() {
+        continuarAlteracao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 ic = new InstituicaoController();
                 if(validateForm()){
-                    Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
+                    Intent intentEndereco = new Intent(MeusDadosInstituicaoActivity.this, CadastroEndereco.class);
                     intentEndereco.putExtra("telaOrigem", "instituicao");
                     intentEndereco.putExtra("nomeInstituicao", nome);
                     intentEndereco.putExtra("cnpjInstituicao", cnpj);
@@ -77,13 +67,22 @@ public class CadastroInstituicao extends AppCompatActivity{
             }
         });
 
+        alterarSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intentAlterarSenha = new Intent(MeusDadosInstituicaoActivity.this, AlterarSenha.class);
+                startActivity(intentAlterarSenha);
+
+            }
+        });
+
     }
 
     public boolean validateForm(){
 
         nome = inputNome.getEditText().getText().toString();
         email = inputEmail.getEditText().getText().toString();
-        password = inputPassword.getEditText().getText().toString();
         cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
         telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
 
@@ -101,10 +100,6 @@ public class CadastroInstituicao extends AppCompatActivity{
             return false;
         }
 
-        if(ic.validaPassword(password) != ""){
-            inputPassword.getEditText().setError(ic.validaPassword(password));
-            return false;
-        }
 
         if(ic.validarTelefone(telefone) != ""){
             inputTelefone.getEditText().setError(ic.validarTelefone(telefone));

@@ -1,20 +1,20 @@
 package br.com.acolher.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class DisponibilidadeController {
 
-    public String validarData(String data) {
-
-        if (data == null || data.isEmpty() || data == "") {
-            return "Campo obrigatorio!";
+    public static boolean empty(String s){
+        if(s == ""){
+            return false;
         }
-        return "";
+        return s.trim().length()>0;
     }
 
-    public String validarHora(String hora) {
-
-        if (hora == null || hora.isEmpty() || hora == "") {
-            return "Campo obrigatorio!";
-        }
-        return "";
+    public static LocalDateTime localDateTime(String dateTime, String hora) {
+        String dataHora = dateTime + " " + hora;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return LocalDateTime.parse(dataHora, formatter);
     }
 }

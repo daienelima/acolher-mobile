@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
-    tools:context=".view.CadastroActivity">
+    tools:context=".view.MeusDadosInstituicaoActivity">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -22,7 +21,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cadastro"
+                android:text="Meus Dados"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:gravity="center_horizontal"
@@ -30,22 +29,21 @@
                 />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputNomeCompleto"
+                android:id="@+id/inputNome"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="@color/buttonSalvarDados"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelNomeCompleto"
+                    android:id="@+id/labelNome"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:singleLine="true"
                     android:padding="0dp"
-                    android:hint="@string/label_cadastro_nome" />
+                    android:hint="@string/label_cadastro_instituicao_nome" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -55,34 +53,24 @@
                 android:weightSum="4">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputDataNasc"
-                    android:layout_width="0dp"
+                    android:id="@+id/inputCnpj"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="4"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/labelDataNasc"
+                        android:id="@+id/labelCnpj"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:singleLine="true"
+                        android:inputType="phone"
+                        android:maxLength="18"
                         android:padding="0dp"
-                        android:hint="@string/label_cadastro_datanascimento" />
+                        android:hint="@string/label_cadastro_instituicao_cnpj" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btnCalendar"
-                    android:layout_width="58dp"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/button_cadastro_radius"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/calendar" />
 
             </LinearLayout>
 
@@ -109,27 +97,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:passwordToggleEnabled="true"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelPassword"
-                    android:inputType="textPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    android:hint="@string/label_cadastro_password" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputTelefone"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -152,49 +119,8 @@
                     android:hint="@string/label_cadastro_telefone" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCPF"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCPF"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:padding="0dp"
-                    android:inputType="text"
-                    android:maxLength="14"
-                    android:hint="@string/label_cadastro_CPF" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCRM"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCRM"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:padding="0dp"
-                    android:inputType="number"
-                    android:hint="@string/label_cadastro_CRM" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <Button
-                android:id="@+id/buttonContinuarCadastro"
+                android:id="@+id/buttonContinuarAlteracao"
                 android:layout_width="220dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
@@ -202,7 +128,17 @@
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
                 android:textSize="18dp"
-                android:text="@string/label_button_continuar_cadastro" />
+                android:text="@string/label_button_alterar_insituicao" />
+            <Button
+                android:id="@+id/buttonAlterarSenha"
+                android:layout_width="220dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:textColor="#FFF"
+                android:background="@drawable/button_cadastro_radius"
+                android:textSize="18dp"
+                android:text="@string/label_button_alterar_senha" />
 
             <TextView
                 android:id="@+id/labelRetornarLogin"

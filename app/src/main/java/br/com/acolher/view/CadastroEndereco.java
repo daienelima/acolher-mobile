@@ -1,10 +1,5 @@
 package br.com.acolher.view;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -20,12 +15,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,57 +33,45 @@ import java.io.IOException;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Usuario;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
+    public static final String TAG = "API";
     private LocationManager locationManager;
     private Address address;
     private Location location;
     private double latitude;
     private double longitude;
 
-    Spinner spinnerEstados;
-    ArrayAdapter<CharSequence> adapterSpinnerEstados;
-    GoogleApiClient googleApiClient;
-    Button pesquisarEndereco;
-    FusedLocationProviderClient fusedLocation;
-    TextInputLayout inputRua;
-    TextInputLayout inputCep;
-    TextInputLayout inputNumero;
-    TextInputLayout inputBairro;
-
-    Button btnFinalizarCadastro;
-
-    EnderecoController ec;
-
+    private GoogleApiClient googleApiClient;
+    private Button pesquisarEndereco, btnFinalizarCadastro, btnBuscaCep;
+    private FusedLocationProviderClient fusedLocation;
+    private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro, inputUF;
+    private EnderecoController ec;
+    private Usuario usuario = new Usuario();
+    private Instituicao instituicao = new Instituicao();
+    private RetrofitInit retrofitInit = new RetrofitInit();
+    private Endereco enderecoResponse = new Endereco();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.cadastro_endereco_activity);
+        setContentView(R.layout.activity_cadastro_endereco);
 
-        spinnerEstados  = (Spinner) findViewById(R.id.listaEstados);
-        adapterSpinnerEstados = ArrayAdapter.createFromResource(this, R.array.spinner_estados, android.R.layout.simple_spinner_item);
-        adapterSpinnerEstados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerEstados.setAdapter(adapterSpinnerEstados);
-
-        pesquisarEndereco = (Button) findViewById(R.id.btnSearchLocale);
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
-        inputRua = (TextInputLayout) findViewById(R.id.inputRua);
-
-        inputCep = (TextInputLayout) findViewById(R.id.inputCep);
-        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
-
-        btnFinalizarCadastro = (Button) findViewById(R.id.btnFinalizarCadastro);
-
-        inputBairro = (TextInputLayout) findViewById(R.id.inputBairro);
-
-        inputNumero = (TextInputLayout) findViewById(R.id.inputNumero);
+        findBydId();
 
         if(googleApiClient == null){
 
@@ -122,6 +105,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                                         inputRua.getEditText().setText(address.getThoroughfare());
                                         inputCep.getEditText().setText(address.getPostalCode());
                                         inputBairro.getEditText().setText(address.getSubLocality());
+                                        inputUF.getEditText().setText(address.getLocality());
                                     }catch (IOException e){
                                         e.printStackTrace();
                                     }
@@ -162,11 +146,67 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         btnFinalizarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ec = new EnderecoController();
-                validateForm();
+                if (validateForm()){
+                   /* Endereco endereco = new Endereco();
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCep(inputCep.getEditText().getText().toString());
+                    endereco.setCidade("Recife");
+                    //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
+                    endereco.setUf("PE");
+                    endereco.setLatitude(Double.toString(latitude));
+                    endereco.setLongitude(Double.toString(longitude));
+                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());*/
+
+                    Intent intent = getIntent();
+                    if(intent.getStringExtra("telaOrigem").contentEquals("usuario")){
+                        usuario.setNome_completo(intent.getStringExtra("nomeUsuario"));
+                        usuario.setData_nascimento(intent.getStringExtra("dataUsuario"));
+                        usuario.setEmail(intent.getStringExtra("emailUsuario"));
+                        usuario.setPassword(intent.getStringExtra("passwordUsuario"));
+                        usuario.setTelefone(intent.getStringExtra("telefoneUsuario"));
+                        usuario.setCpf(intent.getStringExtra("cpfUsuario"));
+                        usuario.setCrm_crp(" ");
+                        enderecoResponse.setCodigo(1);
+                        cadastroUsuario(usuario);
+                    }else{
+                        instituicao.setAtivo(true);
+                        instituicao.setNome(intent.getStringExtra("nomeInstituicao"));
+                        instituicao.setCnpj(intent.getStringExtra("cnpjInstituicao"));
+                        instituicao.setTelefone(intent.getStringExtra("telefoneInstituicao"));
+                        instituicao.setEmail(intent.getStringExtra("emailInstituicao"));
+                        instituicao.setSenha(intent.getStringExtra("passwordInstituicao"));
+
+                        //cadastroEndereco(endereco);
+                        //enderecoResponse.setCodigo(getCodigo());
+                        enderecoResponse.setCodigo(1);
+                        cadastroInstituicao(instituicao);
+                    }
+                }
             }
         });
 
+        btnBuscaCep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    private void findBydId() {
+        pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
+        btnBuscaCep = findViewById(R.id.btnBuscaCep);
+        inputRua = findViewById(R.id.inputRua);
+        inputCep =  findViewById(R.id.inputCep);
+        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        btnFinalizarCadastro = findViewById(R.id.btnFinalizarCadastro);
+        inputBairro = findViewById(R.id.inputBairro);
+        inputNumero = findViewById(R.id.inputNumero);
+        inputUF = findViewById(R.id.inputUF);
     }
 
     @Override
@@ -259,28 +299,134 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         String rua = inputRua.getEditText().getText().toString();
         String numero = inputNumero.getEditText().getText().toString();
         String bairro = inputBairro.getEditText().getText().toString();
+        String uf = inputUF.getEditText().getText().toString();
 
         if(ec.validaCep(cep) != ""){
-            inputCep.getEditText().setError(ec.validaCep(cep));
+            inputCep.setError(ec.validaCep(cep));
+            return false;
         }
 
-        if(ec.validaBairro(bairro) != ""){
-            inputBairro.getEditText().setError(ec.validaBairro(bairro));
+        if(!EnderecoController.empty(rua)){
+            inputRua.setError("Campo Obrigatorio");
+            return false;
         }
 
-        if(ec.validaNumero(numero) != ""){
-            inputNumero.getEditText().setError(ec.validaNumero(numero));
+        if(EnderecoController.empty(numero)){
+            inputNumero.setError("Campo Obrigatorio");
+            return false;
         }
 
-        if(ec.validaRua(rua) != ""){
-            inputRua.getEditText().setError(ec.validaRua(rua));
+        if(!EnderecoController.empty(bairro)){
+            inputBairro.setError("Campo Obrigatorio");
+            return false;
         }
 
-        if(ec.validaEstado(spinnerEstados.getSelectedItem().toString()) != ""){
-            ((TextView)spinnerEstados.getSelectedView()).setError(ec.validaEstado(spinnerEstados.getSelectedItem().toString()));
+        if(EnderecoController.validaUF(uf) != ""){
+            inputUF.setError(EnderecoController.validaUF(uf));
+            return false;
         }
 
         return true;
     }
 
+    private void cadastroEndereco(Endereco endereco){
+        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(endereco);
+        cadastroEndereco.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+
+    }
+
+    private void cadastroInstituicao(Instituicao instituicao){
+        Log.d(TAG, enderecoResponse.toString());
+        instituicao.setEndereco(enderecoResponse);
+        Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
+        cadastroInstituicao.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        if(response.errorBody().contentLength() == 19) {
+                            msgJaCadastrado("CNPJ");
+                        }
+                        if(response.errorBody().contentLength() == 21) {
+                            msgJaCadastrado("E-mail");
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void cadastroUsuario(Usuario usuario){
+        Log.d(TAG, enderecoResponse.toString());
+        usuario.setEndereco(enderecoResponse);
+        Call<Usuario> cadastroUsuario = retrofitInit.getService().cadastroUsuario(usuario);
+        cadastroUsuario.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        if(response.errorBody().contentLength() == 18){
+                            msgJaCadastrado("CPF");
+                        }
+                        if(response.errorBody().contentLength() == 21){
+                            msgJaCadastrado("E-mail");
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void msgJaCadastrado(String campo){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroEndereco.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(campo + " " + "já cadastrado.");
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+            }
+        });
+
+        // visualizacao do dialogo
+        alertDialog.show();
+    }
 }
