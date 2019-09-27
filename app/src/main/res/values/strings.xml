@@ -89,4 +89,14 @@
         <item>Estrangeiro</item>
     </string-array>
 
+    <string name="button_cadastro_paciente">Paciente</string>
+    <string name="button_cadastro_profissional">Profissional</string>
+    <string name="button_cadastro_instituicao">Instutuição</string>
+    <string name="button_info_perfil">Qual o meu perfil?</string>
+    <string name="txt_descricao_paciente">  Se você está buscando apoio profissional, escolha a opção paciente.</string>
+    <string name="txt_descricao_profissional">  Se você é um psicólogo ou psiquiatra e deseja fornecer consultas de forma voluntária, escolha a opção profissional.</string>
+    <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
+    <string name="btn_escolha_perfil">Escolha o perfil</string>
+
+
 </resources>

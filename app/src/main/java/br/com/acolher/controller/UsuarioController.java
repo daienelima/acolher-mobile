@@ -114,5 +114,13 @@ public class UsuarioController {
 
     }
 
+    public String validaCRM(String crm){
+        if(crm == null || crm.isEmpty() || crm == ""){
+            return "Campo obrigatório";
+        }
+
+        return "";
+    }
+
 
 }
