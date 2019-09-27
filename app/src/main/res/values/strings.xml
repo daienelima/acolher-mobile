@@ -48,6 +48,11 @@
     <string name="labelCodigo">Código</string>
     <string name="labelCodigoNome">Código</string>
 
+    <!-- label de Meus dados Instituição -->
+
+    <string name="label_button_alterar_insituicao">Continuar alteração </string>
+    <string name="label_button_alterar_senha">Alterar Senha </string>
+
     <!-- label de Cadastro de disponibilidade. -->
 
     <string name="label_cadastro_data">Data</string>
