@@ -31,6 +31,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
@@ -40,6 +41,8 @@ import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
+import br.com.acolher.model.ViaCep;
+import br.com.acolher.viacep.HttpService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,7 +59,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private GoogleApiClient googleApiClient;
     private Button pesquisarEndereco, btnFinalizarCadastro, btnBuscaCep;
     private FusedLocationProviderClient fusedLocation;
-    private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro, inputUF;
+    private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private EnderecoController ec;
     private Usuario usuario = new Usuario();
     private Instituicao instituicao = new Instituicao();
@@ -191,6 +194,19 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         btnBuscaCep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+                try {
+                    ViaCep retorno = new HttpService(cep).execute().get();
+                    inputRua.getEditText().setText(retorno.getLogradouro());
+                    inputBairro.getEditText().setText(retorno.getBairro());
+                    inputUF.getEditText().setText(retorno.getUf());
+                    inputCidade.getEditText().setText(retorno.getLocalidade());
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -207,6 +223,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         inputBairro = findViewById(R.id.inputBairro);
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
+        inputCidade = findViewById(R.id.inputCidade);
     }
 
     @Override
@@ -300,6 +317,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         String numero = inputNumero.getEditText().getText().toString();
         String bairro = inputBairro.getEditText().getText().toString();
         String uf = inputUF.getEditText().getText().toString();
+        String cidade = inputCidade.getEditText().getText().toString();
 
         if(ec.validaCep(cep) != ""){
             inputCep.setError(ec.validaCep(cep));
@@ -318,6 +336,11 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
         if(!EnderecoController.empty(bairro)){
             inputBairro.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(cidade)){
+            inputCidade.setError("Campo Obrigatorio");
             return false;
         }
 
