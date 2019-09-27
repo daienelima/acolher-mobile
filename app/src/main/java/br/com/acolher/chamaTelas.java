@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import br.com.acolher.view.AlterarDadosInstituicao;
 import br.com.acolher.view.AlterarSenha;
 import br.com.acolher.view.CadastroActivity;
 import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
 import br.com.acolher.view.MeusDadosActivity;
+import br.com.acolher.view.MeusDadosInstituicaoActivity;
 import br.com.acolher.view.login;
 
 public class chamaTelas extends AppCompatActivity {
@@ -64,8 +64,8 @@ public class chamaTelas extends AppCompatActivity {
                 startActivity(intent);
                 break;
 
-            case R.id.alterarDadosInstituicao:
-                intent = new Intent(chamaTelas.this, AlterarDadosInstituicao.class);
+            case R.id.meusDadosInstituicao:
+                intent = new Intent(chamaTelas.this, MeusDadosInstituicaoActivity.class);
                 startActivity(intent);
 
             default:
