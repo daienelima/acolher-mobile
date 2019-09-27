@@ -311,8 +311,8 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             return false;
         }
 
-        if(ec.validaNumero(numero) != ""){
-            inputNumero.setError(ec.validaNumero(numero));
+        if(EnderecoController.empty(numero)){
+            inputNumero.setError("Campo Obrigatorio");
             return false;
         }
 

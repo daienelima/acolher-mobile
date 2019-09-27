@@ -36,24 +36,6 @@ public class EnderecoController {
         return "";
     }
 
-    /**
-     * Validação numero
-     * @param numero
-     * @return
-     */
-    public String validaNumero(String numero){
-
-        if(!empty(numero)){
-            return "Campo obrigatorio!";
-        }
-
-        if(!numero.matches("[0-9]+")){
-            return "Insira apenas numeros!";
-        }
-
-        return "";
-    }
-
     public static String validaUF(String UF){
 
         if(!empty(UF)){
