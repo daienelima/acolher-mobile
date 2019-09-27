@@ -24,28 +24,36 @@ public class CadastroActivity extends AppCompatActivity{
     Calendar calendar;
     DatePickerDialog datePickerDialog;
 
-    TextInputLayout inputDataNasc;
-    ImageButton btnCalendar;
-    Button continuarCadastro;
-    TextInputLayout inputPassword;
-    TextInputLayout inputTelefone;
-    TextInputLayout inputCpf;
-    TextInputLayout inputNome;
-    TextInputLayout inputEmail;
-    UsuarioController uc;
-    String nome;
-    String data;
-    String email;
-    String password;
-    String cpf;
-    String telefone;
+    private TextInputLayout inputDataNasc;
+    private ImageButton btnCalendar;
+    private Button continuarCadastro;
+    private TextInputLayout inputPassword;
+    private TextInputLayout inputTelefone;
+    private TextInputLayout inputCpf;
+    private TextInputLayout inputCRM_CRP;
+    private TextInputLayout inputNome;
+    private TextInputLayout inputEmail;
+    private UsuarioController uc;
+    private String nome;
+    private String data;
+    private String email;
+    private String password;
+    private String cpf;
+    private String telefone;
+    private String crm;
+    private boolean hasCpf;
+    private boolean hasCrm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
+        hasCpf = false;
+        hasCrm = false;
+
         //Configurações da activity
-        setContentView(R.layout.cadastro_basico_activity);
+        setContentView(R.layout.activity_cadastro_basico);
 
         inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
 
@@ -55,8 +63,12 @@ public class CadastroActivity extends AppCompatActivity{
 
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
 
-        inputCpf = (TextInputLayout) findViewById(R.id.inputCPF);
+        inputCpf = (TextInputLayout) findViewById(R.id.inputCPFCad);
         inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+        inputCpf.setVisibility(View.GONE);
+
+        inputCRM_CRP = (TextInputLayout) findViewById(R.id.inputCRM);
+        inputCRM_CRP.setVisibility(View.GONE);
 
         inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
         inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
@@ -64,6 +76,22 @@ public class CadastroActivity extends AppCompatActivity{
         inputNome = (TextInputLayout) findViewById(R.id.inputNomeCompleto);
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+
+        Intent intent = getIntent();
+        if(intent.getStringExtra("perfil") != null){
+           switch (intent.getStringExtra("perfil")) {
+               case "paciente":
+                   inputCpf.setVisibility(View.VISIBLE);
+                   hasCpf = true;
+                   break;
+               case "profissional":
+                   hasCrm = true;
+                   inputCRM_CRP.setVisibility(View.VISIBLE);
+                   break;
+               default:
+                   break;
+           }
+        }
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +156,7 @@ public class CadastroActivity extends AppCompatActivity{
         password = inputPassword.getEditText().getText().toString();
         cpf = Validacoes.cleanCPF(inputCpf.getEditText().getText().toString());
         telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
+        crm = inputCRM_CRP.getEditText().getText().toString();
 
         if(uc.validarNome(nome) != ""){
             inputNome.getEditText().setError(uc.validarNome(nome));
@@ -154,9 +183,18 @@ public class CadastroActivity extends AppCompatActivity{
             return false;
         }
 
-        if(uc.validaCpf(cpf) != ""){
-            inputCpf.getEditText().setError(uc.validaCpf(cpf));
-            return false;
+        if(hasCpf){
+            if(uc.validaCpf(cpf) != ""){
+                inputCpf.getEditText().setError(uc.validaCpf(cpf));
+                return false;
+            }
+        }
+
+        if(hasCrm){
+            if(uc.validaCRM(crm) != ""){
+                inputCRM_CRP.getEditText().setError((uc.validaCRM(crm)));
+                return false;
+            }
         }
 
         /*if(inputNome.getText().toString().isEmpty()){
