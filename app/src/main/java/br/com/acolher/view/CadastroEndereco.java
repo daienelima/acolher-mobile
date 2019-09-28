@@ -152,17 +152,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
                 ec = new EnderecoController();
                 if (validateForm()){
-                   /* Endereco endereco = new Endereco();
-                    endereco.setBairro(inputBairro.getEditText().getText().toString());
-                    endereco.setCep(inputCep.getEditText().getText().toString());
-                    endereco.setCidade("Recife");
-                    //endereco.setEstado(spinnerEstados.getSelectedItem().toString());
-                    endereco.setUf("PE");
-                    endereco.setLatitude(Double.toString(latitude));
-                    endereco.setLongitude(Double.toString(longitude));
-                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());*/
-
                     Intent intent = getIntent();
                     if(intent.getStringExtra("telaOrigem").contentEquals("usuario")){
                         usuario.setNome_completo(intent.getStringExtra("nomeUsuario"));
@@ -195,19 +184,23 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onClick(View v) {
                 String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-                try {
-                    ViaCep retorno = new HttpService(cep).execute().get();
-                    inputRua.getEditText().setText(retorno.getLogradouro());
-                    inputBairro.getEditText().setText(retorno.getBairro());
-                    inputUF.getEditText().setText(retorno.getUf());
-                    inputCidade.getEditText().setText(retorno.getLocalidade());
+                if(EnderecoController.empty(cep)){
+                    try {
+                        ViaCep retorno = new HttpService(cep).execute().get();
 
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                        inputRua.getEditText().setText(EnderecoController.spaces(retorno.getLogradouro()));
+                        inputBairro.getEditText().setText(EnderecoController.spaces(retorno.getBairro()));
+                        inputUF.getEditText().setText(retorno.getUf());
+                        inputCidade.getEditText().setText(EnderecoController.spaces(retorno.getLocalidade()));
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    inputCep.setError("Campo Obrigatorio");
                 }
-
             }
         });
 

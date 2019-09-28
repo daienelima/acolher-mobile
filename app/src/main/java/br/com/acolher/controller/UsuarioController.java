@@ -9,10 +9,6 @@ public class UsuarioController {
 
     public String validarNome(String nome){
 
-        /*String regexNome = "/^[a-zA-ZéúíóáÉÚÍÓÁèùìòàçÇÈÙÌÒÀõãñÕÃÑêûîôâÊÛÎÔÂëÿüïöäËYÜÏÖÄ\\-\\ \\s]+$/";
-        Pattern pattern = Pattern.compile(regexNome);
-        Matcher matcher = pattern.matcher(nome);*/
-
         if(nome == null || nome.isEmpty() || nome == "") {
             return "Campo obrigatorio!";
         }
@@ -24,10 +20,6 @@ public class UsuarioController {
         if(nome.indexOf(" ") == -1){
             return "O nome deve conter seu nome e sobrenome";
         }
-
-        /*if(!matcher.matches()){
-            return "Insira apenas letras!";
-        }*/
 
         return "";
     }
@@ -47,8 +39,6 @@ public class UsuarioController {
 
     public String validarEmail(String email){
 
-        String regexEmail = "^(.+)@(.+)$";
-
         if(email == null || email.isEmpty() || email == ""){
             return "Campo obrigatório!";
         }
@@ -66,9 +56,6 @@ public class UsuarioController {
         String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%=+-_]).{4,})";
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
-
-
-        //String regexPassword = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%!]).{4,20})";
 
         if(password == null || password.isEmpty() || password == ""){
             return "Campo obrigatório!";

@@ -1,5 +1,8 @@
 package br.com.acolher.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class EnderecoController {
 
     /**
@@ -47,6 +50,25 @@ public class EnderecoController {
         }
 
         return "";
+    }
+
+    /**
+     * Colocar um espaço antes de cada letra Maiuscula
+     * @param s
+     * @return
+     */
+    public static String spaces(String s ){
+        StringBuilder saida = new StringBuilder(s);
+        Pattern pattern  = Pattern.compile("[A-Z]");
+        Matcher matcher = pattern.matcher(s);
+        int extraFeed = 0;
+        while(matcher.find()){
+            if(matcher.start()!=0){
+                saida = saida.insert(matcher.start()+extraFeed, " ");
+                extraFeed++;
+            }
+        }
+        return String.valueOf(saida);
     }
 
 }
