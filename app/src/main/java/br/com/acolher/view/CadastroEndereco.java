@@ -65,6 +65,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Endereco enderecoResponse = new Endereco();
+    private Intent intent = getIntent();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -359,9 +360,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
-                    //terminar
-                    Intent continuarCadastro = new Intent(CadastroEndereco.this, CadastroInstituicao.class);
-                    continuarCadastro.putExtra("codigoEndereco", response.body().getCodigo());
+                    chamarProximaTela(response.body().getCodigo());
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
@@ -374,6 +373,19 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             }
         });
 
+    }
+
+    private void chamarProximaTela(Integer codigoEndereco) {
+        String perfil = intent.getStringExtra("perfil");
+
+        if(perfil.equals("instituicao")){
+            Intent intentCadastroInstituicao = new Intent(CadastroEndereco.this, CadastroInstituicao.class);
+            intentCadastroInstituicao.putExtra("codigoEndereco", codigoEndereco);
+        }else{
+            Intent intentCadastroUsuario = new Intent(CadastroEndereco.this, CadastroActivity.class);
+            intentCadastroUsuario.putExtra("perfil", perfil);
+            intentCadastroUsuario.putExtra("codigoEndereco", codigoEndereco);
+        }
     }
 
     private void cadastroInstituicao(Instituicao instituicao){
