@@ -49,9 +49,8 @@ public class CadastroActivity extends AppCompatActivity{
     private String password;
     private String cpf;
     private String telefone;
-    private String crm;
-    private boolean hasCpf;
-    private boolean hasCrm;
+    private String crpCrm;
+    private boolean hasCrpCrm;
     public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Usuario usuario = new Usuario();
@@ -60,9 +59,8 @@ public class CadastroActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-
-        hasCpf = false;
-        hasCrm = false;
+        
+        hasCrpCrm = false;
 
         //Configurações da activity
         setContentView(R.layout.activity_cadastro_basico);
@@ -77,7 +75,6 @@ public class CadastroActivity extends AppCompatActivity{
 
         inputCpf = (TextInputLayout) findViewById(R.id.inputCPFCad);
         inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
-        inputCpf.setVisibility(View.GONE);
 
         inputCRM_CRP = (TextInputLayout) findViewById(R.id.inputCRM);
         inputCRM_CRP.setVisibility(View.GONE);
@@ -91,17 +88,9 @@ public class CadastroActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         if(intent.getStringExtra("perfil") != null){
-           switch (intent.getStringExtra("perfil")) {
-               case "paciente":
-                   inputCpf.setVisibility(View.VISIBLE);
-                   hasCpf = true;
-                   break;
-               case "profissional":
-                   hasCrm = true;
-                   inputCRM_CRP.setVisibility(View.VISIBLE);
-                   break;
-               default:
-                   break;
+           if(intent.getStringExtra("perfil").equals("profissional")) {
+               hasCrpCrm = true;
+               inputCRM_CRP.setVisibility(View.VISIBLE);
            }
         }
 
@@ -138,7 +127,11 @@ public class CadastroActivity extends AppCompatActivity{
                     usuario.setTelefone(telefone);
                     usuario.setEmail(email);
                     usuario.setPassword(password);
-                    //if
+                    if(hasCrpCrm){
+                        usuario.setCrm_crp(crpCrm);
+                    }else{
+                        usuario.setCrm_crp("");
+                    }
 
                     cadastroUsuario(usuario);
                 }
@@ -173,7 +166,7 @@ public class CadastroActivity extends AppCompatActivity{
         password = inputPassword.getEditText().getText().toString();
         cpf = Validacoes.cleanCPF(inputCpf.getEditText().getText().toString());
         telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
-        crm = inputCRM_CRP.getEditText().getText().toString();
+        crpCrm = inputCRM_CRP.getEditText().getText().toString();
 
         if(uc.validarNome(nome) != ""){
             inputNome.getEditText().setError(uc.validarNome(nome));
@@ -200,16 +193,14 @@ public class CadastroActivity extends AppCompatActivity{
             return false;
         }
 
-        if(hasCpf){
-            if(uc.validaCpf(cpf) != ""){
+        if(uc.validaCpf(cpf) != ""){
                 inputCpf.getEditText().setError(uc.validaCpf(cpf));
                 return false;
-            }
         }
 
-        if(hasCrm){
-            if(uc.validaCRM(crm) != ""){
-                inputCRM_CRP.getEditText().setError((uc.validaCRM(crm)));
+        if(hasCrpCrm){
+            if(uc.validaCRM(crpCrm) != ""){
+                inputCRM_CRP.getEditText().setError((uc.validaCRM(crpCrm)));
                 return false;
             }
         }

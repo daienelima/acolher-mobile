@@ -36,7 +36,7 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
                 if (!validaEmail(email.getEditText().getText().toString())){
                     email.setErrorTextColor(ColorStateList.valueOf(Color.GREEN));
-                    email.setError("Funk you!");
+                    email.setError("E-mail inválido!");
                 }
             }
         });

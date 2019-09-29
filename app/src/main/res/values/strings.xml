@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
-    <string name="label_cadastro_nome">Nome completo Profissional</string>
+    <string name="label_cadastro_nome">Nome completo</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
-    <string name="label_cadastro_CRM">CRM</string>
+    <string name="label_cadastro_CRP_CRM">CRP ou CRM</string>
     <string name="label_cadastro_password">Senha</string>
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
     <string name="label_senha_atual">Senha Atual</string>
