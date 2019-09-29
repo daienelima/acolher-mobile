@@ -188,10 +188,10 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                     try {
                         ViaCep retorno = new HttpService(cep).execute().get();
 
-                        inputRua.getEditText().setText(EnderecoController.spaces(retorno.getLogradouro()));
-                        inputBairro.getEditText().setText(EnderecoController.spaces(retorno.getBairro()));
+                        inputRua.getEditText().setText(retorno.getLogradouro());
+                        inputBairro.getEditText().setText(retorno.getBairro());
                         inputUF.getEditText().setText(retorno.getUf());
-                        inputCidade.getEditText().setText(EnderecoController.spaces(retorno.getLocalidade()));
+                        inputCidade.getEditText().setText(retorno.getLocalidade());
 
                     } catch (ExecutionException e) {
                         e.printStackTrace();
@@ -322,7 +322,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             return false;
         }
 
-        if(EnderecoController.empty(numero)){
+        if(!EnderecoController.empty(numero)){
             inputNumero.setError("Campo Obrigatorio");
             return false;
         }
