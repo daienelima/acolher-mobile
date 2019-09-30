@@ -103,5 +103,15 @@
     <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
     <string name="btn_escolha_perfil">Escolha o perfil</string>
 
+    <!--Textos - Modal de disponibilidade-->
+    <string name="tvEndereco">Endereço : </string>
+    <string name="tvNumero">Numero : </string>
+    <string name="tvCep">CEP : </string>
+    <string name="tvBairro">Bairro : </string>
+    <string name="tvDataHora">Data e Hora : </string>
+
+
+    <string name="headerModalDisp">Disponibilidade</string>
+
 
 </resources>
