@@ -10,9 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Instituicao;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MeusDadosInstituicaoActivity extends AppCompatActivity{
 
@@ -28,6 +33,9 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
     private String password;
     private String cnpj;
     private String telefone;
+    Instituicao instituicao;
+    Call<Instituicao> call;
+    private RetrofitInit retrofitInit = new RetrofitInit();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,28 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
                     intentEndereco.putExtra("telefoneInstituicao", telefone);
                     intentEndereco.putExtra("emailInstituicao", email);
                     intentEndereco.putExtra("passwordInstituicao", password);
-                    startActivity(intentEndereco);
+                    // buscar do banco
+
+                    call = retrofitInit.getService().consultaInstituicao(1);
+
+                    call.enqueue(new Callback<Instituicao>() {
+                        @Override
+                        public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                            instituicao = response.body();
+
+                            //incluindo dados em tela
+                            inputNome.getEditText().setText(instituicao.getNome());
+                            inputEmail.getEditText().setText(instituicao.getEmail());
+                            inputTelefone.getEditText().setText(instituicao.getTelefone());
+                            inputCnpj.getEditText().setText(instituicao.getCnpj());
+                        }
+
+                        @Override
+                        public void onFailure(Call<Instituicao> call, Throwable t) {
+
+                        }
+                    });
+                    //startActivity(intentEndereco);
                 }
             }
         });
