@@ -10,6 +10,8 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface ServiceApi {
 
@@ -27,5 +29,12 @@ public interface ServiceApi {
   
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
+
+    @PUT("consulta/confirmar")
+    Call<Consulta> confirmarConsulta(@Body Consulta consulta);
+
+    @GET("consulta/disponiveis/{codigo}")
+    Call<Consulta> getConsultasPorPaciente(@Path("codigo") Integer codigo);
+
 
 }
