@@ -38,6 +38,8 @@ import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Usuario;
 import br.com.acolher.model.ViaCep;
 import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
@@ -361,8 +363,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
 
     }
     private void cadastroInstituicao(Instituicao instituicao){
-        Log.d(TAG, enderecoResponse.toString());
-        instituicao.setEndereco(enderecoResponse);
+
         Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
         cadastroInstituicao.enqueue(new Callback<Instituicao>() {
             @Override
@@ -394,8 +395,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
     }
 
     private void cadastroUsuario(Usuario usuario){
-        Log.d(TAG, enderecoResponse.toString());
-        usuario.setEndereco(enderecoResponse);
         Call<Usuario> cadastroUsuario = retrofitInit.getService().cadastroUsuario(usuario);
         cadastroUsuario.enqueue(new Callback<Usuario>() {
             @Override
@@ -425,17 +424,18 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         });
     }
 
-    public void msgJaCadastrado(String campo){
+    public void msgJaCadastrado(String campo) {
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroEndereco.this);
         alertDialog.setTitle("Atenção");
         alertDialog.setMessage(campo + " " + "já cadastrado.");
         alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
         alertDialog.show();
+    }
     private void chamarProximaTela(Integer codigoEndereco) {
         Intent intent = getIntent();
         String perfil = intent.getStringExtra("perfil");
