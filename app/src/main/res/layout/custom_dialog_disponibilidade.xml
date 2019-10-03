@@ -13,10 +13,10 @@
             android:layout_width="0dp"
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
-            android:text="Disponibilidade"
+            android:text="@string/headerModalDisp"
             android:gravity="center"
             android:padding="15dp"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:background="@color/buttonSalvarDados"
             android:layout_marginBottom="20dp"
@@ -30,7 +30,7 @@
             android:text="X"
             android:gravity="center"
             android:padding="15dp"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:background="#aaa"
             android:layout_marginBottom="20dp"
@@ -44,36 +44,131 @@
         android:orientation="vertical"
         android:paddingLeft="15dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dra. Lorem Impsun"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-        <TextView
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvVoluntario"
+                android:text="Instituição: "
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlVoluntario"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Endereço: Rua das bromélias"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-        <TextView
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvEndereco"
+                android:text="@string/tvEndereco"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlEndereco"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Numero: 127"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-        <TextView
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvNumero"
+                android:text="@string/tvNumero"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlNumero"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CEP: 51320470"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-        <TextView
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvCep"
+                android:text="@string/tvCep"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlCep"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Candeias, PE"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvBairro"
+                android:text="@string/tvBairro"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlBairro"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDataHora"
+                android:text="@string/tvDataHora"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vlDataHora"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -86,7 +181,7 @@
         android:layout_marginTop="20dp">
 
         <Button
-            android:id="@+id/btnCancelar"
+            android:id="@+id/btnCall"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
@@ -101,7 +196,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btnDeletar"
+            android:id="@+id/btnAgendar"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"

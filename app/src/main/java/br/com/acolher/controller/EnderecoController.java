@@ -1,5 +1,8 @@
 package br.com.acolher.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class EnderecoController {
 
     /**
@@ -31,24 +34,6 @@ public class EnderecoController {
 
         if(cep.length() != 8){
             return "O cep está incompleto";
-        }
-
-        return "";
-    }
-
-    /**
-     * Validação numero
-     * @param numero
-     * @return
-     */
-    public String validaNumero(String numero){
-
-        if(!empty(numero)){
-            return "Campo obrigatorio!";
-        }
-
-        if(!numero.matches("[0-9]+")){
-            return "Insira apenas numeros!";
         }
 
         return "";

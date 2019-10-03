@@ -149,7 +149,7 @@
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
                 android:textSize="18dp"
-                android:text="@string/label_button_continuar_cadastro" />
+                android:text="@string/label_btn_finalizar_cadastro" />
 
             <TextView
                 android:id="@+id/labelRetornarLogin"
