@@ -36,7 +36,7 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
                 if (!validaEmail(email.getEditText().getText().toString())){
                     email.setErrorTextColor(ColorStateList.valueOf(Color.GREEN));
-                    email.setError("Funk you!");
+                    email.setError("E-mail inválido!");
                 }
             }
         });
@@ -76,7 +76,9 @@ public class login extends AppCompatActivity {
                 final Button btnPaciente = viewDialog.findViewById(R.id.btnPaciente);
                 final Button btnProfissional = viewDialog.findViewById(R.id.btnProfissional);
                 final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
-                Intent intent = new Intent(login.getContext(), CadastroActivity.class);
+                Intent intent = new Intent(login.getContext(), CadastroEndereco.class);
+
+
 
                 btnPaciente.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -99,7 +101,8 @@ public class login extends AppCompatActivity {
                 btnInstituicao.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(login.getContext(), CadastroInstituicao.class);
+                        String perfil = "instituicao";
+                        intent.putExtra("perfil", perfil);
                         startActivity(intent);
                     }
                 });
