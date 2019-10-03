@@ -31,7 +31,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
@@ -39,11 +38,15 @@ import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Usuario;
 import br.com.acolher.model.ViaCep;
-import br.com.acolher.viacep.HttpService;
+import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CadastroEndereco extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -163,26 +166,40 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onClick(View v) {
                 String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-                if(EnderecoController.empty(cep)){
-                    try {
-                        ViaCep retorno = new HttpService(cep).execute().get();
-
-                        inputRua.getEditText().setText(retorno.getLogradouro());
-                        inputBairro.getEditText().setText(retorno.getBairro());
-                        inputUF.getEditText().setText(retorno.getUf());
-                        inputCidade.getEditText().setText(retorno.getLocalidade());
-
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    inputCep.setError("Campo Obrigatorio");
-                }
+                buscaCep(cep);
             }
         });
 
+    }
+
+    private void buscaCep(String cep) {
+        if(EnderecoController.empty(cep)){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://viacep.com.br/ws/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ServiceApi api = retrofit.create(ServiceApi.class);
+
+            Call<ViaCep> retorno = api.buscarCEP(cep);
+            retorno.enqueue(new Callback<ViaCep>() {
+                @Override
+                public void onResponse(Call<ViaCep> call, Response<ViaCep> response) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    ViaCep endereco = response.body();
+                    inputRua.getEditText().setText(endereco.getLogradouro());
+                    inputBairro.getEditText().setText(endereco.getBairro());
+                    inputUF.getEditText().setText(endereco.getUf());
+                    inputCidade.getEditText().setText(endereco.getLocalidade());
+                }
+
+                @Override
+                public void onFailure(Call<ViaCep> call, Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                }
+            });
+        }else{
+            inputCep.setError("Campo Obrigatorio");
+        }
     }
 
     private void findBydId() {
@@ -345,7 +362,80 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         });
 
     }
+    private void cadastroInstituicao(Instituicao instituicao){
 
+        Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
+        cadastroInstituicao.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        if(response.errorBody().contentLength() == 19) {
+                            msgJaCadastrado("CNPJ");
+                        }
+                        if(response.errorBody().contentLength() == 21) {
+                            msgJaCadastrado("E-mail");
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void cadastroUsuario(Usuario usuario){
+        Call<Usuario> cadastroUsuario = retrofitInit.getService().cadastroUsuario(usuario);
+        cadastroUsuario.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroEndereco.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        if(response.errorBody().contentLength() == 18){
+                            msgJaCadastrado("CPF");
+                        }
+                        if(response.errorBody().contentLength() == 21){
+                            msgJaCadastrado("E-mail");
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void msgJaCadastrado(String campo) {
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroEndereco.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(campo + " " + "já cadastrado.");
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+    }
     private void chamarProximaTela(Integer codigoEndereco) {
         Intent intent = getIntent();
         String perfil = intent.getStringExtra("perfil");
