@@ -43,10 +43,19 @@
     <string name="error_nome_completo">Insira o seu nome completo</string>
 
     <!-- label de Meus dados. -->
-
     <string name="label_button_continuar_alteracao">Continuar Alteração</string>
     <string name="labelCodigo">Código</string>
     <string name="labelCodigoNome">Código</string>
+    <string name="label_meusdados_nome">Nome Completo</string>
+    <string name="label_meusdados_datanascimento">Data de nascimento</string>
+    <string name="label_meusdados_email">"Email"</string>
+    <string name="label_meusdados_cpf">"CPF"</string>
+    <string name="label_meusdados_telefone">"Telefone"</string>
+
+    <!-- label de Meus dados Instituição -->
+
+    <string name="label_button_alterar_insituicao">Continuar alteração </string>
+    <string name="label_button_alterar_senha">Alterar Senha </string>
 
     <!-- label de Meus dados Instituição -->
 
@@ -103,6 +112,7 @@
     <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
     <string name="btn_escolha_perfil">Escolha o perfil</string>
 
+
     <!--Textos - Modal de disponibilidade-->
     <string name="tvEndereco">Endereço : </string>
     <string name="tvNumero">Numero : </string>
@@ -112,6 +122,5 @@
 
 
     <string name="headerModalDisp">Disponibilidade</string>
-
 
 </resources>
