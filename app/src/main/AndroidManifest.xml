@@ -16,7 +16,6 @@
         <activity android:name=".view.MeusDadosInstituicaoActivity"/>
         <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas" />
-        <activity android:name=".chamaTelas"/>
         <activity android:name=".view.login" />
         <activity android:name=".view.AlterarSenha" />
         <activity android:name=".view.CadastroEndereco" />
