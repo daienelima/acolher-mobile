@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
-    <string name="label_cadastro_nome">Nome completo Profissional</string>
+    <string name="label_cadastro_nome">Nome completo</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
-    <string name="label_cadastro_CRM">CRM</string>
+    <string name="label_cadastro_CRP_CRM">CRP ou CRM</string>
     <string name="label_cadastro_password">Senha</string>
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
     <string name="label_senha_atual">Senha Atual</string>
@@ -93,5 +93,25 @@
         <item>Tocantins</item>
         <item>Estrangeiro</item>
     </string-array>
+
+    <string name="button_cadastro_paciente">Paciente</string>
+    <string name="button_cadastro_profissional">Profissional</string>
+    <string name="button_cadastro_instituicao">Instutuição</string>
+    <string name="button_info_perfil">Qual o meu perfil?</string>
+    <string name="txt_descricao_paciente">  Se você está buscando apoio profissional, escolha a opção paciente.</string>
+    <string name="txt_descricao_profissional">  Se você é um psicólogo ou psiquiatra e deseja fornecer consultas de forma voluntária, escolha a opção profissional.</string>
+    <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
+    <string name="btn_escolha_perfil">Escolha o perfil</string>
+
+    <!--Textos - Modal de disponibilidade-->
+    <string name="tvEndereco">Endereço : </string>
+    <string name="tvNumero">Numero : </string>
+    <string name="tvCep">CEP : </string>
+    <string name="tvBairro">Bairro : </string>
+    <string name="tvDataHora">Data e Hora : </string>
+
+
+    <string name="headerModalDisp">Disponibilidade</string>
+
 
 </resources>

@@ -205,7 +205,7 @@
                     android:singleLine="true"
                     android:padding="0dp"
                     android:inputType="number"
-                    android:hint="@string/label_cadastro_CRM" />
+                    android:hint="@string/label_cadastro_CRP_CRM" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button

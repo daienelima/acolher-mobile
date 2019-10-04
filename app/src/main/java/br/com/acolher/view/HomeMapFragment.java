@@ -4,20 +4,24 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -65,19 +70,19 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     List<Consulta> consultas;
     Call<List<Consulta>> call;
     private RetrofitInit retrofitInit = new RetrofitInit();
+    private static final int REQUEST_PHONE_CALL = 1;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_home_maps, null);
-
         return mView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        MapsInitializer.initialize(getContext());
         fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
 
         mMapView = (MapView) mView.findViewById(R.id.map);
@@ -96,21 +101,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     .build();
 
         }
-
-        call = retrofitInit.getService().getConsultas();
-
-        call.enqueue(new Callback<List<Consulta>>() {
-            @Override
-            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
-                consultas = response.body();
-                generateMarkers(consultas);
-            }
-
-            @Override
-            public void onFailure(Call<List<Consulta>> call, Throwable t) {
-
-            }
-        });
 
         /*enderecos = new ArrayList<Endereco>();
 
@@ -172,7 +162,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                             LatLng myLocal = new LatLng(latitude, longitude);
                             myMarker = mMap.addMarker(new MarkerOptions()
                                     .position(myLocal)
-                                    .title("Marker in Sydney")
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocal, 13.0f));
 
@@ -184,7 +173,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                             LatLng myLocal = new LatLng(latitude, longitude);
                             myMarker = mMap.addMarker(new MarkerOptions()
                                     .position(myLocal)
-                                    .title("Marker in Sydney")
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocal, 13.0f));
                         }
@@ -193,12 +181,31 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
+        call = retrofitInit.getService().getConsultas();
+
+        call.enqueue(new Callback<List<Consulta>>() {
+            @Override
+            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                consultas = response.body();
+                if(consultas != null && consultas.size() > 0){
+                    generateMarkers(consultas);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Consulta>> call, Throwable t) {
+
+            }
+        });
+
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                //Toast.makeText(getContext(), "Index - " + marker.getId(), Toast.LENGTH_LONG).show();
-                //openModal(Integer.parseInt(marker.getTitle()));
+                String codMarker = String.valueOf(marker.getId()).split("m")[1];
+                if(!marker.equals(myMarker)){
+                    openModal(Integer.parseInt(codMarker) - 1);
+                }
                 /*if(marker.equals(myMarker)){
 
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
@@ -229,7 +236,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             LatLng disponibilidade = new LatLng(Double.parseDouble(consultas.get(i).getEndereco().getLatitude()), Double.parseDouble(consultas.get(i).getEndereco().getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(disponibilidade)
-                    .title(String.valueOf(i))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
             );
         }
@@ -294,12 +300,65 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mBuilder.setView(viewDialog);
         final AlertDialog dialog = mBuilder.create();
 
+        TextView labelVoluntario = (TextView) viewDialog.findViewById(R.id.tvVoluntario);
+        TextView valueVoluntario = (TextView) viewDialog.findViewById(R.id.vlVoluntario);
+        TextView valueLogradouro = (TextView) viewDialog.findViewById(R.id.vlEndereco);
+        TextView valueNumero = (TextView) viewDialog.findViewById(R.id.vlNumero);
+        TextView valueCep = (TextView) viewDialog.findViewById(R.id.vlCep);
+        TextView valueBairro = (TextView) viewDialog.findViewById(R.id.vlBairro);
+        TextView valueDataHora = (TextView) viewDialog.findViewById(R.id.vlDataHora);
         TextView btnClose = (TextView) viewDialog.findViewById(R.id.closeDialogDisp);
+        Button btnCall = (Button) viewDialog.findViewById(R.id.btnCall);
+        String tell;
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+            }
+        });
+
+        if(consulta.getInstituicao() == null && consulta.getProfissional() != null){
+            labelVoluntario.setText("Profissional : ");
+            valueVoluntario.setText(consulta.getProfissional().getNome_completo());
+            valueLogradouro.setText(consulta.getProfissional().getEndereco().getLogradouro());
+            valueNumero.setText(consulta.getProfissional().getEndereco().getNumero());
+            valueCep.setText(consulta.getProfissional().getEndereco().getCep());
+            valueBairro.setText(consulta.getProfissional().getEndereco().getBairro());
+            valueDataHora.setText(consulta.getData() + " | " + consulta.getHora());
+            tell = consulta.getProfissional().getTelefone();
+        }else{
+            labelVoluntario.setText("Instituição : ");
+            valueVoluntario.setText(consulta.getInstituicao().getNome());
+            valueLogradouro.setText(consulta.getInstituicao().getEndereco().getLogradouro());
+            valueNumero.setText(consulta.getInstituicao().getEndereco().getNumero());
+            valueCep.setText(consulta.getInstituicao().getEndereco().getCep());
+            valueBairro.setText(consulta.getInstituicao().getEndereco().getBairro());
+            valueDataHora.setText(consulta.getData() + " | " + consulta.getHora());
+            tell = consulta.getInstituicao().getTelefone();
+        }
+
+        btnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final Intent intentCall = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+tell));
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    int permissionCheck = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE);
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)) {
+
+                        } else {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                        }
+                    }
+                    else{
+                        startActivity(intentCall);
+                    }
+                }else {
+                    startActivity(intentCall);
+                }
             }
         });
 
