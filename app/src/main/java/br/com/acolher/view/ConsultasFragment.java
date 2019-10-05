@@ -46,8 +46,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
         int id = pref.getInt("USERCODE",0);
         String tipo = pref.getString("TIPO","erro");
 
-        System.out.println("tipo aw: " + tipo);
-
         if(tipo.equals("paciente")) {
             call = retrofitInit.getService().getConsultasPorPaciente(id);
         }else if(tipo.equals("voluntario")){
