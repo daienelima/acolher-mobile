@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">acolher</string>
     <string name="title_activity_maps">Map</string>
-    <string name="label_cadastro_nome">Nome completo Profissional</string>
+    <string name="label_cadastro_nome">Nome completo</string>
     <string name="label_cadastro_email">Email</string>
     <string name="label_cadastro_telefone">Telefone</string>
     <string name="label_cadastro_CPF">CPF</string>
-    <string name="label_cadastro_CRM">CRM</string>
+    <string name="label_cadastro_CRP_CRM">CRP ou CRM</string>
     <string name="label_cadastro_password">Senha</string>
     <string name="label_cadastro_datanascimento">Data de nascimento</string>
     <string name="label_senha_atual">Senha Atual</string>
@@ -29,9 +29,9 @@
     <string name="label_save_alteracao">salvar dados</string>
     <string name="label_nome_instituicao">nome da instituicao</string>
     <string name="label_button_salvar_dados">salvar dados</string>
-    <string name="label_return_home"> voltar para a tela principal</string>
+    <string name="label_return_home"> Voltar para a tela principal</string>
     <string name="label_button_continuar_cadastro">Continuar cadastro</string>
-    <string name="label_return_login">Voltar para a tela de login</string>
+    <string name="label_return_login">Voltar para a tela principal</string>
     <string name="label_rua">Rua</string>
     <string name="label_cep">Cep</string>
     <string name="label_bairro">Bairro</string>
@@ -43,10 +43,14 @@
     <string name="error_nome_completo">Insira o seu nome completo</string>
 
     <!-- label de Meus dados. -->
-
     <string name="label_button_continuar_alteracao">Continuar Alteração</string>
     <string name="labelCodigo">Código</string>
     <string name="labelCodigoNome">Código</string>
+    <string name="label_meusdados_nome">Nome Completo</string>
+    <string name="label_meusdados_datanascimento">Data de nascimento</string>
+    <string name="label_meusdados_email">"Email"</string>
+    <string name="label_meusdados_cpf">"CPF"</string>
+    <string name="label_meusdados_telefone">"Telefone"</string>
 
     <!-- label de Meus dados Instituição -->
 
@@ -61,6 +65,30 @@
 
     <!-- Spinner Estados -->
     <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
+
+    <string name="button_cadastro_paciente">Paciente</string>
+
+    <string name="button_cadastro_profissional">Profissional</string>
+    <string name="button_cadastro_instituicao">Instutuição</string>
+    <string name="button_info_perfil">Qual o meu perfil?</string>
+    <string name="txt_descricao_paciente">  Se você está buscando apoio profissional, escolha a opção paciente.</string>
+    <string name="txt_descricao_profissional">  Se você é um psicólogo ou psiquiatra e deseja fornecer consultas de forma voluntária, escolha a opção profissional.</string>
+    <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
+    <string name="btn_escolha_perfil">Escolha o perfil</string>
+    <string name="tvEndereco">Endereço : </string>
+
+
+    <!--Textos - Modal de disponibilidade-->
+    <string name="tvNumero">Numero : </string>
+    <string name="tvCep">CEP : </string>
+    <string name="tvBairro">Bairro : </string>
+    <string name="tvDataHora">Data e Hora : </string>
+    <string name="headerModalDisp">Disponibilidade</string>
+
+
+    <string name="google_maps_key">AIzaSyBpex0TRdOrtQk3XVO-DiReMdPH_0Bz84Q</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="spinner_estados">
         <item>Estado</item>

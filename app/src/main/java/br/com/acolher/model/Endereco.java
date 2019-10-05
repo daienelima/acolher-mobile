@@ -1,6 +1,8 @@
 package br.com.acolher.model;
 
-public class Endereco {
+import java.io.Serializable;
+
+public class Endereco implements Serializable {
 
     private Integer codigo;
     private String cep;
@@ -12,7 +14,7 @@ public class Endereco {
     private String longitude;
     private String latitude;
 
-    public Endereco(){}
+    public Endereco (){}
 
     public Endereco(Integer codigo, String cep, String logradouro, String cidade, String uf, String bairro, String numero, String longitude, String latitude) {
         this.codigo = codigo;

@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
-    tools:context=".view.MeusDadosActivity">
+    tools:context=".view.MeusDadosInstituicaoFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -26,10 +25,11 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:gravity="center_horizontal"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 />
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCodigo"
+                android:id="@+id/inputNome"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
@@ -38,31 +38,16 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCodigo"
+                    android:id="@+id/labelNome"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:singleLine="true"
                     android:padding="0dp"
-                    android:hint="@string/labelCodigoNome" />
+                    android:hint="@string/label_cadastro_instituicao_nome"
+                    android:focusable="false"
+                    android:clickable="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputNomeCompleto"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelNomeCompleto"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:padding="0dp"
-                    android:hint="@string/label_cadastro_nome" />
-            </com.google.android.material.textfield.TextInputLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,34 +55,26 @@
                 android:weightSum="4">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputDataNasc"
-                    android:layout_width="0dp"
+                    android:id="@+id/inputCnpj"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="4"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/labelDataNasc"
+                        android:id="@+id/labelCnpj"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:singleLine="true"
+                        android:inputType="phone"
+                        android:maxLength="18"
                         android:padding="0dp"
-                        android:hint="@string/label_cadastro_datanascimento" />
+                        android:hint="@string/label_cadastro_instituicao_cnpj"
+                        android:focusable="false"
+                        android:clickable="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btnCalendar"
-                    android:layout_width="58dp"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/button_cadastro_radius"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/calendar" />
 
             </LinearLayout>
 
@@ -120,28 +97,9 @@
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:padding="0dp"
-                    android:hint="@string/label_cadastro_email" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:passwordToggleEnabled="true"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelPassword"
-                    android:inputType="textPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    android:hint="@string/label_cadastro_password" />
+                    android:hint="@string/label_cadastro_email"
+                    android:focusable="false"
+                    android:clickable="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -164,71 +122,45 @@
                     android:inputType="phone"
                     android:maxLength="15"
                     android:drawableLeft="@drawable/phone"
-                    android:hint="@string/label_cadastro_telefone" />
+                    android:hint="@string/label_cadastro_telefone"
+                    android:focusable="false"
+                    android:clickable="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCPF"
+                android:id="@+id/inputEndereco"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="70dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
+
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCPF"
+                    android:id="@+id/labelEndereco"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:padding="0dp"
-                    android:inputType="text"
-                    android:maxLength="14"
-                    android:hint="@string/label_cadastro_CPF" />
+                    android:hint="Endereço"
+                    android:focusable="false"
+                    android:clickable="false"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCRM"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCRM"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:padding="0dp"
-                    android:inputType="number"
-                    android:hint="@string/label_cadastro_CRP_CRM" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/buttonContinuarCadastro"
+                android:id="@+id/buttonAlterar"
                 android:layout_width="220dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="40dp"
                 android:textColor="#FFF"
                 android:background="@drawable/button_cadastro_radius"
-                android:textSize="18dp"
-                android:text="@string/label_button_continuar_alteracao" />
-
-            <TextView
-                android:id="@+id/labelRetornarLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center_horizontal"
-                android:text="@string/label_return_login"
-                android:textColor="@color/corLink"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:text="Alterar" />
 
         </LinearLayout>
 

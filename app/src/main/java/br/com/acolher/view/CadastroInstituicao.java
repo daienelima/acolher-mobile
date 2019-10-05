@@ -1,8 +1,10 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -20,8 +22,11 @@ import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
+import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CadastroInstituicao extends AppCompatActivity{
 
@@ -32,6 +37,9 @@ public class CadastroInstituicao extends AppCompatActivity{
     TextInputLayout inputNome;
     TextInputLayout inputEmail;
     InstituicaoController ic;
+    public static final String TAG = "API";
+    private Instituicao instituicao = new Instituicao();
+    private RetrofitInit retrofitInit = new RetrofitInit();
     private String nome;
     private String email;
     private String password;
@@ -65,14 +73,18 @@ public class CadastroInstituicao extends AppCompatActivity{
 
                 ic = new InstituicaoController();
                 if(validateForm()){
-                    Intent intentEndereco = new Intent(CadastroInstituicao.this, CadastroEndereco.class);
-                    intentEndereco.putExtra("telaOrigem", "instituicao");
-                    intentEndereco.putExtra("nomeInstituicao", nome);
-                    intentEndereco.putExtra("cnpjInstituicao", cnpj);
-                    intentEndereco.putExtra("telefoneInstituicao", telefone);
-                    intentEndereco.putExtra("emailInstituicao", email);
-                    intentEndereco.putExtra("passwordInstituicao", password);
-                    startActivity(intentEndereco);
+                    Intent intent = getIntent();
+                    Endereco endereco = new Endereco();
+                    endereco.setCodigo(intent.getIntExtra("codigoEndereco", 0));
+
+                    instituicao.setEndereco(endereco);
+                    instituicao.setNome(nome);
+                    instituicao.setCnpj(cnpj);
+                    instituicao.setTelefone(telefone);
+                    instituicao.setEmail(email);
+                    instituicao.setSenha(password);
+
+                    cadastroInstituicao(instituicao);
                 }
             }
         });
@@ -114,4 +126,50 @@ public class CadastroInstituicao extends AppCompatActivity{
 
     }
 
+    private void cadastroInstituicao(Instituicao instituicao){
+
+        Call<Instituicao> cadastroInstituicao = retrofitInit.getService().cadastroInstituicao(instituicao);
+        cadastroInstituicao.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(TAG, response.body().toString());
+                    Intent home = new Intent(CadastroInstituicao.this, MapsActivity.class);
+                    startActivity(home);
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    if(response.code() == 403){
+                        if(response.errorBody().contentLength() == 19) {
+                            msgJaCadastrado("CNPJ");
+                        }
+                        if(response.errorBody().contentLength() == 21) {
+                            msgJaCadastrado("E-mail");
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    public void msgJaCadastrado(String campo){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroInstituicao.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(campo + " " + "já cadastrado.");
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+            }
+        });
+
+        // visualizacao do dialogo
+        alertDialog.show();
+    }
 }

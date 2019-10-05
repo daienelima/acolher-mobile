@@ -1,8 +1,9 @@
 package br.com.acolher.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Consulta {
+public class Consulta implements Serializable {
 
     private Integer codigo;
     private String data;

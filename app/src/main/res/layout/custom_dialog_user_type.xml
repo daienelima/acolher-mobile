@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="8.5"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_escolha_perfil"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:background="@color/buttonSalvarDados"
+            android:layout_marginBottom="20dp"
+            android:textColor="#FFF"/>
+
+        <TextView
+            android:id="@+id/closeDialogDisp"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:background="#aaa"
+            android:layout_marginBottom="20dp"
+            android:textColor="#FFF"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPaciente"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="20dp"
+        android:background="@color/buttonSalvarDados"
+        android:textColor="#FFF"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:text="@string/button_cadastro_paciente" />
+
+    <Button
+        android:id="@+id/btnProfissional"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/buttonSalvarDados"
+        android:textColor="#FFF"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:text="@string/button_cadastro_profissional" />
+
+    <Button
+        android:id="@+id/btnInstituicao"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="20dp"
+        android:background="@color/buttonSalvarDados"
+        android:textColor="#FFF"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:text="@string/button_cadastro_instituicao" />
+
+    <TextView
+        android:id="@+id/label_perfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/button_info_perfil"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_green_light"
+        android:textSize="22sp"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold" />
+</LinearLayout>
