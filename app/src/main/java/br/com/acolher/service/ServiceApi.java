@@ -21,13 +21,16 @@ public interface ServiceApi {
 
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
-  
+
+    @GET("instituicao/{codigo}")
+    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
-  
+
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
 
