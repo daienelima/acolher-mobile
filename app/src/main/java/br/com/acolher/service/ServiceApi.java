@@ -6,10 +6,12 @@ import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
+import br.com.acolher.model.ViaCep;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ServiceApi {
@@ -31,5 +33,14 @@ public interface ServiceApi {
 
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
+
+    @PUT("consulta/confirmar")
+    Call<Consulta> confirmarConsulta(@Body Consulta consulta);
+
+    @GET("consulta/disponiveis/{codigo}")
+    Call<Consulta> getConsultasPorPaciente(@Path("codigo") Integer codigo);
+
+    @GET("{cep}/json")
+    Call<ViaCep> buscarCEP(@Path("cep") String cep);
 
 }

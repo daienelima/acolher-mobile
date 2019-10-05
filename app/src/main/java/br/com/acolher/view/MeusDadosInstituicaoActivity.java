@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -42,6 +43,28 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
+
+        // buscar do banco
+        call = retrofitInit.getService().consultaInstituicao(1);
+
+        call.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                instituicao = response.body();
+
+                //incluindo dados em tela
+                inputNome.getEditText().setText(instituicao.getNome());
+                inputEmail.getEditText().setText(instituicao.getEmail());
+                inputTelefone.getEditText().setText(instituicao.getTelefone());
+                inputCnpj.getEditText().setText(instituicao.getCnpj());
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+
         //Configurações da activity
         setContentView(R.layout.activity_meus_dados_instituicao);
 
@@ -57,6 +80,8 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
 
         inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
 
+        TextView voltar = (TextView) findViewById(R.id.labelRetornarHome) ;
+
         continuarAlteracao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,31 +95,11 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
                     intentEndereco.putExtra("telefoneInstituicao", telefone);
                     intentEndereco.putExtra("emailInstituicao", email);
                     intentEndereco.putExtra("passwordInstituicao", password);
-                    // buscar do banco
-
-                    call = retrofitInit.getService().consultaInstituicao(1);
-
-                    call.enqueue(new Callback<Instituicao>() {
-                        @Override
-                        public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-                            instituicao = response.body();
-
-                            //incluindo dados em tela
-                            inputNome.getEditText().setText(instituicao.getNome());
-                            inputEmail.getEditText().setText(instituicao.getEmail());
-                            inputTelefone.getEditText().setText(instituicao.getTelefone());
-                            inputCnpj.getEditText().setText(instituicao.getCnpj());
-                        }
-
-                        @Override
-                        public void onFailure(Call<Instituicao> call, Throwable t) {
-
-                        }
-                    });
-                    //startActivity(intentEndereco);
+                    startActivity(intentEndereco);
                 }
             }
         });
+
 
         alterarSenha.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +108,12 @@ public class MeusDadosInstituicaoActivity extends AppCompatActivity{
                 Intent intentAlterarSenha = new Intent(MeusDadosInstituicaoActivity.this, AlterarSenha.class);
                 startActivity(intentAlterarSenha);
 
+            }
+        });
+
+        voltar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
             }
         });
 

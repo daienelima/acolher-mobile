@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private GoogleMap mMap;
     private ActionBar actionBar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
 
-        loadFragment(new HomeMapFragment());
+        //loadFragment(new HomeMapFragment()); comentado para testes
 
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
@@ -70,7 +72,9 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
-                fragment = new MinhaContaFragment();
+                Intent intentMeusdadosInstituicao = new Intent(MapsActivity.this, MeusDadosInstituicaoActivity.class);
+                startActivity(intentMeusdadosInstituicao);
+                //fragment = new MinhaContaFragment();
                 break;
             default:
                 break;

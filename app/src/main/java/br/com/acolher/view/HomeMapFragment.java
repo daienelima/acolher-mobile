@@ -3,8 +3,10 @@ package br.com.acolher.view;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -42,6 +44,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import br.com.acolher.R;
@@ -57,20 +60,26 @@ import retrofit2.Response;
 
 public class HomeMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener ,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    GoogleMap mMap;
-    MapView mMapView;
-    View mView;
-    Marker myMarker;
-    TextView btnClose;
-    GoogleApiClient googleApiClient;
-    Double latitude;
-    Double longitude;
-    FusedLocationProviderClient fusedLocation;
-    List<Endereco> enderecos;
-    List<Consulta> consultas;
-    Call<List<Consulta>> call;
+    private Integer consultaSelecionada;
+    private GoogleMap mMap;
+    private MapView mMapView;
+    private View mView;
+    private Marker myMarker;
+    private GoogleApiClient googleApiClient;
+    private Double latitude;
+    private Double longitude;
+    private FusedLocationProviderClient fusedLocation;
+    private List<Consulta> consultas;
+    private Call<List<Consulta>> callGetConsultas;
+    private Call<Consulta> callPutConsulta;
+    private Call<Consulta> consultaPorPaciente;
+    private Consulta consPorUser;
     private RetrofitInit retrofitInit = new RetrofitInit();
     private static final int REQUEST_PHONE_CALL = 1;
+    private SharedPreferences sharedPreferences;
+    private Integer codeUser;
+    private ProgressDialog progressDialog;
+    private HashMap<Integer, Consulta> mapConsulta;
 
     @Nullable
     @Override
@@ -82,6 +91,16 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        /**
+         * Shared Preferences Mocado
+         */
+        sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", 4);
+        editor.apply();
+
         MapsInitializer.initialize(getContext());
         fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
 
@@ -129,6 +148,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         enderecos.add(end3);
         enderecos.add(end4);
         enderecos.add(end5);*/
+        codeUser = sharedPreferences.getInt("USERCODE", 0);
+
 
     }
 
@@ -181,30 +202,63 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
-        call = retrofitInit.getService().getConsultas();
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Carregando");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        call.enqueue(new Callback<List<Consulta>>() {
+        consultaPorPaciente = retrofitInit.getService().getConsultasPorPaciente(codeUser);
+
+        consultaPorPaciente.enqueue(new Callback<Consulta>() {
             @Override
-            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
-                consultas = response.body();
-                if(consultas != null && consultas.size() > 0){
-                    generateMarkers(consultas);
+            public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                consPorUser = response.body();
+                if(consPorUser == null){
+                    callGetConsultas = retrofitInit.getService().getConsultas();
+                    callGetConsultas.enqueue(new Callback<List<Consulta>>() {
+                        @Override
+                        public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                            consultas = response.body();
+                            if(consultas != null && consultas.size() > 0){
+                                if(progressDialog.isShowing()){
+                                    progressDialog.dismiss();
+                                }
+                                generateMarkers(consultas,null);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Consulta>> call, Throwable t) {
+                            if(progressDialog.isShowing()){
+                                progressDialog.dismiss();
+                            }
+                        }
+                    });
+                }else{
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
+                    generateMarkers(null, consPorUser);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Consulta>> call, Throwable t) {
-
+            public void onFailure(Call<Consulta> call, Throwable t) {
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
         });
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
-                String codMarker = String.valueOf(marker.getId()).split("m")[1];
                 if(!marker.equals(myMarker)){
-                    openModal(Integer.parseInt(codMarker) - 1);
+                    if(consPorUser != null){
+                        openDetails(consPorUser);
+                    }else if(consultas != null){
+                        openModal(Integer.parseInt(marker.getSnippet()));
+                    }
                 }
                 /*if(marker.equals(myMarker)){
 
@@ -231,9 +285,18 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
-    public void generateMarkers(List<Consulta> consultas){
-        for(int i=0; i<consultas.size(); i++){
-            LatLng disponibilidade = new LatLng(Double.parseDouble(consultas.get(i).getEndereco().getLatitude()), Double.parseDouble(consultas.get(i).getEndereco().getLongitude()));
+    public void generateMarkers(List<Consulta> consultas, Consulta consultaPorUsuario){
+        if(consultas != null){
+            for(int i=0; i<consultas.size(); i++){
+                LatLng disponibilidade = new LatLng(Double.parseDouble(consultas.get(i).getEndereco().getLatitude()), Double.parseDouble(consultas.get(i).getEndereco().getLongitude()));
+                mMap.addMarker(new MarkerOptions()
+                        .position(disponibilidade)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
+                        .snippet(String.valueOf(i))
+                );
+            }
+        }else if(consultaPorUsuario != null){
+            LatLng disponibilidade = new LatLng(Double.parseDouble(consultaPorUsuario.getEndereco().getLatitude()), Double.parseDouble(consultaPorUsuario.getEndereco().getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(disponibilidade)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
@@ -300,21 +363,47 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mBuilder.setView(viewDialog);
         final AlertDialog dialog = mBuilder.create();
 
-        TextView labelVoluntario = (TextView) viewDialog.findViewById(R.id.tvVoluntario);
-        TextView valueVoluntario = (TextView) viewDialog.findViewById(R.id.vlVoluntario);
-        TextView valueLogradouro = (TextView) viewDialog.findViewById(R.id.vlEndereco);
-        TextView valueNumero = (TextView) viewDialog.findViewById(R.id.vlNumero);
-        TextView valueCep = (TextView) viewDialog.findViewById(R.id.vlCep);
-        TextView valueBairro = (TextView) viewDialog.findViewById(R.id.vlBairro);
-        TextView valueDataHora = (TextView) viewDialog.findViewById(R.id.vlDataHora);
-        TextView btnClose = (TextView) viewDialog.findViewById(R.id.closeDialogDisp);
-        Button btnCall = (Button) viewDialog.findViewById(R.id.btnCall);
+        TextView labelVoluntario = viewDialog.findViewById(R.id.tvVoluntario);
+        TextView valueVoluntario = viewDialog.findViewById(R.id.vlVoluntario);
+        TextView valueLogradouro = viewDialog.findViewById(R.id.vlEndereco);
+        TextView valueNumero = viewDialog.findViewById(R.id.vlNumero);
+        TextView valueCep = viewDialog.findViewById(R.id.vlCep);
+        TextView valueBairro = viewDialog.findViewById(R.id.vlBairro);
+        TextView valueDataHora = viewDialog.findViewById(R.id.vlDataHora);
+        TextView btnClose = viewDialog.findViewById(R.id.closeDialogDisp);
+        Button btnCall = viewDialog.findViewById(R.id.btnCall);
+        Button btnAgendar = viewDialog.findViewById(R.id.btnAgendar);
         String tell;
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+            }
+        });
+
+        btnAgendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(codeUser != 0){
+                    Usuario paciente = new Usuario();
+                    paciente.setCodigo(codeUser);
+                    consulta.setPaciente(paciente);
+                    callPutConsulta = retrofitInit.getService().confirmarConsulta(consulta);
+                    callPutConsulta.enqueue(new Callback<Consulta>() {
+                        @Override
+                        public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                            if(response.body() != null || response.body().getStatusConsulta().equals("CONFIRMADA")){
+                                Toast.makeText(getContext(), "Consulta agendada!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Consulta> call, Throwable t) {
+
+                        }
+                    });
+                }
             }
         });
 
@@ -363,5 +452,21 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         });
 
         dialog.show();
+    }
+
+    public void openDetails(Consulta c){
+        Intent telaConsulta = new Intent(getContext(), Consultas.class);
+        String nome = c.getPaciente() != null ? c.getPaciente().getNome_completo() : c.getInstituicao().getNome();
+        String data = c.getData();
+        String hora = c.getHora();
+        String endereco = c.getEndereco().getLogradouro();
+        String cod = c.getCodigo().toString();
+
+        telaConsulta.putExtra("nome",nome);
+        telaConsulta.putExtra("data",data);
+        telaConsulta.putExtra("hora",hora);
+        telaConsulta.putExtra("endereco",endereco);
+        telaConsulta.putExtra("cod",cod);
+        startActivity(telaConsulta);
     }
 }
