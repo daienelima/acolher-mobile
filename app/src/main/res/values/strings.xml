@@ -66,6 +66,30 @@
     <!-- Spinner Estados -->
     <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
 
+    <string name="button_cadastro_paciente">Paciente</string>
+
+    <string name="button_cadastro_profissional">Profissional</string>
+    <string name="button_cadastro_instituicao">Instutuição</string>
+    <string name="button_info_perfil">Qual o meu perfil?</string>
+    <string name="txt_descricao_paciente">  Se você está buscando apoio profissional, escolha a opção paciente.</string>
+    <string name="txt_descricao_profissional">  Se você é um psicólogo ou psiquiatra e deseja fornecer consultas de forma voluntária, escolha a opção profissional.</string>
+    <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
+    <string name="btn_escolha_perfil">Escolha o perfil</string>
+    <string name="tvEndereco">Endereço : </string>
+
+
+    <!--Textos - Modal de disponibilidade-->
+    <string name="tvNumero">Numero : </string>
+    <string name="tvCep">CEP : </string>
+    <string name="tvBairro">Bairro : </string>
+    <string name="tvDataHora">Data e Hora : </string>
+    <string name="headerModalDisp">Disponibilidade</string>
+
+
+    <string name="google_maps_key">AIzaSyBpex0TRdOrtQk3XVO-DiReMdPH_0Bz84Q</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string-array name="spinner_estados">
         <item>Estado</item>
         <item>Acre</item>
@@ -97,27 +121,5 @@
         <item>Tocantins</item>
         <item>Estrangeiro</item>
     </string-array>
-
-    <string name="button_cadastro_paciente">Paciente</string>
-    <string name="button_cadastro_profissional">Profissional</string>
-    <string name="button_cadastro_instituicao">Instutuição</string>
-    <string name="button_info_perfil">Qual o meu perfil?</string>
-    <string name="txt_descricao_paciente">  Se você está buscando apoio profissional, escolha a opção paciente.</string>
-    <string name="txt_descricao_profissional">  Se você é um psicólogo ou psiquiatra e deseja fornecer consultas de forma voluntária, escolha a opção profissional.</string>
-    <string name="txt_descricao_instituição">  Se você é representante de uma instituição que deseja fornecer consultas de valor irrisório ou grátis, escolha a opção instituição.</string>
-    <string name="btn_escolha_perfil">Escolha o perfil</string>
-
-
-    <!--Textos - Modal de disponibilidade-->
-    <string name="tvEndereco">Endereço : </string>
-    <string name="tvNumero">Numero : </string>
-    <string name="tvCep">CEP : </string>
-    <string name="tvBairro">Bairro : </string>
-    <string name="tvDataHora">Data e Hora : </string>
-
-
-    <string name="headerModalDisp">Disponibilidade</string>
-
-    <string name="google_maps_key"></string>
 
 </resources>

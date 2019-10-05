@@ -16,11 +16,13 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import br.com.acolher.R;
+import br.com.acolher.model.Usuario;
 
 public class MapsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
     private ActionBar actionBar;
+    public String tipoUsuario = "Instituição";
 
 
     @Override
@@ -31,7 +33,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
 
-        //loadFragment(new HomeMapFragment()); comentado para testes
+        loadFragment(new HomeMapFragment());
 
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
@@ -72,9 +74,12 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
-                Intent intentMeusdadosInstituicao = new Intent(MapsActivity.this, MeusDadosInstituicaoActivity.class);
-                startActivity(intentMeusdadosInstituicao);
-                //fragment = new MinhaContaFragment();
+                if (tipoUsuario.equals("Instituição")){
+                fragment = new MeusDadosInstituicaoFragment();
+                }
+                if (tipoUsuario.equals("Usuario")){
+                    fragment = new MinhaContaFragment();
+                }
                 break;
             default:
                 break;
