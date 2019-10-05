@@ -98,7 +98,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", 4);
+        editor.putInt("USERCODE", 1);
+        editor.putString("TIPO","voluntario");
         editor.apply();
 
         MapsInitializer.initialize(getContext());

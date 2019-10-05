@@ -1,6 +1,8 @@
 package br.com.acolher.model;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
 
     private Integer codigo;
     private String nome_completo;
