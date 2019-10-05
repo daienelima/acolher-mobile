@@ -43,4 +43,16 @@ public interface ServiceApi {
     @GET("{cep}/json")
     Call<ViaCep> buscarCEP(@Path("cep") String cep);
 
+    @GET("consulta/paciente/{id}")
+    Call<List<Consulta>> getConsultasPorPaciente(@Path("id") int id);
+
+    @GET("consulta/voluntario/{id}")
+    Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+
+    @PUT("consulta/cancelar")
+    Call<Consulta> cancelarConsulta(@Body Consulta consulta);
+
+    @PUT("consulta/cancelarpaciente")
+    Call<Consulta> cancelarConsultaPaciente(@Body Consulta consulta);
+
 }
