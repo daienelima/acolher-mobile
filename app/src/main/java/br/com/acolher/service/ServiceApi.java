@@ -2,6 +2,8 @@ package br.com.acolher.service;
 
 
 import java.util.List;
+
+import br.com.acolher.dto.Login;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
@@ -21,13 +23,16 @@ public interface ServiceApi {
 
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
-  
+
+    @GET("instituicao/{codigo}")
+    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
-  
+
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
 
@@ -40,4 +45,21 @@ public interface ServiceApi {
     @GET("{cep}/json")
     Call<ViaCep> buscarCEP(@Path("cep") String cep);
 
+    @GET("consulta/paciente/{id}")
+    Call<List<Consulta>> getConsultasPorPaciente(@Path("id") int id);
+
+    @GET("consulta/voluntario/{id}")
+    Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+
+    @PUT("consulta/cancelar")
+    Call<Consulta> cancelarConsulta(@Body Consulta consulta);
+
+    @PUT("consulta/cancelarpaciente")
+    Call<Consulta> cancelarConsultaPaciente(@Body Consulta consulta);
+
+    @POST("usuario/login")
+    Call<Usuario> validarLoginUsuario(@Body Login login);
+
+    @POST("instituicao/login")
+    Call<Instituicao> validarLoginInstituicao(@Body Login login);
 }
