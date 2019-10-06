@@ -1,14 +1,14 @@
 package br.com.acolher.view;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -20,6 +20,8 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     private GoogleMap mMap;
     private ActionBar actionBar;
+    public String tipoUsuario = "Instituição";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,12 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
+                /*if (tipoUsuario.equals("Instituição")){
+                fragment = new MeusDadosInstituicaoFragment();
+                }
+                if (tipoUsuario.equals("Usuario")){
+                    fragment = new MinhaContaFragment();
+                }*/
                 fragment = new MinhaContaFragment();
                 break;
             default:

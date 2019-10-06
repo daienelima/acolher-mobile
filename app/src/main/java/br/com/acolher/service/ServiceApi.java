@@ -21,13 +21,19 @@ public interface ServiceApi {
 
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
-  
+
+    @GET("instituicao/{codigo}")
+    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
-  
+
+    @GET("usario/{codigo}")
+    Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
+
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
 
@@ -39,5 +45,17 @@ public interface ServiceApi {
 
     @GET("{cep}/json")
     Call<ViaCep> buscarCEP(@Path("cep") String cep);
+
+    @GET("consulta/paciente/{id}")
+    Call<List<Consulta>> getConsultasPorPaciente(@Path("id") int id);
+
+    @GET("consulta/voluntario/{id}")
+    Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+
+    @PUT("consulta/cancelar")
+    Call<Consulta> cancelarConsulta(@Body Consulta consulta);
+
+    @PUT("consulta/cancelarpaciente")
+    Call<Consulta> cancelarConsultaPaciente(@Body Consulta consulta);
 
 }

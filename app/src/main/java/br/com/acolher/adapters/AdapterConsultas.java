@@ -1,6 +1,9 @@
 package br.com.acolher.adapters;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -48,20 +51,34 @@ public class AdapterConsultas extends BaseAdapter {
         TextView hora = view.findViewById(R.id.hora);
         TextView endereco = view.findViewById(R.id.endereco);
         TextView cod =  view.findViewById(R.id.cod);
+        TextView status =  view.findViewById(R.id.status);
 
-        String tipo = "pacientee";
+        SharedPreferences pref = act.getApplicationContext().getSharedPreferences("USERDATA", act.getApplicationContext().MODE_PRIVATE);
+        String tipo = pref.getString("TIPO","tipo não encontrado");
 
         Consulta consulta = consultas.get(position);
 
-
         if(tipo.equals("paciente")) {
             nome.setText(consulta.getProfissional().getNome_completo());
+        }else if (tipo.equals("voluntario")){
+            try {
+                nome.setText(consulta.getPaciente().getNome_completo());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }else{
-            nome.setText(consulta.getPaciente().getNome_completo());
+            //tem q tratar
         }
         hora.setText(consulta.getHora());
+        data.setText(consulta.getData());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
         cod.setText(""+consulta.getCodigo().toString());
+        status.setText(consulta.getStatusConsulta().toString());
+        if(consulta.getStatusConsulta().toString().equals("CANCELADA")){
+            status.setTextColor(Color.RED);
+        }else{
+            status.setTextColor(Color.GREEN);
+        }
         return view;
     }
 }
