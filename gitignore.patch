@@ -1,0 +1,15 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .gitignore	(date 1570069346000)
++++ .gitignore	(date 1570069589084)
+@@ -10,6 +10,7 @@
+ /.idea/assetWizardSettings.xml
+ /.idea/name
+ /app/src/debug/res/values/google_maps_api.xml
++\app\src\debug\res\values\google_maps_api.xml
+ .DS_Store
+ /build
+ /captures
