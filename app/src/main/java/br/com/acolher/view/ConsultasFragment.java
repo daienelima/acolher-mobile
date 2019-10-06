@@ -79,6 +79,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
                 String hora = (String) ((TextView)view.findViewById(R.id.hora)).getText();
                 String endereco = (String) ((TextView)view.findViewById(R.id.endereco)).getText();
                 String cod = (String) ((TextView)view.findViewById(R.id.cod)).getText();
+
                 Consulta c = new Consulta();
                 c.setCodigo(Integer.parseInt(cod));
                 for(Consulta con : consultas){

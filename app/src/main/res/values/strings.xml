@@ -62,6 +62,7 @@
     <string name="label_cadastro_data">Data</string>
     <string name="label_button_concluir_cadastro">Continuar Cadastro</string>
     <string name="label_cadastro_horas">Hora</string>
+    <string name="label_cadastro_numero">Numero - Endereço</string>
 
     <!-- Spinner Estados -->
     <string name="label_btn_finalizar_cadastro">Finalizar Cadastro</string>
