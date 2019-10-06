@@ -52,7 +52,6 @@ public class MeusDadosActivity extends AppCompatActivity {
 
         inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
 
-        inputCodigo = (TextInputLayout) findViewById(R.id.inputCodigo);
 
         inputCpf = (TextInputLayout) findViewById(R.id.inputCPF);
         inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());

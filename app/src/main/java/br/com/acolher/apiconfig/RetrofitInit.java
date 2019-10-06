@@ -6,11 +6,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitInit {
 
-    private String BASE_URL = "http://10.0.2.2:8080/api/";
     private ServiceApi serviceApi;
 
     public RetrofitInit() {
 
+        //private String BASE_URL = "http://10.0.2.2:8080/api/";
+        String BASE_URL = "https://acolher.herokuapp.com/api/";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

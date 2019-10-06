@@ -86,41 +86,7 @@
     <string name="tvDataHora">Data e Hora : </string>
     <string name="headerModalDisp">Disponibilidade</string>
 
-
     <string name="google_maps_key">AIzaSyBpex0TRdOrtQk3XVO-DiReMdPH_0Bz84Q</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string-array name="spinner_estados">
-        <item>Estado</item>
-        <item>Acre</item>
-        <item>Alagoas</item>
-        <item>Amapá</item>
-        <item>Amazonas</item>
-        <item>Bahia</item>
-        <item>Ceará</item>
-        <item>Distrito Federal</item>
-        <item>Espírito Santo</item>
-        <item>Goiás</item>
-        <item>Maranhão</item>
-        <item>Mato Grosso</item>
-        <item>Mato Grosso do Sul</item>
-        <item>Minas Gerais</item>
-        <item>Pará</item>
-        <item>Paraíba</item>
-        <item>Paraná</item>
-        <item>Pernambuco</item>
-        <item>Piauí</item>
-        <item>Rio de Janeiro</item>
-        <item>Rio Grande do Norte</item>
-        <item>Rio Grande do Sul</item>
-        <item>Rondônia</item>
-        <item>Roraima</item>
-        <item>Santa Catarina</item>
-        <item>São Paulo</item>
-        <item>Sergipe</item>
-        <item>Tocantins</item>
-        <item>Estrangeiro</item>
-    </string-array>
 
 </resources>
