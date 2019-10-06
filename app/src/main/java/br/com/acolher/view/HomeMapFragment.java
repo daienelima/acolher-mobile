@@ -19,9 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.DialogInterface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -40,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private GoogleMap mMap;
     private MapView mMapView;
     private View mView;
-    private Marker myMarker;
+    private Marker myMarker, markerConsulta;
     private GoogleApiClient googleApiClient;
     private Double latitude;
     private Double longitude;
@@ -78,8 +80,13 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private static final int REQUEST_PHONE_CALL = 1;
     private SharedPreferences sharedPreferences;
     private Integer codeUser;
+    private String typeUser;
     private ProgressDialog progressDialog;
     private HashMap<Integer, Consulta> mapConsulta;
+    private FloatingActionButton btnAddConsulta, btnAddLastConsulta;
+    private AlertDialog alerta;
+    private Double latDisp;
+    private Double longDisp;
 
     @Nullable
     @Override
@@ -92,6 +99,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        progressDialog = new ProgressDialog(getContext());
+
         /**
          * Shared Preferences Mocado
          */
@@ -99,7 +108,18 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("USERCODE", 4);
+        editor.putString("TYPE", "VOLUNTARIO");
         editor.apply();
+
+        btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
+        btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
+        latDisp = 0.0;
+        longDisp = 0.0;
+        //btnAddConsulta.setVisibility(View.VISIBLE);
+
+        if(sharedPreferences.getString("LAT", "0.0") != "0.0"){
+            btnAddLastConsulta.show();
+        }
 
         MapsInitializer.initialize(getContext());
         fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
@@ -149,6 +169,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         enderecos.add(end4);
         enderecos.add(end5);*/
         codeUser = sharedPreferences.getInt("USERCODE", 0);
+        typeUser = sharedPreferences.getString("TYPE", "");
 
 
     }
@@ -202,57 +223,62 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Carregando");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if(typeUser == "PACIENTE"){
 
-        consultaPorPaciente = retrofitInit.getService().getConsultasPorPaciente(codeUser);
+            progressDialog.setMessage("Carregando");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
-        consultaPorPaciente.enqueue(new Callback<Consulta>() {
-            @Override
-            public void onResponse(Call<Consulta> call, Response<Consulta> response) {
-                consPorUser = response.body();
-                if(consPorUser == null){
-                    callGetConsultas = retrofitInit.getService().getConsultas();
-                    callGetConsultas.enqueue(new Callback<List<Consulta>>() {
-                        @Override
-                        public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
-                            consultas = response.body();
-                            if(consultas != null && consultas.size() > 0){
+            consultaPorPaciente = retrofitInit.getService().getConsultasPorPaciente(codeUser);
+
+            consultaPorPaciente.enqueue(new Callback<Consulta>() {
+                @Override
+                public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                    consPorUser = response.body();
+                    if(consPorUser == null){
+                        callGetConsultas = retrofitInit.getService().getConsultas();
+                        callGetConsultas.enqueue(new Callback<List<Consulta>>() {
+                            @Override
+                            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                                consultas = response.body();
+                                if(consultas != null && consultas.size() > 0){
+                                    if(progressDialog.isShowing()){
+                                        progressDialog.dismiss();
+                                    }
+                                    generateMarkers(consultas,null);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Consulta>> call, Throwable t) {
                                 if(progressDialog.isShowing()){
                                     progressDialog.dismiss();
                                 }
-                                generateMarkers(consultas,null);
                             }
+                        });
+                    }else{
+                        if(progressDialog.isShowing()){
+                            progressDialog.dismiss();
                         }
+                        generateMarkers(null, consPorUser);
+                    }
+                }
 
-                        @Override
-                        public void onFailure(Call<List<Consulta>> call, Throwable t) {
-                            if(progressDialog.isShowing()){
-                                progressDialog.dismiss();
-                            }
-                        }
-                    });
-                }else{
+                @Override
+                public void onFailure(Call<Consulta> call, Throwable t) {
                     if(progressDialog.isShowing()){
                         progressDialog.dismiss();
                     }
-                    generateMarkers(null, consPorUser);
                 }
-            }
-
-            @Override
-            public void onFailure(Call<Consulta> call, Throwable t) {
-                if(progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-            }
-        });
+            });
+        }else{
+            btnAddConsulta.show();
+        }
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
                 if(!marker.equals(myMarker)){
                     if(consPorUser != null){
                         openDetails(consPorUser);
@@ -283,6 +309,64 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         });
 
+        btnAddConsulta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(latDisp == 0.0 && longDisp == 0.0){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Selecione o local");
+                    builder.setMessage("Selecione no mapa o local que será realizada a consulta!");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    alerta = builder.create();
+                    alerta.show();
+                }else{
+                    callCadastroDisp();
+                }
+            }
+        });
+
+        btnAddLastConsulta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                latDisp = Double.parseDouble(sharedPreferences.getString("LAT", "0.0"));
+                longDisp = Double.parseDouble(sharedPreferences.getString("LON", "0.0"));
+                callCadastroDisp();
+            }
+        });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(typeUser .equals("VOLUNTARIO")){
+                    if(markerConsulta != null){
+                        markerConsulta.remove();
+                    }
+                    latDisp = latLng.latitude;
+                    longDisp = latLng.longitude;
+                    markerConsulta = mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
+                            .draggable(true)
+                    );
+                }
+            }
+        });
+
+    }
+
+    public void callCadastroDisp(){
+        Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
+        telaCadastroDisp.putExtra("lat", latDisp);
+        telaCadastroDisp.putExtra("long", longDisp);
+        progressDialog.setMessage("Redirecionando");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        startActivity(telaCadastroDisp);
     }
 
     public void generateMarkers(List<Consulta> consultas, Consulta consultaPorUsuario){
@@ -308,6 +392,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void onResume() {
         super.onResume();
         googleApiClient.connect();
+        progressDialog.dismiss();
     }
 
     @Override

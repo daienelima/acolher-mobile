@@ -1,6 +1,12 @@
 package br.com.acolher.helper;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+
+import java.io.IOException;
 import java.util.InputMismatchException;
+import java.util.List;
 
 public class Validacoes {
 
@@ -155,6 +161,83 @@ public class Validacoes {
         }
 
         return true;
+    }
+
+    public static Address buscarEndereco(Double latitude, Double longitude, Context context) throws IOException {
+
+        Geocoder geocoder;
+        Address address = null;
+        List<Address> addresses;
+
+        geocoder = new Geocoder(context);
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+        if(addresses.size() > 0){
+            address = addresses.get(0);
+        }
+
+        return  address;
+    }
+
+    public static String deParaEstados(String estado){
+        switch(estado){
+            case "Acre":
+                return ("AC");
+            case "Alagoas":
+                return ("AL");
+            case "Amapá":
+                return ("AP");
+            case "Amazonas":
+                return ("AM");
+            case "Bahia":
+                return ("BA");
+            case "Ceará":
+                return ("CE");
+            case "Distrito Federal":
+                return ("DF");
+            case "Espírito Santo":
+                return ("ES");
+            case "Goiás":
+                return ("GO");
+            case "Maranhão":
+                return ("MA");
+            case "Mato Grosso":
+                return ("MT");
+            case "Mato Grosso do Sul":
+                return ("MS");
+            case "Minas Gerais":
+                return ("MG");
+            case "Pará":
+                return ("PA");
+            case "Paraíba":
+                return ("PB");
+            case "Paraná":
+                return ("PR");
+            case "Pernambuco":
+                return ("PE");
+            case "Piauí":
+                return ("PI");
+            case "Rio de Janeiro":
+                return ("RJ");
+            case "Rio Grande do Norte":
+                return ("RN");
+            case "Rio Grande do Sul":
+                return ("RS");
+            case "Rondônia":
+                return ("RO");
+            case "Roraima":
+                return ("RR");
+            case "Santa Catarina":
+                return ("SC");
+            case "São Paulo":
+                return ("SP");
+            case "Sergipe":
+                return ("SE");
+            case "Tocantins":
+                return ("TO");
+            default:
+                return "";
+        }
     }
 
 }

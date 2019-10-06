@@ -80,14 +80,6 @@ public class ConsultasFragment extends Fragment {
                 String hora = (String) ((TextView)view.findViewById(R.id.hora)).getText();
                 String endereco = (String) ((TextView)view.findViewById(R.id.endereco)).getText();
                 String cod = (String) ((TextView)view.findViewById(R.id.cod)).getText();
-
-                Intent intent = new Intent(view.getContext(), Consultas.class);
-                intent.putExtra("nome",nome);
-                intent.putExtra("data",data);
-                intent.putExtra("hora",hora);
-                intent.putExtra("endereco",endereco);
-                intent.putExtra("cod",cod);
-                startActivity(intent);
             }
         });
 
