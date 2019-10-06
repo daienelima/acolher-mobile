@@ -115,11 +115,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
         latDisp = 0.0;
         longDisp = 0.0;
-        //btnAddConsulta.setVisibility(View.VISIBLE);
-
-        if(sharedPreferences.getString("LAT", "0.0") != "0.0"){
-            btnAddLastConsulta.show();
-        }
 
         MapsInitializer.initialize(getContext());
         fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
@@ -141,33 +136,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         }
 
-        /*enderecos = new ArrayList<Endereco>();
-
-        Endereco end1 = new Endereco();
-        end1.setLatitude("-8.152672205776259");
-        end1.setLongitude("-34.916444420814514");
-
-        Endereco end2 = new Endereco();
-        end2.setLatitude("-8.149791409918464");
-        end2.setLongitude("-34.91507716476917");
-
-        Endereco end3 = new Endereco();
-        end3.setLatitude("-8.153644635638697");
-        end3.setLongitude("-34.913859106600285");
-
-        Endereco end4 = new Endereco();
-        end4.setLatitude("-8.156542993620057");
-        end4.setLongitude("-34.916751869022846");
-
-        Endereco end5 = new Endereco();
-        end5.setLatitude("-8.160599929350232");
-        end5.setLongitude("-34.9206243082881");
-
-        enderecos.add(end1);
-        enderecos.add(end2);
-        enderecos.add(end3);
-        enderecos.add(end4);
-        enderecos.add(end5);*/
         codeUser = sharedPreferences.getInt("USERCODE", 0);
         typeUser = sharedPreferences.getString("TYPE", "");
 
@@ -325,7 +293,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     alerta = builder.create();
                     alerta.show();
                 }else{
-                    callCadastroDisp();
+                    callCadastroDisp(0);
                 }
             }
         });
@@ -333,9 +301,10 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         btnAddLastConsulta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Integer codigoRecente = sharedPreferences.getInt("COD_END_RECENT", 0);
                 latDisp = Double.parseDouble(sharedPreferences.getString("LAT", "0.0"));
                 longDisp = Double.parseDouble(sharedPreferences.getString("LON", "0.0"));
-                callCadastroDisp();
+                callCadastroDisp(codigoRecente);
             }
         });
 
@@ -359,10 +328,11 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
-    public void callCadastroDisp(){
+    public void callCadastroDisp(Integer codigo){
         Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
         telaCadastroDisp.putExtra("lat", latDisp);
         telaCadastroDisp.putExtra("long", longDisp);
+        telaCadastroDisp.putExtra("codigoRecente", codigo);
         progressDialog.setMessage("Redirecionando");
         progressDialog.setCancelable(false);
         progressDialog.show();
@@ -385,6 +355,9 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     .position(disponibilidade)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
             );
+        }else{
+            progressDialog.dismiss();
+            Toast.makeText(getContext(), "Não existem consultas disponíveis nesta localidade!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -393,6 +366,9 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         super.onResume();
         googleApiClient.connect();
         progressDialog.dismiss();
+        if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
+            btnAddLastConsulta.show();
+        }
     }
 
     @Override

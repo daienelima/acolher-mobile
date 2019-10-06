@@ -53,6 +53,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Address address;
     private Double lon;
     private Double lat;
+    private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
     private SharedPreferences sharedPreferences;
 
@@ -67,6 +68,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0.0);
         lon = intent.getDoubleExtra("long", 0.0);
+        codigoEnderecoRecente = intent.getIntExtra("codigoRecente", 0);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -104,26 +106,35 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
                     novaConsulta.setProfissional(profissional);
 
-                    Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);
-                    cadastroEndereco.enqueue(new Callback<Endereco>() {
-                        @Override
-                        public void onResponse(Call<Endereco> call, Response<Endereco> response) {
-                            if (response.isSuccessful()) {
-                                Log.d(TAG, String.valueOf(response.code()));
-                                enderecoConsulta = response.body();
-                                novaConsulta.setEndereco(enderecoConsulta);
-                                cadastroConsulta(novaConsulta);
-                            } else {
-                                Log.d(TAG, String.valueOf(response.code()));
+                    if(codigoEnderecoRecente == 0){
+                        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);
+                        cadastroEndereco.enqueue(new Callback<Endereco>() {
+                            @Override
+                            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                                if (response.isSuccessful()) {
+                                    Log.d(TAG, String.valueOf(response.code()));
+                                    enderecoConsulta = response.body();
+                                    editor.putInt("COD_END_RECENT", enderecoConsulta.getCodigo());
+                                    editor.apply();
+                                    novaConsulta.setEndereco(enderecoConsulta);
+                                    cadastroConsulta(novaConsulta);
+                                } else {
+                                    Log.d(TAG, String.valueOf(response.code()));
+                                }
+
                             }
 
-                        }
+                            @Override
+                            public void onFailure(Call<Endereco> call, Throwable t) {
+                                Log.d(TAG, t.getMessage());
+                            }
+                        });
+                    }else{
+                        enderecoConsulta.setCodigo(codigoEnderecoRecente);
+                        novaConsulta.setEndereco(enderecoConsulta);
+                        cadastroConsulta(novaConsulta);
+                    }
 
-                        @Override
-                        public void onFailure(Call<Endereco> call, Throwable t) {
-                            Log.d(TAG, t.getMessage());
-                        }
-                    });
                 }
 
             }
