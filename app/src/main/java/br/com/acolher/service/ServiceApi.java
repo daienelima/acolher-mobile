@@ -33,6 +33,9 @@ public interface ServiceApi {
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
 
+    @GET("usario/{codigo}")
+    Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
+
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
 

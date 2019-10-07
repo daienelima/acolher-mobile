@@ -102,7 +102,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                                     latitude = location.getLatitude();
                                     longitude = location.getLongitude();
                                     try {
-                                        address = buscarEndereco(latitude, longitude);
+                                        address = Validacoes.buscarEndereco(latitude, longitude, getApplicationContext());
                                         inputRua.getEditText().setText(address.getThoroughfare());
                                         inputCep.getEditText().setText(address.getPostalCode());
                                         inputBairro.getEditText().setText(address.getSubLocality());
@@ -283,7 +283,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         alertDialog.show();
     }
 
-    public Address buscarEndereco(Double latitude, Double longitude) throws IOException{
+    /*public Address buscarEndereco(Double latitude, Double longitude) throws IOException{
 
         Geocoder geocoder;
         Address address = null;
@@ -297,7 +297,7 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         }
 
         return  address;
-    }
+    }*/
 
     public boolean validateForm(){
 
@@ -360,7 +360,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
                 Log.d(TAG, t.getMessage());
             }
         });
-
     }
 
     private void chamarProximaTela(Integer codigoEndereco) {

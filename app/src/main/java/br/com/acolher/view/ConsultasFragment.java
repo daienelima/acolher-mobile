@@ -1,8 +1,10 @@
 package br.com.acolher.view;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,62 +16,59 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConsultas;
+import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
-import br.com.acolher.model.Endereco;
-import br.com.acolher.model.Usuario;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class ConsultasFragment extends Fragment {
+public class ConsultasFragment extends Fragment implements Serializable{
 
     View mView;
     private List<Consulta> consultas;
+    Call<List<Consulta>> call;
+    private RetrofitInit retrofitInit = new RetrofitInit();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_consultas, null);
         consultas = new ArrayList<>();
-
-        Usuario u = new Usuario();
-        u.setNome_completo("Pedro Paulo");
-        u.setCpf("10436594471");
-
-        Usuario d = new Usuario();
-        d.setNome_completo("Ricardo Nobrega");
-        d.setCrm_crp("23123123123");
-
-        Endereco e = new Endereco();
-        e.setLogradouro("Rua Tocantinópolis");
-        e.setNumero("100");
-        e.setBairro("Ibura");
-
-        Consulta c = new Consulta();
-        c.setCodigo(1);
-        c.setPaciente(u);
-        c.setProfissional(d);
-        c.setHora("14:00");
-        c.setEndereco(e);
-        c.setData("25/10/2019");
-        consultas.add(c);
-
-
-        Consulta cc = new Consulta();
-        cc.setCodigo(2);
-        cc.setPaciente(d);
-        cc.setProfissional(d);
-        cc.setHora("19:00");
-        cc.setEndereco(e);
-        cc.setData("25/10/2019");
-        consultas.add(cc);
-
         ListView listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
 
-        AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
-        listaDeConsultas.setAdapter(adapter);
+        SharedPreferences pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
+        int id = pref.getInt("USERCODE",0);
+        String tipo = pref.getString("TIPO","erro");
+
+        if(tipo.equals("paciente")) {
+            call = retrofitInit.getService().getConsultasPorPaciente(id);
+        }else if(tipo.equals("voluntario")){
+            call = retrofitInit.getService().getConsultasPorVoluntario(id);
+        }else {
+            //tem q tratar
+        }
+
+        call.enqueue(new Callback<List<Consulta>>() {
+            @Override
+            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                consultas = response.body();
+                AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
+                listaDeConsultas.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Consulta>> call, Throwable t) {
+
+            }
+        });
+
+
 
 
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,12 +80,15 @@ public class ConsultasFragment extends Fragment {
                 String endereco = (String) ((TextView)view.findViewById(R.id.endereco)).getText();
                 String cod = (String) ((TextView)view.findViewById(R.id.cod)).getText();
 
+                Consulta c = new Consulta();
+                c.setCodigo(Integer.parseInt(cod));
+                for(Consulta con : consultas){
+                    if(con.getCodigo().equals(c.getCodigo())){
+                        c = con;
+                    }
+                }
                 Intent intent = new Intent(view.getContext(), Consultas.class);
-                intent.putExtra("nome",nome);
-                intent.putExtra("data",data);
-                intent.putExtra("hora",hora);
-                intent.putExtra("endereco",endereco);
-                intent.putExtra("cod",cod);
+                intent.putExtra("consulta",c);
                 startActivity(intent);
             }
         });

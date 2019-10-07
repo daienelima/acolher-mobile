@@ -14,23 +14,31 @@
             android:id="@+id/nome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nome"
-            android:textSize="25dp"
+            android:text=""
+            android:textSize="21dp"
             android:layout_marginLeft="15dp"/>
         <TextView
             android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Data"
-            android:textSize="20dp"
+            android:textSize="17dp"
             android:layout_marginLeft="15dp"/>
         <TextView
             android:id="@+id/hora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hora"
-            android:textSize="20dp"
+            android:textSize="17dp"
             android:layout_marginLeft="15dp"/>
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:gravity="right"
+            android:textSize="12dp"
+            android:layout_marginRight="15dp"/>
         <TextView
             android:id="@+id/endereco"
             android:layout_width="match_parent"

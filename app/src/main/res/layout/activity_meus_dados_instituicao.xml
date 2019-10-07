@@ -141,7 +141,7 @@
                 android:text="@string/label_button_alterar_senha" />
 
             <TextView
-                android:id="@+id/labelRetornarLogin"
+                android:id="@+id/labelRetornarHome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
