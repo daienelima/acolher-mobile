@@ -150,6 +150,13 @@ public class login extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
+                    String tipoUsuario = "";
+                    if(response.body().getCrm_crp().isEmpty()){
+                        tipoUsuario = "paciente";
+                    }else{
+                        tipoUsuario = "voluntario";
+                    }
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
                     Intent home = new Intent(login.this, MapsActivity.class);
                     startActivity(home);
                 } else {
@@ -178,6 +185,7 @@ public class login extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
+                    salvarDadosInstituicao(response.body().getCodigo());
                     Intent home = new Intent(login.this, MapsActivity.class);
                     startActivity(home);
                 } else {
@@ -210,6 +218,21 @@ public class login extends AppCompatActivity {
         alertDialog.show();
     }
 
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
+        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", codigoUsuario);
+        editor.putString("TYPE", tipoUsuario);
+        editor.apply();
+    }
+
+    public void salvarDadosInstituicao(Integer codigoUsuario) {
+        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", codigoUsuario);
+        editor.putString("TYPE", "instituicao");
+        editor.apply();
+    }
     /**
      * Adicionar e-mail ao SharedPreferences
      *

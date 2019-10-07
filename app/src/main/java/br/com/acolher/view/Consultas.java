@@ -66,7 +66,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("USERDATA", getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TIPO","tipo não encontrado");
+        String tipo = pref.getString("TYPE","tipo não encontrado");
 
 
 
@@ -83,11 +83,18 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             }
         }else{
             //tem q tratar
+            //por hora, adicionar mesmo tratamento de voluntario
+            nomeLabel.setText("Nome do paciente");
+            try {
+                nome.setText(c.getPaciente().getNome_completo());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         data.setText(c.getData());
         hora.setText(c.getHora());
-        endereco.setText(c.getEndereco().getLogradouro()+",n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
+        endereco.setText(c.getEndereco().getLogradouro()+", n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
 
         cancelarConsulta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -99,10 +106,13 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                     finish();
                 }else{
                     //tem q tratar
+                    //por hora, adicionar mesmo tratamento de voluntario
+                    call = retrofitInit.getService().cancelarConsulta(c);
+                    finish();
                 }
                 call.enqueue(new Callback<Consulta>() {
                     @Override
-                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {                    }
+                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {}
 
                     @Override
                     public void onFailure(Call<Consulta> call, Throwable t) {}
@@ -123,7 +133,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         mMap = googleMap;
         myMarker = mMap.addMarker(new MarkerOptions()
                 .position(sydney)
-                .title("Marker in Sydney")
+                .title("Local da consulta")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 

@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -70,16 +71,21 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         lon = intent.getDoubleExtra("long", 0.0);
         codigoEnderecoRecente = intent.getIntExtra("codigoRecente", 0);
 
+        //exibir campo "Número - Endereço" apenas quando for incluir novo endereço de consulta
+        if(codigoEnderecoRecente == 0){
+            inputNumero.setVisibility(View.VISIBLE);
+        }
+
         sharedPreferences = getApplicationContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("LAT", lat.toString());
         editor.putString("LON", lon.toString());
         editor.apply();
 
-        inputCPR_CRM.getEditText().setText("8454654");
+     /*   inputCPR_CRM.getEditText().setText("8454654");
         inputCPR_CRM.setEnabled(false);
         inputNome.getEditText().setText("Medico");
-        inputNome.setEnabled(false);
+        inputNome.setEnabled(false);*/
 
         if(lat != 0.0 && lon != 0.0){
             try {
@@ -97,7 +103,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     Consulta novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
                     Usuario profissional = new Usuario();
-                    profissional.setCodigo(1);
+                    profissional.setCodigo(sharedPreferences.getInt("USERCODE", 1));
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
@@ -143,8 +149,9 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         buttonCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
-                startActivity(home);
+                /*Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
+                startActivity(home);*/
+                finish();
             }
         });
 
@@ -178,14 +185,15 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     }
 
     private void pegaIdCampos() {
-        inputCPR_CRM = findViewById(R.id.input_CRP_CRM);
-        inputNome = findViewById(R.id.inputNomeCompleto);
+        // = findViewById(R.id.input_CRP_CRM);
+        //inputNome = findViewById(R.id.inputNomeCompleto);
         inputData = findViewById(R.id.inputDataNasc);
         btnCalendar = findViewById(R.id.btnCalendar);
         inputHora = findViewById(R.id.inputHora);
         buttonCancelar = findViewById(R.id.buttonCancelar);
         concluirCadastro = findViewById(R.id.buttonConcluirCadastro);
         inputNumero = findViewById(R.id.inputNumero);
+        inputNumero.setVisibility(View.GONE);
     }
 
     public void openCalendar(){
@@ -200,7 +208,11 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         datePickerDialog = new DatePickerDialog(CadastroDisponibilidade.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int mYear, int mMonth, int mDay) {
-                inputData.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear);
+                if (mDay < 10){
+                    inputData.getEditText().setText("0" + mDay + "/" + (mMonth + 1) + "/" + mYear);
+                }else{
+                    inputData.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear);
+                }
             }
         }, year, month, day);
         datePickerDialog.show();
@@ -223,14 +235,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
     public boolean validateForm(){
 
-        String nome = inputNome.getEditText().getText().toString();
+        //String nome = inputNome.getEditText().getText().toString();
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-        if(!DisponibilidadeController.empty(nome)){
+       /* if(!DisponibilidadeController.empty(nome)){
             inputNome.setError("Nome não dede ficar em branco");
             return false;
-        }
+        }*/
 
         if(!DisponibilidadeController.empty(data)){
             inputData.setError("Campo Obrigatorio");

@@ -1,5 +1,7 @@
 package br.com.acolher.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +36,13 @@ public class MinhaContaFragment extends Fragment {
 
         findById();
 
-        Call<Usuario> call = retrofitInit.getService().getUsuario(1);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        if(sharedPreferences.getString("TYPE", "").equals("voluntario")){
+            crm.setVisibility(View.VISIBLE);
+        }
+
+        Call<Usuario> call = retrofitInit.getService().getUsuario(sharedPreferences.getInt("USERCODE", 1));
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
@@ -82,6 +90,7 @@ public class MinhaContaFragment extends Fragment {
         email =  mView.findViewById(R.id.inputEmail);
         telefone =  mView.findViewById(R.id.inputTelefone);
         crm =  mView.findViewById(R.id.inputCRM);
+        crm.setVisibility(View.GONE);
     }
 
     @Override
