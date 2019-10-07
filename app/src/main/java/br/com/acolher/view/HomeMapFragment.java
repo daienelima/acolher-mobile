@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private AlertDialog alerta;
     private Double latDisp;
     private Double longDisp;
+    BottomNavigationView navigationView;
 
     @Nullable
     @Override
@@ -100,7 +103,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         super.onViewCreated(view, savedInstanceState);
 
         progressDialog = new ProgressDialog(getContext());
-
+        navigationView = getActivity().findViewById(R.id.bottom_navigation);
         /**
          * Shared Preferences Mocado
          */
@@ -109,7 +112,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 /*
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("USERCODE", 4);
-        editor.putString("TYPE", "VOLUNTARIO");
+        editor.putString("TYPE", "PACIENTE");
         editor.apply();
 */
         btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
@@ -160,7 +163,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        Toast.makeText(getContext(), "onMapReady", Toast.LENGTH_LONG).show();
         mMap = googleMap;
 
         if (GetLocalization(getContext())) {
@@ -181,8 +184,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                                     .position(myLocal)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocal, 13.0f));
-
-                            //Toast.makeText(getContext(), "LAT E LONG" + latitude + " - " + longitude, Toast.LENGTH_LONG).show();
                         }else{
                             latitude = -8.160599929350232;
                             longitude = -34.9206243082881;
@@ -198,7 +199,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
-        if(typeUser.equals("paciente")){
+        if(typeUser.equals("PACIENTE")){
 
             progressDialog.setMessage("Carregando");
             progressDialog.setCancelable(false);
@@ -284,17 +285,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onClick(View v) {
                 if(latDisp == 0.0 && longDisp == 0.0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("Selecione o local");
-                    builder.setMessage("Selecione no mapa o local que será realizada a consulta!");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    alerta = builder.create();
-                    alerta.show();
+                    openGenericModal("Selecione o local", "Selecione no mapa o local que será realizada a consulta!", getContext() );
                 }else{
                     callCadastroDisp(0);
                 }
@@ -366,17 +357,15 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     @Override
     public void onResume() {
-        super.onResume();
+        if(mMap != null){
+            onMapReady(mMap);
+        }
         googleApiClient.connect();
         progressDialog.dismiss();
-        if(!sharedPreferences.getString("TYPE", "").equals("paciente")){
-            //if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
-                btnAddLastConsulta.show();
-            //}
-        }else{
-            latDisp = 0.0;
-            longDisp = 0.0;
+        if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0 && !typeUser.equals("PACIENTE")){
+            btnAddLastConsulta.show();
         }
+        super.onResume();
     }
 
     @Override
@@ -462,16 +451,17 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     callPutConsulta.enqueue(new Callback<Consulta>() {
                         @Override
                         public void onResponse(Call<Consulta> call, Response<Consulta> response) {
-                            if(response.body() != null || response.body().getStatusConsulta().equals("CONFIRMADA")){
-                                Toast.makeText(getContext(), "Consulta agendada!", Toast.LENGTH_LONG).show();
+                            if(response.isSuccessful()){
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Consulta> call, Throwable t) {
-
+                            //openGenericModal("Erro!", "Não foi possivel agendar a consulta, tente novamente mais tarde!", getContext());
                         }
                     });
+                    navigationView.setSelectedItemId(navigationView.getSelectedItemId());
+                    dialog.dismiss();
                 }
             }
         });
@@ -525,17 +515,21 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     public void openDetails(Consulta c){
         Intent telaConsulta = new Intent(getContext(), Consultas.class);
-        String nome = c.getPaciente() != null ? c.getPaciente().getNome_completo() : c.getInstituicao().getNome();
-        String data = c.getData();
-        String hora = c.getHora();
-        String endereco = c.getEndereco().getLogradouro();
-        String cod = c.getCodigo().toString();
-
-        telaConsulta.putExtra("nome",nome);
-        telaConsulta.putExtra("data",data);
-        telaConsulta.putExtra("hora",hora);
-        telaConsulta.putExtra("endereco",endereco);
-        telaConsulta.putExtra("cod",cod);
+        telaConsulta.putExtra("consulta", c);
         startActivity(telaConsulta);
+    }
+
+    public void openGenericModal(String title, String text, Context context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(text);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alerta = builder.create();
+        alerta.show();
     }
 }
