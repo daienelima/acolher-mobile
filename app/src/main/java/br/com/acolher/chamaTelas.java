@@ -12,9 +12,9 @@ import br.com.acolher.view.CadastroActivity;
 import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
+import br.com.acolher.view.Login;
 import br.com.acolher.view.MeusDadosActivity;
 import br.com.acolher.view.MeusDadosInstituicaoActivity;
-import br.com.acolher.view.login;
 
 public class chamaTelas extends AppCompatActivity {
 
@@ -35,7 +35,7 @@ public class chamaTelas extends AppCompatActivity {
 
         switch (v.getId()) {
             case R.id.telaLogin:
-                intent = new Intent(chamaTelas.this, login.class);
+                intent = new Intent(chamaTelas.this, Login.class);
                 startActivity(intent);
                 break;
             case R.id.telaCadastro:

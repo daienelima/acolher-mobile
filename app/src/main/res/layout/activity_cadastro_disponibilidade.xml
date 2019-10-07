@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="20dp"
                     android:layout_weight="4"
                     android:layout_marginTop="10dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -98,11 +98,11 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputDataNasc"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="4"
+                    android:layout_weight="3"
                     android:layout_marginTop="10dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:errorEnabled="true">
@@ -117,8 +117,9 @@
 
                 <ImageButton
                     android:id="@+id/btnCalendar"
-                    android:layout_width="58dp"
-                    android:layout_height="48dp"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/button_cadastro_radius"
@@ -137,7 +138,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="20dp"
                     android:layout_weight="4"
                     android:layout_marginTop="10dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -155,17 +156,20 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="101dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="15dp"
+                android:weightSum="4"
                 android:padding="20dp">
 
                 <Button
                     android:id="@+id/buttonConcluirCadastro"
-                    android:layout_width="206dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="48dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="40dp"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/button_cadastro_radius"
                     android:text="@string/label_button_concluir_cadastro"
                     android:textColor="#FFF"
@@ -173,10 +177,10 @@
 
                 <Button
                     android:id="@+id/buttonCancelar"
-                    android:layout_width="109dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="48dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="18dp"
                     android:layout_marginTop="40dp"
                     android:background="@drawable/btn_cancelar"
                     android:text="Cancelar"

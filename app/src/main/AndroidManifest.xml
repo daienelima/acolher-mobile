@@ -16,7 +16,7 @@
         <activity android:name=".view.MeusDadosInstituicaoActivity"/>
         <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas" />
-        <activity android:name=".view.login" >
+        <activity android:name=".view.Login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

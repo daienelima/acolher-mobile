@@ -120,6 +120,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                                 if (response.isSuccessful()) {
                                     Log.d(TAG, String.valueOf(response.code()));
                                     enderecoConsulta = response.body();
+                                    codigoEnderecoRecente = enderecoConsulta.getCodigo();
                                     editor.putInt("COD_END_RECENT", enderecoConsulta.getCodigo());
                                     editor.apply();
                                     novaConsulta.setEndereco(enderecoConsulta);
