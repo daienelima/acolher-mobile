@@ -35,41 +35,21 @@ public class ConsultasFragment extends Fragment implements Serializable{
     private List<Consulta> consultas;
     Call<List<Consulta>> call;
     private RetrofitInit retrofitInit = new RetrofitInit();
+    private SharedPreferences pref;
+    private int id;
+    private ListView listaDeConsultas;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_consultas, null);
         consultas = new ArrayList<>();
-        ListView listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
+        listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
 
-        SharedPreferences pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
-        int id = pref.getInt("USERCODE",0);
-        String tipo = pref.getString("TIPO","erro");
+        pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
+        id = pref.getInt("USERCODE",0);
 
-        if(tipo.equals("paciente")) {
-            call = retrofitInit.getService().getConsultasPorPaciente(id);
-        }else if(tipo.equals("voluntario")){
-            call = retrofitInit.getService().getConsultasPorVoluntario(id);
-        }else {
-            //tem q tratar
-        }
-
-        call.enqueue(new Callback<List<Consulta>>() {
-            @Override
-            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
-                consultas = response.body();
-                AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
-                listaDeConsultas.setAdapter(adapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<Consulta>> call, Throwable t) {
-
-            }
-        });
-
-
-
+        loadLista();
 
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -95,5 +75,42 @@ public class ConsultasFragment extends Fragment implements Serializable{
 
 
         return mView;
+    }
+
+    public void loadLista(){
+        String tipo = pref.getString("TYPE","erro");
+        if(tipo.equals("PACIENTE")) {
+            call = retrofitInit.getService().getConsultasPorPaciente(id);
+        }else if(tipo.equals("VOLUNTARIO")){
+            call = retrofitInit.getService().getConsultasPorVoluntario(id);
+        }else {
+            //tem q tratar
+        }
+
+
+        call.enqueue(new Callback<List<Consulta>>() {
+            @Override
+            public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                if(response.isSuccessful()){
+                    consultas = response.body();
+                    if(consultas == null){
+                        consultas = new ArrayList<Consulta>();
+                    }
+                    AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
+                    listaDeConsultas.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Consulta>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onResume(){
+        loadLista();
+        super.onResume();
     }
 }
