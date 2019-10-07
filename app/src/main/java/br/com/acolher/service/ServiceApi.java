@@ -33,7 +33,7 @@ public interface ServiceApi {
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
 
-    @GET("usario/{codigo}")
+    @GET("usuario/{codigo}")
     Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
 
     @POST("consulta")
