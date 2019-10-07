@@ -104,17 +104,24 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         /**
          * Shared Preferences Mocado
          */
-        sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
 
+        sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
+/*
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("USERCODE", 4);
         editor.putString("TYPE", "VOLUNTARIO");
         editor.apply();
-
+*/
         btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
         btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
         latDisp = 0.0;
         longDisp = 0.0;
+
+        if(!sharedPreferences.getString("TYPE", "").equals("paciente")) {
+            //if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
+            btnAddLastConsulta.show();
+            //}
+        }
 
         MapsInitializer.initialize(getContext());
         fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
@@ -136,7 +143,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         }
 
-        codeUser = sharedPreferences.getInt("USERCODE", 0);
+        codeUser = sharedPreferences.getInt("USERCODE", 1);
         typeUser = sharedPreferences.getString("TYPE", "");
 
 
@@ -175,7 +182,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocal, 13.0f));
 
-                            Toast.makeText(getContext(), "LAT E LONG" + latitude + " - " + longitude, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getContext(), "LAT E LONG" + latitude + " - " + longitude, Toast.LENGTH_LONG).show();
                         }else{
                             latitude = -8.160599929350232;
                             longitude = -34.9206243082881;
@@ -191,7 +198,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
-        if(typeUser == "PACIENTE"){
+        if(typeUser.equals("paciente")){
 
             progressDialog.setMessage("Carregando");
             progressDialog.setCancelable(false);
@@ -241,6 +248,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             });
         }else{
             btnAddConsulta.show();
+            btnAddLastConsulta.show();
         }
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -255,23 +263,18 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     }
                 }
                 /*if(marker.equals(myMarker)){
-
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
                     mBuilder.setView(viewDialog);
                     final AlertDialog dialog = mBuilder.create();
-
                     TextView btnClose = (TextView) viewDialog.findViewById(R.id.closeDialogDisp);
-
                     btnClose.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
                         }
                     });
-
                     dialog.show();
-
                 }*/
                 return false;
             }
@@ -311,7 +314,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(typeUser .equals("VOLUNTARIO")){
+                if(typeUser .equals("voluntario")){
                     if(markerConsulta != null){
                         markerConsulta.remove();
                     }
@@ -366,8 +369,13 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         super.onResume();
         googleApiClient.connect();
         progressDialog.dismiss();
-        if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
-            btnAddLastConsulta.show();
+        if(!sharedPreferences.getString("TYPE", "").equals("paciente")){
+            //if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
+                btnAddLastConsulta.show();
+            //}
+        }else{
+            latDisp = 0.0;
+            longDisp = 0.0;
         }
     }
 

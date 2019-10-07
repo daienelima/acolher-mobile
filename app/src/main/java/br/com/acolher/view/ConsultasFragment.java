@@ -43,8 +43,8 @@ public class ConsultasFragment extends Fragment implements Serializable{
         ListView listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
 
         SharedPreferences pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
-        int id = pref.getInt("USERCODE",0);
-        String tipo = pref.getString("TIPO","erro");
+        int id = pref.getInt("USERCODE",1);
+        String tipo = pref.getString("TYPE","erro");
 
         if(tipo.equals("paciente")) {
             call = retrofitInit.getService().getConsultasPorPaciente(id);
@@ -52,6 +52,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
             call = retrofitInit.getService().getConsultasPorVoluntario(id);
         }else {
             //tem q tratar
+
         }
 
         call.enqueue(new Callback<List<Consulta>>() {

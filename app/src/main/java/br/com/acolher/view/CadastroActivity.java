@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.UiAutomation;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +55,8 @@ public class CadastroActivity extends AppCompatActivity{
     public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Usuario usuario = new Usuario();
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,6 +228,15 @@ public class CadastroActivity extends AppCompatActivity{
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
+
+                    String tipoUsuario = "";
+                    if(response.body().getCrm_crp().isEmpty()){
+                        tipoUsuario = "paciente";
+                    }else{
+                        tipoUsuario = "voluntario";
+                    }
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+
                     Intent home = new Intent(CadastroActivity.this, MapsActivity.class);
                     startActivity(home);
                 } else {
@@ -259,5 +271,13 @@ public class CadastroActivity extends AppCompatActivity{
 
         // visualizacao do dialogo
         alertDialog.show();
+    }
+
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
+        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", codigoUsuario);
+        editor.putString("TYPE", tipoUsuario);
+        editor.apply();
     }
 }
