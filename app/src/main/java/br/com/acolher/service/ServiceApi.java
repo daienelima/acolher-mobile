@@ -2,6 +2,8 @@ package br.com.acolher.service;
 
 
 import java.util.List;
+
+import br.com.acolher.dto.Login;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
@@ -31,6 +33,9 @@ public interface ServiceApi {
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
 
+    @GET("usuario/{codigo}")
+    Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
+
     @POST("consulta")
     Call<Consulta> cadastroConsulta (@Body Consulta consulta);
 
@@ -55,4 +60,9 @@ public interface ServiceApi {
     @PUT("consulta/cancelarpaciente")
     Call<Consulta> cancelarConsultaPaciente(@Body Consulta consulta);
 
+    @POST("usuario/login")
+    Call<Usuario> validarLoginUsuario(@Body Login login);
+
+    @POST("instituicao/login")
+    Call<Instituicao> validarLoginInstituicao(@Body Login login);
 }

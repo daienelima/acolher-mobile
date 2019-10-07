@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,13 +55,13 @@ public class AdapterConsultas extends BaseAdapter {
         TextView status =  view.findViewById(R.id.status);
 
         SharedPreferences pref = act.getApplicationContext().getSharedPreferences("USERDATA", act.getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TIPO","tipo não encontrado");
+        String tipo = pref.getString("TYPE","tipo não encontrado");
 
         Consulta consulta = consultas.get(position);
 
-        if(tipo.equals("paciente")) {
+        if(tipo.equals("PACIENTE")) {
             nome.setText(consulta.getProfissional().getNome_completo());
-        }else if (tipo.equals("voluntario")){
+        }else if (tipo.equals("VOLUNTARIO")){
             try {
                 nome.setText(consulta.getPaciente().getNome_completo());
             } catch (Exception e) {

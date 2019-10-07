@@ -36,6 +36,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
     private RetrofitInit retrofitInit = new RetrofitInit();
     Call<Consulta> call;
     Consulta c;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,15 +67,15 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("USERDATA", getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TIPO","tipo não encontrado");
+        String tipo = pref.getString("TYPE","tipo não encontrado");
 
 
 
         final Bundle bundle = getIntent().getExtras();
-        if(tipo.equals("paciente")){
+        if(tipo.equals("PACIENTE")){
             nomeLabel.setText("Nome do voluntário");
             nome.setText(c.getProfissional().getNome_completo());
-        }else if(tipo.equals("voluntario")){
+        }else if(tipo.equals("VOLUNTARIO")){
             nomeLabel.setText("Nome do paciente");
             try {
                 nome.setText(c.getPaciente().getNome_completo());
@@ -83,26 +84,36 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             }
         }else{
             //tem q tratar
+            //por hora, adicionar mesmo tratamento de voluntario
+            nomeLabel.setText("Nome do paciente");
+            try {
+                nome.setText(c.getPaciente().getNome_completo());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         data.setText(c.getData());
         hora.setText(c.getHora());
-        endereco.setText(c.getEndereco().getLogradouro()+",n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
+        endereco.setText(c.getEndereco().getLogradouro()+", n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
 
         cancelarConsulta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(tipo.equals("paciente")){
+                if(tipo.equals("PACIENTE")){
                     call = retrofitInit.getService().cancelarConsultaPaciente(c);
                     finish();
-                }else if(tipo.equals("voluntario")){
+                }else if(tipo.equals("VOLUNTARIO")){
                     call = retrofitInit.getService().cancelarConsulta(c);
                     finish();
                 }else{
                     //tem q tratar
+                    //por hora, adicionar mesmo tratamento de voluntario
+                    call = retrofitInit.getService().cancelarConsulta(c);
+                    finish();
                 }
                 call.enqueue(new Callback<Consulta>() {
                     @Override
-                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {                    }
+                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {}
 
                     @Override
                     public void onFailure(Call<Consulta> call, Throwable t) {}
@@ -119,13 +130,12 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng sydney = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
+        LatLng local = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
         mMap = googleMap;
         myMarker = mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney")
+                .position(local)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local,15.0f ));
 
     }
 }

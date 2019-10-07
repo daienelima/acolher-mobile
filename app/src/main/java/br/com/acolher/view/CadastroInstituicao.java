@@ -3,6 +3,7 @@ package br.com.acolher.view;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,8 @@ public class CadastroInstituicao extends AppCompatActivity{
     private String password;
     private String cnpj;
     private String telefone;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +138,9 @@ public class CadastroInstituicao extends AppCompatActivity{
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
+
+                    salvarDadosInstituicao(response.body().getCodigo());
+
                     Intent home = new Intent(CadastroInstituicao.this, MapsActivity.class);
                     startActivity(home);
                 } else {
@@ -171,5 +177,13 @@ public class CadastroInstituicao extends AppCompatActivity{
 
         // visualizacao do dialogo
         alertDialog.show();
+    }
+
+    public void salvarDadosInstituicao(Integer codigoUsuario) {
+        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", codigoUsuario);
+        editor.putString("TYPE", "instituicao");
+        editor.apply();
     }
 }
