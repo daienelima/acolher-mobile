@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,14 +19,13 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
-import br.com.acolher.dto.Login;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class login extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     private TextInputLayout email;
     private TextInputLayout senha;
@@ -33,12 +33,14 @@ public class login extends AppCompatActivity {
     private TextView cadastro;
     public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
+    ProgressDialog progressDialogLogin;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        progressDialogLogin = new ProgressDialog(Login.this);
         setContentView(R.layout.activity_login);
         email = findViewById(R.id.inputEmail);
         senha = findViewById(R.id.inputSenha);
@@ -55,7 +57,10 @@ public class login extends AppCompatActivity {
                     email.setErrorTextColor(ColorStateList.valueOf(Color.GREEN));
                     email.setError("E-mail inválido!");
                 }else{
-                    Login login = new Login();
+                    progressDialogLogin.setMessage("Entrando...");
+                    progressDialogLogin.setCancelable(false);
+                    progressDialogLogin.show();
+                    br.com.acolher.dto.Login login = new br.com.acolher.dto.Login();
                     login.setEmail(email.getEditText().getText().toString());
                     login.setSenha(senha.getEditText().getText().toString());
 
@@ -141,7 +146,7 @@ public class login extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
 
-    private void validarLoginUsuario(Login login){
+    private void validarLoginUsuario(br.com.acolher.dto.Login login){
 
         Call<Usuario> validarLoginUsuario = retrofitInit.getService().validarLoginUsuario(login);
         validarLoginUsuario.enqueue(new Callback<Usuario>() {
@@ -152,14 +157,20 @@ public class login extends AppCompatActivity {
                     Log.d(TAG, response.body().toString());
                     String tipoUsuario = "";
                     if(response.body().getCrm_crp().isEmpty()){
-                        tipoUsuario = "paciente";
+                        tipoUsuario = "PACIENTE";
                     }else{
-                        tipoUsuario = "voluntario";
+                        tipoUsuario = "VOLUNTARIO";
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
-                    Intent home = new Intent(login.this, MapsActivity.class);
+                    Intent home = new Intent(Login.this, MapsActivity.class);
+                    if(progressDialogLogin.isShowing()){
+                        progressDialogLogin.dismiss();
+                    }
                     startActivity(home);
                 } else {
+                    if(progressDialogLogin.isShowing()){
+                        progressDialogLogin.dismiss();
+                    }
                     Log.d(TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
                         validarLoginInstituicao(login);
@@ -176,7 +187,7 @@ public class login extends AppCompatActivity {
 
     }
 
-    private void validarLoginInstituicao(Login login){
+    private void validarLoginInstituicao(br.com.acolher.dto.Login login){
 
         Call<Instituicao> validarLoginInstituicao = retrofitInit.getService().validarLoginInstituicao(login);
         validarLoginInstituicao.enqueue(new Callback<Instituicao>() {
@@ -186,7 +197,10 @@ public class login extends AppCompatActivity {
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
                     salvarDadosInstituicao(response.body().getCodigo());
-                    Intent home = new Intent(login.this, MapsActivity.class);
+                    Intent home = new Intent(Login.this, MapsActivity.class);
+                    if(progressDialogLogin.isShowing()){
+                        progressDialogLogin.dismiss();
+                    }
                     startActivity(home);
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
@@ -205,7 +219,10 @@ public class login extends AppCompatActivity {
     }
 
     public void msgLoginInvalido(){
-        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(login.this);
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(Login.this);
+        if(progressDialogLogin.isShowing()){
+            progressDialogLogin.dismiss();
+        }
         alertDialog.setTitle("Atenção");
         alertDialog.setMessage("Login inválido!");
         alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -239,7 +256,7 @@ public class login extends AppCompatActivity {
      * @param email email a ser adicionado no SharedPreferences
      */
     public void salvarLogin(String email) {
-        sharedPreferences = this.getSharedPreferences("login", MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         //editor.putBoolean("logado", true);
         editor.putString("email", email.toLowerCase());
@@ -252,7 +269,7 @@ public class login extends AppCompatActivity {
      * Caso não esteja: recuperar último e-mail logado, se houver
      */
     private void usuarioLogado() {
-        sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
        // if (sharedPreferences.getBoolean("logado", false)) {
        //     Intent home = new Intent(this, MapsActivity.class);
        //     startActivity(home);

@@ -50,7 +50,8 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputCep"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="220dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="5dp"
@@ -67,7 +68,8 @@
 
                 <Button
                     android:id="@+id/btnBuscaCep"
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
@@ -86,7 +88,8 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputRua"
-                    android:layout_width="220dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
@@ -103,7 +106,9 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputNumero"
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="20dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -151,7 +156,8 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputCidade"
-                    android:layout_width="220dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
@@ -167,7 +173,8 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputUF"
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="20dp"

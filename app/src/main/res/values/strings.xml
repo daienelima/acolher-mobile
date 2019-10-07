@@ -60,7 +60,7 @@
     <!-- label de Cadastro de disponibilidade. -->
 
     <string name="label_cadastro_data">Data</string>
-    <string name="label_button_concluir_cadastro">Confirmar Cadastro</string>
+    <string name="label_button_concluir_cadastro">Cadastrar</string>
     <string name="label_cadastro_horas">Hora</string>
     <string name="label_cadastro_numero">Numero - Endereço</string>
 
