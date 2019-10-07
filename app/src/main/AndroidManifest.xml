@@ -16,18 +16,18 @@
         <activity android:name=".view.MeusDadosInstituicaoActivity"/>
         <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas" />
-        <activity android:name=".view.login" />
-        <activity android:name=".view.AlterarSenha" />
-        <activity android:name=".view.CadastroEndereco" />
-        <activity android:name=".view.CadastroActivity" />
-        <activity android:name=".view.AlterarDadosInstituicao" />
-        <activity android:name=".view.CadastroInstituicao" />
-        <activity android:name=".view.MapsActivity">
+        <activity android:name=".view.login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.AlterarSenha" />
+        <activity android:name=".view.CadastroEndereco" />
+        <activity android:name=".view.CadastroActivity" />
+        <activity android:name=".view.AlterarDadosInstituicao" />
+        <activity android:name=".view.CadastroInstituicao" />
+        <activity android:name=".view.MapsActivity" />
         <activity android:name=".view.Consultas" />
         <activity
             android:name=".view.MeusDadosActivity"

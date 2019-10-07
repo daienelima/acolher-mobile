@@ -45,7 +45,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
         mView = inflater.inflate(R.layout.fragment_consultas, null);
         consultas = new ArrayList<>();
         listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
-
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
         id = pref.getInt("USERCODE",0);
 
