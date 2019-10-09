@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -57,13 +58,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
     private SharedPreferences sharedPreferences;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_cadastro_disponibilidade);
-
+        progressDialog = new ProgressDialog(CadastroDisponibilidade.this);
         pegaIdCampos();
 
         Intent intent = getIntent();
@@ -94,11 +96,17 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            //enderecoConsulta = pegarEndereco();
+
         }
 
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.setMessage("Cadastrando disponibilidade!");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
@@ -142,6 +150,10 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                         cadastroConsulta(novaConsulta);
                     }
 
+                }else{
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
                 }
 
             }
@@ -270,23 +282,31 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
                     startActivity(home);
                 } else {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Consulta> call, Throwable t) {
-
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
         });
     }
 
     public Endereco pegarEndereco(Address address){
-        Endereco endereco = new Endereco();
 
+        Endereco endereco = new Endereco();
         endereco.setLongitude(lon.toString());
         endereco.setLatitude(lat.toString());
         endereco.setLogradouro(address.getThoroughfare());
@@ -294,7 +314,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         endereco.setCep(Validacoes.cleanCep(address.getPostalCode()));
         endereco.setCidade(address.getSubAdminArea());
         endereco.setUf(Validacoes.deParaEstados(address.getAdminArea()));
-
         return endereco;
     }
 }

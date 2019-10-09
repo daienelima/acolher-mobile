@@ -101,10 +101,8 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             public void onClick(View v) {
                 if(tipo.equals("PACIENTE")){
                     call = retrofitInit.getService().cancelarConsultaPaciente(c);
-                    finish();
                 }else if(tipo.equals("VOLUNTARIO")){
                     call = retrofitInit.getService().cancelarConsulta(c);
-                    finish();
                 }else{
                     //tem q tratar
                     //por hora, adicionar mesmo tratamento de voluntario
@@ -113,10 +111,14 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 call.enqueue(new Callback<Consulta>() {
                     @Override
-                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {}
+                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                        finish();
+                    }
 
                     @Override
-                    public void onFailure(Call<Consulta> call, Throwable t) {}
+                    public void onFailure(Call<Consulta> call, Throwable t) {
+                        finish();
+                    }
                 });
             }
         });

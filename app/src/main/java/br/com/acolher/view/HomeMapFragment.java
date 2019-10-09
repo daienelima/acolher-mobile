@@ -122,7 +122,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         if(!sharedPreferences.getString("TYPE", "").equals("PACIENTE")) {
             if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
-                btnAddLastConsulta.show();
+                //btnAddLastConsulta.show();
             }
         }
 
@@ -372,7 +372,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         googleApiClient.connect();
         progressDialog.dismiss();
         if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0 && !typeUser.equals("PACIENTE")){
-            btnAddLastConsulta.show();
+            //btnAddLastConsulta.show();
         }
         super.onResume();
     }
