@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;

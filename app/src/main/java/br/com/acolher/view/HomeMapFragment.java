@@ -104,17 +104,18 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         progressDialog = new ProgressDialog(getContext());
         navigationView = getActivity().findViewById(R.id.bottom_navigation);
+
         /**
          * Shared Preferences Mocado
          */
 
         sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
-/*
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        /*SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("USERCODE", 4);
         editor.putString("TYPE", "PACIENTE");
-        editor.apply();
-*/
+        editor.apply();*/
+
         btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
         btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
         latDisp = 0.0;
