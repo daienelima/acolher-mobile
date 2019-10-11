@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +17,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
-import br.com.acolher.helper.Helper;
+import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -28,25 +26,22 @@ import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
-    private TextInputLayout email;
-    private TextInputLayout senha;
+    private TextInputLayout inputEmail, inputSenha;
     private Button login;
     private TextView cadastro;
     public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
-    ProgressDialog progressDialogLogin;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    private ProgressDialog progressDialogLogin;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progressDialogLogin = new ProgressDialog(Login.this);
         setContentView(R.layout.activity_login);
-        email = findViewById(R.id.inputEmail);
-        senha = findViewById(R.id.inputSenha);
-        login = findViewById(R.id.buttonLogin);
-        cadastro = findViewById(R.id.cadastro);
+
+        findById();
 
         //Verificar se o usuário está logado
         usuarioLogado();
@@ -54,16 +49,15 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validaEmail(email.getEditText().getText().toString())){
-                    email.setErrorTextColor(ColorStateList.valueOf(Color.GREEN));
-                    email.setError("E-mail inválido!");
-                }else{
+                if(validateLogin()){
+                    String email = inputEmail.getEditText().getText().toString();
+                    String senha = inputSenha.getEditText().getText().toString();
                     progressDialogLogin.setMessage("Entrando...");
                     progressDialogLogin.setCancelable(false);
                     progressDialogLogin.show();
                     br.com.acolher.dto.Login login = new br.com.acolher.dto.Login();
-                    login.setEmail(email.getEditText().getText().toString());
-                    login.setSenha(senha.getEditText().getText().toString());
+                    login.setEmail(email);
+                    login.setSenha(senha);
 
                     salvarLogin(login.getEmail());
                     validarLoginUsuario(login);
@@ -108,8 +102,6 @@ public class Login extends AppCompatActivity {
                 final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
                 Intent intent = new Intent(login.getContext(), CadastroEndereco.class);
 
-
-
                 btnPaciente.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -141,6 +133,28 @@ public class Login extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean validateLogin(){
+
+        String email = inputEmail.getEditText().getText().toString();
+        String senha = inputSenha.getEditText().getText().toString();
+
+        if(!validaEmail(email)){
+            inputEmail.setError("E-mail inválido!");
+           return false;
+        }
+        if(!UsuarioController.empty(senha)) {
+            inputSenha.setError("Senha Inválida!");
+            return  false;
+        }
+        return true;
+    }
+    private void findById() {
+        inputEmail = findViewById(R.id.inputEmail);
+        inputSenha = findViewById(R.id.inputSenha);
+        login = findViewById(R.id.buttonLogin);
+        cadastro = findViewById(R.id.cadastro);
     }
 
     public boolean validaEmail(String emailValida) {
@@ -276,7 +290,7 @@ public class Login extends AppCompatActivity {
        //     startActivity(home);
        //     finish();
        // } else {
-            email.getEditText().setText(sharedPreferences.getString("email", null));
+            inputEmail.getEditText().setText(sharedPreferences.getString("email", null));
        // }
     }
 }

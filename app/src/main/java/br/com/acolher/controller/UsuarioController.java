@@ -7,9 +7,21 @@ import br.com.acolher.helper.Validacoes;
 
 public class UsuarioController {
 
+    /**
+     * Valida se uma String é vazia ou nula
+     * @param s
+     * @return
+     */
+    public static boolean empty(String s){
+        if(s == null){
+            return false;
+        }
+        return s.trim().length() > 0;
+    }
+
     public String validarNome(String nome){
 
-        if(nome == null || nome.isEmpty() || nome == "") {
+        if(empty(nome)) {
             return "Campo obrigatorio!";
         }
 

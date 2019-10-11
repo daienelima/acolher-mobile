@@ -10,7 +10,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="6dp"
         android:minHeight="200dp">
 
@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dados de endereço"
+                android:text="Dados de Endereço"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
                 android:textSize="22dp"/>
@@ -61,6 +61,7 @@
                         android:id="@+id/labelCep"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:hint="@string/label_cep"
                         android:maxLength="10" />
 
