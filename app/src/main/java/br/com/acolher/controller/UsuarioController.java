@@ -21,7 +21,7 @@ public class UsuarioController {
 
     public String validarNome(String nome){
 
-        if(empty(nome)) {
+        if(!empty(nome)) {
             return "Campo obrigatorio!";
         }
 
@@ -49,18 +49,8 @@ public class UsuarioController {
         return "";
     }
 
-    public String validarEmail(String email){
-
-        if(email == null || email.isEmpty() || email == ""){
-            return "Campo obrigatório!";
-        }
-
-        if(!Validacoes.validaEmail(email)){
-            return "formato de email inválido!";
-        }
-
-        return "";
-
+    public static boolean validaEmail(String emailValida) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
 
     public String validaPassword(String password){
@@ -85,16 +75,6 @@ public class UsuarioController {
 
     }
 
-    public String validarDataNasc(String dataNasc){
-
-        if(dataNasc == null || dataNasc == "" || dataNasc.isEmpty()){
-            return "Campo obrigatório!";
-        }
-
-        return "";
-
-    }
-
     public String validaCpf(String cpf){
 
         if(cpf == null || cpf.isEmpty() || cpf == ""){
@@ -111,14 +91,6 @@ public class UsuarioController {
 
         return "";
 
-    }
-
-    public String validaCRM(String crm){
-        if(crm == null || crm.isEmpty() || crm == ""){
-            return "Campo obrigatório";
-        }
-
-        return "";
     }
 
 

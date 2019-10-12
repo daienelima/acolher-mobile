@@ -1,8 +1,6 @@
 package br.com.acolher.view;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
-import android.app.UiAutomation;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,15 +11,16 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 
-import br.com.acolher.apiconfig.RetrofitInit;
-import br.com.acolher.controller.UsuarioController;
-import br.com.acolher.helper.MaskWatcher;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 
 import br.com.acolher.R;
+import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Usuario;
@@ -31,26 +30,15 @@ import retrofit2.Response;
 
 public class CadastroActivity extends AppCompatActivity{
 
+    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório";
+
     Calendar calendar;
     DatePickerDialog datePickerDialog;
-
-    private TextInputLayout inputDataNasc;
     private ImageButton btnCalendar;
     private Button continuarCadastro;
-    private TextInputLayout inputPassword;
-    private TextInputLayout inputTelefone;
-    private TextInputLayout inputCpf;
-    private TextInputLayout inputCRM_CRP;
-    private TextInputLayout inputNome;
-    private TextInputLayout inputEmail;
+    private TextInputLayout inputDataNasc, inputPassword, inputTelefone, inputCpf, inputCRM_CRP, inputNome, inputEmail;
     private UsuarioController uc;
-    private String nome;
-    private String data;
-    private String email;
-    private String password;
-    private String cpf;
-    private String telefone;
-    private String crpCrm;
+    private String nome, data, email, password, cpf, telefone, crpCrm;
     private boolean hasCrpCrm;
     public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
@@ -62,39 +50,17 @@ public class CadastroActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        
         hasCrpCrm = false;
-
         //Configurações da activity
         setContentView(R.layout.activity_cadastro_basico);
-
-        inputDataNasc = (TextInputLayout) findViewById(R.id.inputDataNasc);
-
-        btnCalendar = (ImageButton) findViewById(R.id.btnCalendar);
-
-        continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
-
-        inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
-
-        inputCpf = (TextInputLayout) findViewById(R.id.inputCPFCad);
-        inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
-
-        inputCRM_CRP = (TextInputLayout) findViewById(R.id.inputCRM);
-        inputCRM_CRP.setVisibility(View.GONE);
-
-        inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
-        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
-
-        inputNome = (TextInputLayout) findViewById(R.id.inputNomeCompleto);
-
-        inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+        findById();
 
         Intent intent = getIntent();
         if(intent.getStringExtra("perfil") != null){
-           if(intent.getStringExtra("perfil").equals("profissional")) {
-               hasCrpCrm = true;
-               inputCRM_CRP.setVisibility(View.VISIBLE);
-           }
+            if(intent.getStringExtra("perfil").equals("profissional")) {
+                hasCrpCrm = true;
+                inputCRM_CRP.setVisibility(View.VISIBLE);
+            }
         }
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +109,21 @@ public class CadastroActivity extends AppCompatActivity{
 
     }
 
+    private void findById() {
+        inputDataNasc = findViewById(R.id.inputDataNasc);
+        btnCalendar = findViewById(R.id.btnCalendar);
+        continuarCadastro = findViewById(R.id.buttonContinuarCadastro);
+        inputPassword = findViewById(R.id.inputPassword);
+        inputCpf = findViewById(R.id.inputCPFCad);
+        inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+        inputCRM_CRP = findViewById(R.id.inputCRM);
+        inputCRM_CRP.setVisibility(View.GONE);
+        inputTelefone = findViewById(R.id.inputTelefone);
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputNome = findViewById(R.id.inputNomeCompleto);
+        inputEmail = findViewById(R.id.inputEmail);
+    }
+
     public void openCalendar(){
 
         inputDataNasc.setErrorEnabled(false);
@@ -172,49 +153,41 @@ public class CadastroActivity extends AppCompatActivity{
         crpCrm = inputCRM_CRP.getEditText().getText().toString();
 
         if(uc.validarNome(nome) != ""){
-            inputNome.getEditText().setError(uc.validarNome(nome));
+            inputNome.setError(uc.validarNome(nome));
             return false;
         }
 
-        if(uc.validarDataNasc(data) != ""){
-            inputDataNasc.getEditText().setError(uc.validarDataNasc(data));
+        if(!UsuarioController.empty(data)){
+            inputDataNasc.setError("Campo Obrigatorio");
             return false;
         }
 
-        if(uc.validarEmail(email) != ""){
-            inputEmail.getEditText().setError(uc.validarEmail(email));
+        if(!UsuarioController.validaEmail(email)){
+            inputEmail.setError("E-mail Invalido");
             return false;
         }
 
         if(uc.validaPassword(password) != ""){
-            inputPassword.getEditText().setError(uc.validaPassword(password));
+            inputPassword.setError(uc.validaPassword(password));
             return false;
         }
 
         if(uc.validarTelefone(telefone) != ""){
-            inputTelefone.getEditText().setError(uc.validarTelefone(telefone));
+            inputTelefone.setError(uc.validarTelefone(telefone));
             return false;
         }
 
         if(uc.validaCpf(cpf) != ""){
-                inputCpf.getEditText().setError(uc.validaCpf(cpf));
-                return false;
+            inputCpf.setError(uc.validaCpf(cpf));
+            return false;
         }
 
         if(hasCrpCrm){
-            if(uc.validaCRM(crpCrm) != ""){
-                inputCRM_CRP.getEditText().setError((uc.validaCRM(crpCrm)));
+            if(UsuarioController.empty(crpCrm)){
+                inputCRM_CRP.setError(CAMPO_OBRIGATORIO);
                 return false;
             }
         }
-
-        /*if(inputNome.getText().toString().isEmpty()){
-            //textInputNome.setErrorTextAppearance();
-            inputNome.setError(getString(R.string.error_nome_completo));
-            return false;
-        }else{
-            textInputNome.setErrorEnabled(false);
-        }*/
 
         return true;
 

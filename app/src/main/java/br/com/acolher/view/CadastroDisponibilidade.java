@@ -47,14 +47,12 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-    private TextInputLayout inputNome, inputData, inputHora, inputCPR_CRM, inputNumero;
+    private TextInputLayout inputData, inputHora, inputNumero;
     private ImageButton btnCalendar;
     private Button concluirCadastro, buttonCancelar;
-    private int currentHour;
-    private int currentMinute;
+    private int currentHour, currentMinute;
     private Address address;
-    private Double lon;
-    private Double lat;
+    private Double lon, lat;
     private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
     private SharedPreferences sharedPreferences;
@@ -84,11 +82,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         editor.putString("LON", lon.toString());
         editor.apply();
 
-     /*   inputCPR_CRM.getEditText().setText("8454654");
-        inputCPR_CRM.setEnabled(false);
-        inputNome.getEditText().setText("Medico");
-        inputNome.setEnabled(false);*/
-
         if(lat != 0.0 && lon != 0.0){
             try {
                 address = Validacoes.buscarEndereco(lat, lon, getApplicationContext());
@@ -96,8 +89,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            //enderecoConsulta = pegarEndereco();
 
         }
 
@@ -198,8 +189,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     }
 
     private void pegaIdCampos() {
-        // = findViewById(R.id.input_CRP_CRM);
-        //inputNome = findViewById(R.id.inputNomeCompleto);
         inputData = findViewById(R.id.inputDataNasc);
         btnCalendar = findViewById(R.id.btnCalendar);
         inputHora = findViewById(R.id.inputHora);
@@ -212,7 +201,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     public void openCalendar(){
 
         inputData.setErrorEnabled(false);
-
         calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -248,14 +236,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
     public boolean validateForm(){
 
-        //String nome = inputNome.getEditText().getText().toString();
+        String numero = inputNumero.getEditText().getText().toString();
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-       /* if(!DisponibilidadeController.empty(nome)){
-            inputNome.setError("Nome não dede ficar em branco");
-            return false;
-        }*/
+        if(!DisponibilidadeController.empty(numero)){
+            inputNumero.setError("Campo Obrigatorio");
+            return  false;
+        }
 
         if(!DisponibilidadeController.empty(data)){
             inputData.setError("Campo Obrigatorio");
@@ -266,7 +254,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             inputHora.setError("Campo Obrigatorio");
             return false;
         }
-
 
         return true;
     }
