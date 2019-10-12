@@ -42,8 +42,6 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         findById();
-
-        //Verificar se o usuário está logado
         usuarioLogado();
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +138,7 @@ public class Login extends AppCompatActivity {
         String email = inputEmail.getEditText().getText().toString();
         String senha = inputSenha.getEditText().getText().toString();
 
-        if(!validaEmail(email)){
+        if(!UsuarioController.empty(email)){
             inputEmail.setError("E-mail inválido!");
            return false;
         }
@@ -150,15 +148,12 @@ public class Login extends AppCompatActivity {
         }
         return true;
     }
+
     private void findById() {
         inputEmail = findViewById(R.id.inputEmail);
         inputSenha = findViewById(R.id.inputSenha);
         login = findViewById(R.id.buttonLogin);
         cadastro = findViewById(R.id.cadastro);
-    }
-
-    public boolean validaEmail(String emailValida) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
 
     private void validarLoginUsuario(br.com.acolher.dto.Login login){

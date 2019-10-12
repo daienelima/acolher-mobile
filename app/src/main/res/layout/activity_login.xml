@@ -41,6 +41,7 @@
                     android:id="@+id/labelEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:hint="@string/label_cadastro_email" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -60,6 +61,7 @@
                     android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:hint="@string/label_senha" />
             </com.google.android.material.textfield.TextInputLayout>
 
