@@ -1,13 +1,19 @@
 package br.com.acolher.view;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +27,8 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private GoogleMap mMap;
     private ActionBar actionBar;
     public String tipoUsuario = "Instituição";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -57,6 +65,49 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.navigation_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.tool_sair:
+                limparDadosUsuario();
+                Intent login = new Intent(MapsActivity.this, Login.class);
+                startActivity(login);
+                return true;
+
+            case R.id.tool_conta:
+                return true;
+
+            case R.id.tool_chat:
+                return true;
+
+            case R.id.tool_agenda:
+                return true;
+
+            case R.id.tool_home:
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public void limparDadosUsuario() {
+        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         Fragment fragment = null;
@@ -86,6 +137,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
+
 
 
     /**
