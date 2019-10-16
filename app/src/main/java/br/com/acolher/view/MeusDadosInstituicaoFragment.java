@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MeusDadosInstituicaoFragment extends Fragment {
+public class MeusDadosInstituicaoFragment extends Fragment implements View.OnClickListener {
 
     //Declarações
     private String TAG = "API";
@@ -36,7 +36,7 @@ public class MeusDadosInstituicaoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_meus_dados_instituicao, null);
+        mView = inflater.inflate(R.layout.fragment_meus_dados_instituicao, container,false);
 
         //Buscar em Fragments
         findById();
@@ -61,6 +61,20 @@ public class MeusDadosInstituicaoFragment extends Fragment {
             }
         });
 
+        habilitarEdicao(false);
+
+        //Chamar Edição ao clicar alterar
+        alterar.setOnClickListener(view -> {
+
+            habilitarEdicao(true);
+        });
+
+        //Chamar Put ao clicar Salvar
+        salvar.setOnClickListener(view -> {
+
+            habilitarEdicao(false);
+        });
+
         return mView;
     }
     //incluir dados em campos
@@ -73,12 +87,33 @@ public class MeusDadosInstituicaoFragment extends Fragment {
         telefone.getEditText().setTextColor(Color.BLACK);
         cnpj.getEditText().setText(dados.getCnpj());
         cnpj.getEditText().setTextColor(Color.BLACK);
+    }
 
-        //Desabilitar cammpos
+    private void habilitarEdicao (boolean opcao){
+    if(opcao){
+        //Habilitar campos
+        nomeCompleto.setEnabled(true);
+        email.setEnabled(true);
+        telefone.setEnabled(true);
+        cnpj.setEnabled(true);
+        alterar.setEnabled(false);
+        alterar.setActivated(false);
+        salvar.setEnabled(true);
+        salvar.setVisibility(View.VISIBLE);
+
+    }else{
+
+        //Desabilitar campos
         nomeCompleto.setEnabled(false);
         email.setEnabled(false);
         telefone.setEnabled(false);
         cnpj.setEnabled(false);
+        alterar.setEnabled(true);
+        alterar.setActivated(true);
+        salvar.setEnabled(false);
+        salvar.setVisibility(View.INVISIBLE);
+    }
+
     }
         //Realizar Busca em Fragment
     private void findById() {
@@ -90,14 +125,15 @@ public class MeusDadosInstituicaoFragment extends Fragment {
         salvar =  mView.findViewById(R.id.buttonSalvar);
     }
 
-    //Chamar Edição ao clicar
-    /*
-       alterar.OnClickListener){
-        alterar.setEnabled(false);
-    });*/
+    @Override
+    public void onClick(View v) {
+
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
+
 }
