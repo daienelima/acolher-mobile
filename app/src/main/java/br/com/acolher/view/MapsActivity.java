@@ -129,7 +129,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 if (tipoUsuario.equals("Usuario")){
                     fragment = new MinhaContaFragment();
                 }*/
-                fragment = new MinhaContaFragment();
+                fragment = new MeusDadosInstituicaoFragment();
                 break;
             default:
                 break;
