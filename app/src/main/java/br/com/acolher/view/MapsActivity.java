@@ -77,19 +77,11 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.tool_sair:
                 limparDadosUsuario();
                 Intent login = new Intent(MapsActivity.this, Login.class);
+                login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(login);
                 return true;
 
-            case R.id.tool_conta:
-                return true;
-
-            case R.id.tool_chat:
-                return true;
-
-            case R.id.tool_agenda:
-                return true;
-
-            case R.id.tool_home:
+            case R.id.tool_ajuda:
                 return true;
 
             default:
