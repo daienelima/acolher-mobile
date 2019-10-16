@@ -1,5 +1,6 @@
 package br.com.acolher.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,7 +27,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     private GoogleMap mMap;
     private ActionBar actionBar;
-    public String tipoUsuario = "Instituição";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -110,6 +110,13 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
+        //Buscar Informação do sharedPreferences Inicio
+
+        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        //Buscar Informação do sharedPreferences Fim
+
+
         Fragment fragment = null;
 
         switch (menuItem.getItemId()){
@@ -123,13 +130,12 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
-                /*if (tipoUsuario.equals("Instituição")){
-                fragment = new MeusDadosInstituicaoFragment();
-                }
-                if (tipoUsuario.equals("Usuario")){
+
+                if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+                    fragment = new MeusDadosInstituicaoFragment();
+                }else{
                     fragment = new MinhaContaFragment();
-                }*/
-                fragment = new MeusDadosInstituicaoFragment();
+                }
                 break;
             default:
                 break;
