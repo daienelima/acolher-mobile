@@ -28,9 +28,10 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     //Declarações
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private TextInputLayout nomeCompleto, email, telefone,cnpj;
+    private TextInputLayout nomeCompleto, email, telefone,cnpj,endereco;
     private Button alterar,salvar;
     private View mView;
+    private String enderecoCompleto;
 
     //Levantando Fragment
     @Nullable
@@ -79,6 +80,9 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     }
     //incluir dados em campos
     private void meusdados (Instituicao dados){
+
+        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
+
         nomeCompleto.getEditText().setText(dados.getNome());
         nomeCompleto.getEditText().setTextColor(Color.BLACK);
         email.getEditText().setText(dados.getEmail());
@@ -87,6 +91,8 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         telefone.getEditText().setTextColor(Color.BLACK);
         cnpj.getEditText().setText(dados.getCnpj());
         cnpj.getEditText().setTextColor(Color.BLACK);
+        endereco.getEditText().setText(enderecoCompleto);
+        endereco.getEditText().setTextColor(Color.BLACK);
     }
 
     private void habilitarEdicao (boolean opcao){
@@ -96,8 +102,10 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         email.setEnabled(true);
         telefone.setEnabled(true);
         cnpj.setEnabled(true);
+        endereco.setEnabled(true);
         alterar.setEnabled(false);
         alterar.setActivated(false);
+        alterar.setVisibility(View.INVISIBLE);
         salvar.setEnabled(true);
         salvar.setVisibility(View.VISIBLE);
 
@@ -108,9 +116,11 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         email.setEnabled(false);
         telefone.setEnabled(false);
         cnpj.setEnabled(false);
+        endereco.setEnabled(false);
         alterar.setEnabled(true);
         alterar.setActivated(true);
         salvar.setEnabled(false);
+        alterar.setVisibility(View.VISIBLE);
         salvar.setVisibility(View.INVISIBLE);
     }
 
@@ -121,6 +131,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         email =  mView.findViewById(R.id.inputEmail);
         telefone =  mView.findViewById(R.id.inputTelefone);
         cnpj =  mView.findViewById(R.id.inputCnpj);
+        endereco =  mView.findViewById(R.id.inputEndereco);
         alterar =  mView.findViewById(R.id.buttonAlterar);
         salvar =  mView.findViewById(R.id.buttonSalvar);
     }
