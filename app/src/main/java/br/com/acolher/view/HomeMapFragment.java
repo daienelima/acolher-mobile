@@ -17,7 +17,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.DialogInterface;
@@ -52,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
@@ -102,8 +105,26 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressDialog = new ProgressDialog(getContext());
-        navigationView = getActivity().findViewById(R.id.bottom_navigation);
+        findById(view);
+
+        if(mMapView != null){
+            mMapView.onCreate(null);
+            mMapView.onResume();
+            mMapView.getMapAsync(this);
+        }
+
+        MapsInitializer.initialize(getContext());
+        fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
+
+        if(googleApiClient == null){
+
+            googleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+        }
 
         /**
          * Shared Preferences Mocado
@@ -116,8 +137,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         editor.putString("TYPE", "PACIENTE");
         editor.apply();*/
 
-        btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
-        btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
+
         latDisp = 0.0;
         longDisp = 0.0;
 
@@ -125,26 +145,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
                 //btnAddLastConsulta.show();
             }
-        }
-
-        MapsInitializer.initialize(getContext());
-        fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
-
-        mMapView = (MapView) mView.findViewById(R.id.map);
-        if(mMapView != null){
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(this);
-        }
-
-        if(googleApiClient == null){
-
-            googleApiClient = new GoogleApiClient.Builder(getContext())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-
         }
 
         codeUser = sharedPreferences.getInt("USERCODE", 0);
@@ -258,13 +258,47 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                if(!marker.equals(myMarker)){
+                Integer id = Integer.parseInt(marker.getSnippet());
+
+
+                if(verifyDuplicityLatLng(id)){
+                    ArrayList<Consulta> consultasPorLocalz = consultasPorLocalizacao(id);
+
+                    View view = getLayoutInflater().inflate(R.layout.modal_disponibilidades, null);
+                    ListView listView = view.findViewById(R.id.listaDisponibilidades);
+                    AdapterDisponibilidades adapterDisponibilidades = new AdapterDisponibilidades(consultasPorLocalz, getContext());
+                    listView.setAdapter(adapterDisponibilidades);
+
+                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setView(view);
+                    final AlertDialog dialog = mBuilder.create();
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Toast.makeText(getContext(), String.valueOf(id), Toast.LENGTH_LONG).show();
+                            openModal(Integer.parseInt(String.valueOf(id)));
+                        }
+                    });
+
+                    dialog.show();
+                }else {
+                    openModal(id);
+                }
+
+                //ModalDisponibilidades.listaConsultas = consultas;
+
+                /*ModalDisponibilidades.listaConsultas = consultas;
+                Intent modal = new Intent(getContext(), ModalDisponibilidades.class);
+                startActivity(modal);*/
+
+                /*if(!marker.equals(myMarker)){
                     if(consPorUser != null){
                         openDetails(consPorUser);
                     }else if(consultas != null){
                         openModal(Integer.parseInt(marker.getSnippet()));
                     }
-                }
+                }*/
                 /*if(marker.equals(myMarker)){
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
@@ -324,6 +358,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
+    public void findById(View view){
+        progressDialog = new ProgressDialog(getContext());
+        navigationView = getActivity().findViewById(R.id.bottom_navigation);
+        btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
+        btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
+        mMapView = (MapView) mView.findViewById(R.id.map);
+    }
+
     public void callCadastroDisp(Integer codigo){
         Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
         telaCadastroDisp.putExtra("lat", latDisp);
@@ -339,6 +381,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     public void generateMarkers(List<Consulta> consultas, Consulta consultaPorUsuario){
         if(consultas != null){
+            List<LatLng> listLatLng = new ArrayList<LatLng>();
             for(int i=0; i<consultas.size(); i++){
                 LatLng disponibilidade;
                 try{
@@ -347,11 +390,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     e.printStackTrace();
                     continue;
                 }
-                mMap.addMarker(new MarkerOptions()
-                        .position(disponibilidade)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
-                        .snippet(String.valueOf(i))
-                );
+                if(!listLatLng.contains(disponibilidade)){
+                    listLatLng.add(disponibilidade);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(disponibilidade)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
+                            .snippet(String.valueOf(consultas.get(i).getCodigo()))
+                    );
+                }
             }
         }else if(consultaPorUsuario != null){
             LatLng disponibilidade = new LatLng(Double.parseDouble(consultaPorUsuario.getEndereco().getLatitude()), Double.parseDouble(consultaPorUsuario.getEndereco().getLongitude()));
@@ -422,14 +468,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         return res;
     }
 
-    public void openModal(int index){
+    public void openModal(int codigo){
 
-        Consulta consulta = consultas.get(index);
+        Consulta consulta = getConsulta(codigo);
 
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
         View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
         mBuilder.setView(viewDialog);
-        final AlertDialog dialog = mBuilder.create();
+        AlertDialog dialog = mBuilder.create();
 
         TextView labelVoluntario = viewDialog.findViewById(R.id.tvVoluntario);
         TextView valueVoluntario = viewDialog.findViewById(R.id.vlVoluntario);
@@ -537,5 +583,49 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         });
         alerta = builder.create();
         alerta.show();
+    }
+
+    public Consulta getConsulta(Integer codigo){
+        Consulta consulta = null;
+        for(Consulta c : consultas){
+            if(c.getCodigo() == codigo){
+                consulta = c;
+            }
+        }
+        return consulta;
+    }
+
+    public boolean verifyDuplicityLatLng(Integer codigo){
+
+        Consulta consulta = getConsulta(codigo);
+        LatLng localConsulta = new LatLng(Double.parseDouble(consulta.getEndereco().getLatitude()), Double.parseDouble(consulta.getEndereco().getLongitude()));
+
+        for(Consulta c : consultas){
+            if(c.getCodigo() != codigo){
+                LatLng testeDuplicLocalz = new LatLng(Double.parseDouble(consulta.getEndereco().getLatitude()), Double.parseDouble(consulta.getEndereco().getLongitude()));
+                if(testeDuplicLocalz.equals(localConsulta)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public ArrayList<Consulta> consultasPorLocalizacao(Integer codigo){
+
+        ArrayList<Consulta> consultasPorLocalz = new ArrayList<Consulta>();
+        Consulta cons = getConsulta(codigo);
+        LatLng testarLatLng = new LatLng(Double.parseDouble(cons.getEndereco().getLatitude()), Double.parseDouble(cons.getEndereco().getLongitude()));
+
+        for(Consulta c : consultas){
+            LatLng latLng = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
+            if(latLng.equals(testarLatLng)){
+                consultasPorLocalz.add(c);
+            }
+        }
+
+        return consultasPorLocalz;
+
     }
 }

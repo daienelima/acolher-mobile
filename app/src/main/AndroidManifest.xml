@@ -30,6 +30,7 @@
         <activity android:name=".view.AlterarDadosInstituicao" />
         <activity android:name=".view.CadastroInstituicao" />
         <activity android:name=".view.MapsActivity" />
+        <activity android:name=".view.ModalDisponibilidades" />
         <activity android:name=".view.Consultas" />
         <activity
             android:name=".view.MeusDadosActivity"
