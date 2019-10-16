@@ -263,7 +263,7 @@ public class Login extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
-        editor.putString("TYPE", "instituicao");
+        editor.putString("TYPE", "INSTITUICAO");
         editor.apply();
     }
     /**
