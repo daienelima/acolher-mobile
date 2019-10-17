@@ -602,7 +602,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         for(Consulta c : consultas){
             if(c.getCodigo() != codigo){
-                LatLng testeDuplicLocalz = new LatLng(Double.parseDouble(consulta.getEndereco().getLatitude()), Double.parseDouble(consulta.getEndereco().getLongitude()));
+                LatLng testeDuplicLocalz = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
                 if(testeDuplicLocalz.equals(localConsulta)){
                     return true;
                 }
