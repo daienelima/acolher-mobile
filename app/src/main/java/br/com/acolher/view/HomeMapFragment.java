@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -14,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 import android.content.DialogInterface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -46,28 +43,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
-import br.com.acolher.model.Endereco;
-import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
-import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener ,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private Integer consultaSelecionada;
+    private Integer codigoRecente;
     private GoogleMap mMap;
     private MapView mMapView;
     private View mView;
@@ -83,7 +75,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private Consulta consPorUser;
     private RetrofitInit retrofitInit = new RetrofitInit();
     private static final int REQUEST_PHONE_CALL = 1;
-    private SharedPreferences sharedPreferences;
     private Integer codeUser;
     private String typeUser;
     private ProgressDialog progressDialog;
@@ -130,7 +121,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
          * Shared Preferences Mocado
          */
 
-        sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
+        //sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
 
         /*SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("USERCODE", 4);
@@ -140,15 +131,17 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         latDisp = 0.0;
         longDisp = 0.0;
+        codeUser = (Integer) Helper.getSharedPreferences("USERCODE",  0, 1, getContext());
+        typeUser = (String) Helper.getSharedPreferences("TYPE", "", 2, getContext());
+        codigoRecente = (Integer) Helper.getSharedPreferences("COD_END_RECENT", 0, 1, getContext());
 
-        if(!sharedPreferences.getString("TYPE", "").equals("PACIENTE")) {
-            if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
-                //btnAddLastConsulta.show();
+        if(!typeUser.equals("PACIENTE")) {
+            if(codigoRecente != 0){
+                btnAddLastConsulta.show();
             }
         }
 
-        codeUser = sharedPreferences.getInt("USERCODE", 0);
-        typeUser = sharedPreferences.getString("TYPE", "");
+
 
 
     }
@@ -251,12 +244,18 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             });
         }else{
             btnAddConsulta.show();
-            //btnAddLastConsulta.show();
+            if(((Integer) Helper.getSharedPreferences("COD_END_RECENT", 0, 1, getContext())) != 0){
+                btnAddLastConsulta.show();
+            }
         }
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
+                if(marker.equals(myMarker)){
+                    return false;
+                }
 
                 Integer id = Integer.parseInt(marker.getSnippet());
 
@@ -331,9 +330,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         btnAddLastConsulta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer codigoRecente = sharedPreferences.getInt("COD_END_RECENT", 0);
-                latDisp = Double.parseDouble(sharedPreferences.getString("LAT", "0.0"));
-                longDisp = Double.parseDouble(sharedPreferences.getString("LON", "0.0"));
+                latDisp = Double.parseDouble((String) Helper.getSharedPreferences("LAT", "0.0", 2, getContext()));
+                longDisp = Double.parseDouble((String) Helper.getSharedPreferences("LON", "0.0", 2, getContext()));
                 callCadastroDisp(codigoRecente);
             }
         });
@@ -416,9 +414,12 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         if(mMap != null){
             onMapReady(mMap);
         }
+        if(markerConsulta != null){
+            markerConsulta.remove();
+        }
         googleApiClient.connect();
         progressDialog.dismiss();
-        if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0 && !typeUser.equals("PACIENTE")){
+        if(typeUser.equals("PACIENTE")){
             //btnAddLastConsulta.show();
         }
         super.onResume();

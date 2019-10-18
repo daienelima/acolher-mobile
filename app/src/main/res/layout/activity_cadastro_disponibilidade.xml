@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
+    android:focusableInTouchMode="true"
     tools:context=".view.CadastroDisponibilidade">
 
     <com.google.android.material.card.MaterialCardView
