@@ -1,11 +1,8 @@
 package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +28,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.DisponibilidadeController;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
@@ -55,15 +53,12 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Double lon, lat;
     private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
-    private SharedPreferences sharedPreferences;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_cadastro_disponibilidade);
-        progressDialog = new ProgressDialog(CadastroDisponibilidade.this);
         pegaIdCampos();
 
         Intent intent = getIntent();
@@ -76,11 +71,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             inputNumero.setVisibility(View.VISIBLE);
         }
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("LAT", lat.toString());
-        editor.putString("LON", lon.toString());
-        editor.apply();
+        Helper.setSharedPreferences("LAT", lat.toString(), 2, CadastroDisponibilidade.this);
+        Helper.setSharedPreferences("LON", lon.toString(), 2, CadastroDisponibilidade.this);
 
         if(lat != 0.0 && lon != 0.0){
             try {
@@ -95,14 +87,13 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Cadastrando disponibilidade!");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+
+                Helper.openProgressDialog("Cadastrando disponibilidade", CadastroDisponibilidade.this);
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
                     Usuario profissional = new Usuario();
-                    profissional.setCodigo(sharedPreferences.getInt("USERCODE", 1));
+                    profissional.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
@@ -120,8 +111,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                                     Log.d(TAG, String.valueOf(response.code()));
                                     enderecoConsulta = response.body();
                                     codigoEnderecoRecente = enderecoConsulta.getCodigo();
-                                    editor.putInt("COD_END_RECENT", enderecoConsulta.getCodigo());
-                                    editor.apply();
+                                    Helper.setSharedPreferences("COD_END_RECENT", enderecoConsulta.getCodigo(), 1, CadastroDisponibilidade.this);
                                     novaConsulta.setEndereco(enderecoConsulta);
                                     cadastroConsulta(novaConsulta);
                                 } else {
@@ -142,9 +132,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     }
 
                 }else{
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+                    Helper.closeProgressDialog();
                 }
 
             }
@@ -240,7 +228,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-        if(!DisponibilidadeController.empty(numero)){
+        if(!DisponibilidadeController.empty(numero) && inputNumero.getVisibility() == View.VISIBLE){
             inputNumero.setError("Campo Obrigatorio");
             return  false;
         }
@@ -269,24 +257,18 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+                    Helper.closeProgressDialog();
                     startActivity(home);
                 } else {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+                    Helper.closeProgressDialog();
                 }
             }
 
             @Override
             public void onFailure(Call<Consulta> call, Throwable t) {
-                if(progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
+                Helper.closeProgressDialog();
             }
         });
     }
