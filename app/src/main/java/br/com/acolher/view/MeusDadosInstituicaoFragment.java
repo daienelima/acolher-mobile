@@ -19,12 +19,18 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.helper.MaskWatcher;
+import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.ViaCep;
+import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MeusDadosInstituicaoFragment extends Fragment implements View.OnClickListener {
 
@@ -32,7 +38,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cnpj,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
-    private Button alterar,salvar;
+    private Button alterar,salvar,btnBuscaCep;
     private View mView;
     private String enderecoCompleto;
     private Instituicao globalInstituicao;
@@ -58,9 +64,11 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         habilitarEdicao(false);
 
         //Chamar Edição ao clicar alterar
-        alterar.setOnClickListener(view -> {
+        alterar.setOnClickListener(view -> habilitarEdicao(true));
 
-            habilitarEdicao(true);
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
         });
 
         //Chamar Put ao clicar Salvar
@@ -152,6 +160,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         inputUF.setEnabled(true);
         inputCidade.setEnabled(true);
 
+        btnBuscaCep.setEnabled(true);
         alterar.setEnabled(false);
         alterar.setActivated(false);
         alterar.setVisibility(View.INVISIBLE);
@@ -173,6 +182,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         inputUF.setEnabled(false);
         inputCidade.setEnabled(false);
 
+        btnBuscaCep.setEnabled(false);
         alterar.setEnabled(true);
         alterar.setActivated(true);
         salvar.setEnabled(false);
@@ -193,7 +203,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         // Para endereco
 
         //pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
-        //btnBuscaCep = findViewById(R.id.btnBuscaCep);
+        btnBuscaCep = mView.findViewById(R.id.btnBuscaCep);
         inputRua = mView.findViewById(R.id.inputRua);
         inputCep =  mView.findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
@@ -282,6 +292,36 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
         // visualizacao do dialogo
         alertDialog.show();
+    }
+
+    private void buscaCep(String cep) {
+        if(EnderecoController.empty(cep)){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://viacep.com.br/ws/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ServiceApi api = retrofit.create(ServiceApi.class);
+
+            Call<ViaCep> retorno = api.buscarCEP(cep);
+            retorno.enqueue(new Callback<ViaCep>() {
+                @Override
+                public void onResponse(Call<ViaCep> call, Response<ViaCep> response) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                    ViaCep endereco = response.body();
+                    inputRua.getEditText().setText(endereco.getLogradouro());
+                    inputBairro.getEditText().setText(endereco.getBairro());
+                    inputUF.getEditText().setText(endereco.getUf());
+                    inputCidade.getEditText().setText(endereco.getLocalidade());
+                }
+
+                @Override
+                public void onFailure(Call<ViaCep> call, Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                }
+            });
+        }else{
+            inputCep.setError("Campo Obrigatorio");
+        }
     }
 
 
