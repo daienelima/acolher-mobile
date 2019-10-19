@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.MaskWatcher;
+import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,10 +31,13 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     //Declarações
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private TextInputLayout nomeCompleto, email, telefone,cnpj,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;;
+    private TextInputLayout nomeCompleto, email, telefone,cnpj,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar;
     private View mView;
     private String enderecoCompleto;
+    private Instituicao globalInstituicao;
+    private Boolean globalStatus;
+    private String msgResposta;
 
     //Levantando Fragment
     @Nullable
@@ -44,24 +49,11 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         findById();
 
         //Buscar em SharedPreferences
+
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
-
-        Call<Instituicao> call = retrofitInit.getService().consultaInstituicao(sharedPreferences.getInt("USERCODE", 1));
-        call.enqueue(new Callback<Instituicao>() {
-            @Override
-            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-                if(response.isSuccessful()){
-                    Log.d(TAG, String.valueOf(response.code()));
-                    meusdados(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Instituicao> call, Throwable t) {
-
-            }
-        });
+        //Carregados dados
+        carregarDados(sharedPreferences);
 
         habilitarEdicao(false);
 
@@ -73,14 +65,52 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
         //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
+            try {
+                atualizarDados();
+                msgResposta = "Atualização realizada com sucesso!";
+                habilitarEdicao(false);
+            }catch (Exception e){
+                msgResposta = "Falha na atualização!";
+            e.printStackTrace();
+        }
 
-            habilitarEdicao(false);
+            msgTela(msgResposta);
+
         });
 
         return mView;
     }
     //incluir dados em campos
     private void meusdados (Instituicao dados){
+
+
+        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
+
+        nomeCompleto.getEditText().setText(dados.getNome());
+        nomeCompleto.getEditText().setTextColor(Color.BLACK);
+        email.getEditText().setText(dados.getEmail());
+        email.getEditText().setTextColor(Color.BLACK);
+        telefone.getEditText().setText(dados.getTelefone());
+        telefone.getEditText().setTextColor(Color.BLACK);
+        cnpj.getEditText().setText(dados.getCnpj());
+        cnpj.getEditText().setTextColor(Color.BLACK);
+
+        inputRua.getEditText().setText(dados.getEndereco().getLogradouro());
+        inputRua.getEditText().setTextColor(Color.BLACK);
+        inputCep.getEditText().setText(dados.getEndereco().getCep());
+        inputCep.getEditText().setTextColor(Color.BLACK);
+        inputBairro.getEditText().setText(dados.getEndereco().getBairro());
+        inputBairro.getEditText().setTextColor(Color.BLACK);
+        inputNumero.getEditText().setText(dados.getEndereco().getNumero());
+        inputNumero.getEditText().setTextColor(Color.BLACK);
+        inputUF.getEditText().setText(dados.getEndereco().getUf());
+        inputUF.getEditText().setTextColor(Color.BLACK);
+        inputCidade.getEditText().setText(dados.getEndereco().getCidade());
+        inputCidade.getEditText().setTextColor(Color.BLACK);
+    }
+
+    //incluir dados em campos
+    private void capturarDadosCampos (Instituicao dados){
 
         enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
 
@@ -173,6 +203,67 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         inputCidade = mView.findViewById(R.id.inputCidade);
     }
 
+    private void carregarDados (SharedPreferences sharedPreferences){
+
+        Call<Instituicao> call = retrofitInit.getService().consultaInstituicao(sharedPreferences.getInt("USERCODE", 1));
+        call.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+                if(response.isSuccessful()){
+                    Log.d(TAG, String.valueOf(response.code()));
+                    globalInstituicao = response.body();
+                    meusdados(globalInstituicao);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void atualizarDados (){
+
+        Endereco endereco = globalInstituicao.getEndereco();
+
+        // Para endereco
+
+        endereco.setLogradouro(inputRua.getEditText().getText().toString());
+        endereco.setCep(inputCep.getEditText().getText().toString());
+        endereco.setBairro(inputBairro.getEditText().getText().toString());
+        endereco.setNumero(inputNumero.getEditText().getText().toString());
+        endereco.setUf(inputUF.getEditText().getText().toString());
+        endereco.setCidade(inputCidade.getEditText().getText().toString());
+
+        // Para instituicao
+
+        globalInstituicao.setNome(nomeCompleto.getEditText().getText().toString());
+        globalInstituicao.setEmail(email.getEditText().getText().toString());
+        globalInstituicao.setTelefone(telefone.getEditText().getText().toString());
+        globalInstituicao.setCnpj(cnpj.getEditText().getText().toString());
+        globalInstituicao.setEndereco(endereco);
+
+
+
+        Call<Instituicao> call = retrofitInit.getService().atualizarInstituicao(globalInstituicao);
+        call.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+
+                if(response.isSuccessful()){
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+                Log.e("InstituicaoService   ", "Erro ao atualizar a instituicao:" + t.getMessage());
+
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -181,6 +272,16 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void msgTela(String mensagem){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
+        alertDialog.setTitle("Atenção!");
+        alertDialog.setMessage(mensagem);
+        alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
+
+        // visualizacao do dialogo
+        alertDialog.show();
     }
 
 

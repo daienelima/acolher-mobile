@@ -24,8 +24,11 @@ public interface ServiceApi {
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
 
+    @PUT("instituicao")
+    Call<Instituicao> atualizarInstituicao(@Body Instituicao instituicao);
+
     @GET("instituicao/{codigo}")
-    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+    Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
 
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
