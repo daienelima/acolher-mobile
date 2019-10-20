@@ -54,6 +54,9 @@ public interface ServiceApi {
     @GET("consulta/voluntario/{id}")
     Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
 
+    @GET("consulta/instituicao/{id}")
+    Call<List<Consulta>> getConsultasPorInstituicao(@Path("id") int id);
+
     @PUT("consulta/cancelar")
     Call<Consulta> cancelarConsulta(@Body Consulta consulta);
 

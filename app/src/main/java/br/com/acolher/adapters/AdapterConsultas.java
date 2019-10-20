@@ -60,15 +60,25 @@ public class AdapterConsultas extends BaseAdapter {
         Consulta consulta = consultas.get(position);
 
         if(tipo.equals("PACIENTE")) {
-            nome.setText(consulta.getProfissional().getNome_completo());
+            try {
+                nome.setText(consulta.getProfissional().getNome_completo());
+            } catch (Exception e) {
+                nome.setText(consulta.getInstituicao().getNome());
+            }
         }else if (tipo.equals("VOLUNTARIO")){
             try {
                 nome.setText(consulta.getPaciente().getNome_completo());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }else if (tipo.equals("INSTITUICAO")){
+            try {
+                nome.setText(consulta.getPaciente().getNome_completo());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }else{
-            //tem q tratar
+            //TEM Q TRATAR
         }
         hora.setText(consulta.getHora());
         data.setText(consulta.getData());

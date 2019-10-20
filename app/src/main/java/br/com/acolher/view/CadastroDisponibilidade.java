@@ -32,6 +32,7 @@ import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -92,15 +93,23 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
-                    Usuario profissional = new Usuario();
-                    profissional.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
+                    String typeUser = (String) Helper.getSharedPreferences("TYPE", "", 2, getApplicationContext());
+                    if(typeUser.equals("VOLUNTARIO")){
+                        Usuario profissional = new Usuario();
+                        profissional.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
+                        novaConsulta.setProfissional(profissional);
+                    }else if(typeUser.equals("INSTITUICAO")){
+                        Instituicao instituicao = new Instituicao();
+                        instituicao.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
+                        novaConsulta.setInstituicao(instituicao);
+                    }
+
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
                     novaConsulta.setData(sData);
                     novaConsulta.setHora(hora);
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
-                    novaConsulta.setProfissional(profissional);
 
                     if(codigoEnderecoRecente == 0){
                         Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);

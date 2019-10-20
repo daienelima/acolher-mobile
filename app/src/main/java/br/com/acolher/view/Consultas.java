@@ -73,8 +73,13 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
         final Bundle bundle = getIntent().getExtras();
         if(tipo.equals("PACIENTE")){
-            nomeLabel.setText("Nome do voluntário");
-            nome.setText(c.getProfissional().getNome_completo());
+            try {
+                nomeLabel.setText("Nome do voluntário");
+                nome.setText(c.getProfissional().getNome_completo());
+            }catch(Exception e){
+                nomeLabel.setText("Nome da instituicao");
+                nome.setText(c.getInstituicao().getNome());
+            }
         }else if(tipo.equals("VOLUNTARIO")){
             nomeLabel.setText("Nome do paciente");
             try {
