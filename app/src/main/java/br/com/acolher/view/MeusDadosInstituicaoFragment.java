@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
+import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
@@ -73,17 +74,24 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
         //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
-            try {
-                atualizarDados();
-                msgResposta = "Atualização realizada com sucesso!";
-                habilitarEdicao(false);
-            }catch (Exception e){
-                msgResposta = "Falha na atualização!";
-            e.printStackTrace();
-        }
 
-            msgTela(msgResposta);
+                try {
+                    atualizarDados();
 
+                    if (validateForm()){
+                        updateBD();
+                        msgResposta = "Atualização realizada com sucesso!";
+                        habilitarEdicao(false);
+
+                    }else{
+                        msgResposta = "Favor preencha todos campos obrigatorios!";
+                    }
+                } catch (Exception e) {
+                    msgResposta = "Falha na atualização!";
+                    e.printStackTrace();
+                }
+
+                msgTela(msgResposta);
         });
 
         return mView;
@@ -256,22 +264,6 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
 
 
-        Call<Instituicao> call = retrofitInit.getService().atualizarInstituicao(globalInstituicao);
-        call.enqueue(new Callback<Instituicao>() {
-            @Override
-            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-
-                if(response.isSuccessful()){
-                    Log.d(TAG, String.valueOf(response.code()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Instituicao> call, Throwable t) {
-                Log.e("InstituicaoService   ", "Erro ao atualizar a instituicao:" + t.getMessage());
-
-            }
-        });
     }
 
     @Override
@@ -322,6 +314,90 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         }else{
             inputCep.setError("Campo Obrigatorio");
         }
+    }
+
+    public boolean validateForm(){
+
+        InstituicaoController ic = new InstituicaoController();
+
+        EnderecoController ec = new EnderecoController();
+
+
+        if(ic.validarNome(globalInstituicao.getNome()) != ""){
+            nomeCompleto.getEditText().setError(ic.validarNome(globalInstituicao.getNome()));
+            return false;
+        }
+
+        if(ic.validaCnpj(globalInstituicao.getCnpj()) != ""){
+            cnpj.getEditText().setError(ic.validaCnpj(globalInstituicao.getCnpj()));
+            return false;
+        }
+        if(ic.validarEmail(globalInstituicao.getEmail()) != ""){
+            email.getEditText().setError(ic.validarEmail(globalInstituicao.getEmail()));
+            return false;
+        }
+
+
+        if(ic.validarTelefone(globalInstituicao.getTelefone()) != ""){
+            telefone.getEditText().setError(ic.validarTelefone(globalInstituicao.getTelefone()));
+            return false;
+        }
+
+        if(ec.validaCep(globalInstituicao.getEndereco().getCep()) != ""){
+            inputCep.setError(ec.validaCep(globalInstituicao.getEndereco().getCep()));
+            return false;
+        }
+
+        //Para endereço
+
+        if(!EnderecoController.empty(globalInstituicao.getEndereco().getLogradouro())){
+            inputRua.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalInstituicao.getEndereco().getNumero())){
+            inputNumero.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalInstituicao.getEndereco().getBairro())){
+            inputBairro.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalInstituicao.getEndereco().getCidade())){
+            inputCidade.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(EnderecoController.validaUF(globalInstituicao.getEndereco().getUf()) != ""){
+            inputUF.setError(EnderecoController.validaUF(globalInstituicao.getEndereco().getUf()));
+            return false;
+        }
+
+
+
+        return true;
+
+    }
+    private void updateBD(){
+
+        Call<Instituicao> call = retrofitInit.getService().atualizarInstituicao(globalInstituicao);
+        call.enqueue(new Callback<Instituicao>() {
+            @Override
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+                Log.e("InstituicaoService   ", "Erro ao atualizar a instituicao:" + t.getMessage());
+
+            }
+        });
     }
 
 

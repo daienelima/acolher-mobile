@@ -9,7 +9,7 @@ public class InstituicaoController {
 
     public String validarNome(String nome){
 
-        if(nome == null || nome.isEmpty() || nome == "") {
+        if(nome == null || nome.trim().isEmpty() || nome == "") {
             return "Campo obrigatorio!";
         }
 
@@ -18,7 +18,7 @@ public class InstituicaoController {
 
     public String validarTelefone(String telefone){
 
-        if(telefone == null || telefone.isEmpty() || telefone == "") {
+        if(telefone == null || telefone.trim().isEmpty() || telefone == "") {
             return "Campo obrigatorio!";
         }
 
@@ -32,7 +32,7 @@ public class InstituicaoController {
     public String validarEmail(String email){
 
 
-        if(email == null || email.isEmpty() || email == ""){
+        if(email == null || email.trim().isEmpty() || email == ""){
             return "Campo obrigatório!";
         }
 
@@ -50,7 +50,7 @@ public class InstituicaoController {
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
 
-        if(password == null || password.isEmpty() || password == ""){
+        if(password == null || password.trim().isEmpty() || password == ""){
             return "Campo obrigatório!";
         }
 
@@ -68,7 +68,7 @@ public class InstituicaoController {
 
     public String validaCnpj(String cnpj){
 
-        if(cnpj == null || cnpj.isEmpty() || cnpj == ""){
+        if(cnpj == null || cnpj.trim().isEmpty() || cnpj == ""){
             return "Campo obrigatorio!";
         }
 
