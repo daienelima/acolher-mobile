@@ -14,7 +14,6 @@ import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
 import br.com.acolher.view.Login;
 import br.com.acolher.view.MeusDadosActivity;
-import br.com.acolher.view.MeusDadosInstituicaoActivity;
 
 public class chamaTelas extends AppCompatActivity {
 
@@ -63,10 +62,6 @@ public class chamaTelas extends AppCompatActivity {
                 intent = new Intent(chamaTelas.this, CadastroDisponibilidade.class);
                 startActivity(intent);
                 break;
-
-            case R.id.meusDadosInstituicao:
-                intent = new Intent(chamaTelas.this, MeusDadosInstituicaoActivity.class);
-                startActivity(intent);
 
             default:
                 return;

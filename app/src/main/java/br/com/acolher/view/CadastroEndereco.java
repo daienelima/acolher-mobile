@@ -229,7 +229,6 @@ public class CadastroEndereco extends AppCompatActivity implements GoogleApiClie
         }
     }
 
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("location", "Connected");

@@ -95,16 +95,14 @@ public class Login extends AppCompatActivity {
                         View viewInfos = getLayoutInflater().inflate(R.layout.custom_dialog_info_perfil, null);
                         dialogInfos.setView(viewInfos);
                         final  AlertDialog alertInfos = dialogInfos.create();
-
                         alertInfos.show();
-
                     }
                 });
 
                 final Button btnPaciente = viewDialog.findViewById(R.id.btnPaciente);
                 final Button btnProfissional = viewDialog.findViewById(R.id.btnProfissional);
                 final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
-                Intent intent = new Intent(login.getContext(), CadastroEndereco.class);
+                Intent intent = new Intent(login.getContext(), CadastroActivity.class);
 
                 btnPaciente.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -136,7 +134,6 @@ public class Login extends AppCompatActivity {
                 dialog.show();
             }
         });
-
     }
 
     private boolean validateLogin(){
@@ -146,7 +143,7 @@ public class Login extends AppCompatActivity {
 
         if(!UsuarioController.empty(email)){
             inputEmail.setError("E-mail inválido!");
-           return false;
+            return false;
         }
         if(!UsuarioController.empty(senha)) {
             inputSenha.setError("Senha Inválida!");
@@ -183,6 +180,7 @@ public class Login extends AppCompatActivity {
                         progressDialogLogin.dismiss();
                     }
                     startActivity(home);
+                    finish();
                 } else {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -274,7 +272,7 @@ public class Login extends AppCompatActivity {
     public void salvarLogin(String email) {
         sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        //editor.putBoolean("logado", true);
+        editor.putBoolean("logado", true);
         editor.putString("email", email.toLowerCase());
         editor.apply();
     }
@@ -286,12 +284,12 @@ public class Login extends AppCompatActivity {
      */
     private void usuarioLogado() {
         sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
-       // if (sharedPreferences.getBoolean("logado", false)) {
-       //     Intent home = new Intent(this, MapsActivity.class);
-       //     startActivity(home);
-       //     finish();
-       // } else {
+         if (sharedPreferences.getBoolean("logado", false)) {
+             Intent home = new Intent(this, MapsActivity.class);
+             startActivity(home);
+             finish();
+         } else {
             inputEmail.getEditText().setText(sharedPreferences.getString("email", null));
-       // }
+         }
     }
 }

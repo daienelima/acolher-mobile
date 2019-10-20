@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.MeusDadosInstituicaoActivity"/>
         <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas" />
         <activity android:name=".view.Login" >
