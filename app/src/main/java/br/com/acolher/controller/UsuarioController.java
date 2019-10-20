@@ -49,6 +49,21 @@ public class UsuarioController {
         return "";
     }
 
+    public String validarEmail(String email){
+
+
+        if(email == null || email.trim().isEmpty() || email == ""){
+            return "Campo obrigatório!";
+        }
+
+        if(!Validacoes.validaEmail(email)){
+            return "formato de email inválido!";
+        }
+
+        return "";
+
+    }
+
     public static boolean validaEmail(String emailValida) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
