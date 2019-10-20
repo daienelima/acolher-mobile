@@ -22,6 +22,7 @@ import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
+import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.ViaCep;
@@ -39,7 +40,7 @@ public class MinhaContaFragment extends Fragment {
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, cpf, dataNascimento, email, crm, telefone, inputRua, inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private View mView;
-    private Button alterar, salvar;
+    private Button alterar, salvar,btnBuscaCep;
     private String enderecoCompleto;
     private Usuario globalUsuario;
     private Boolean globalStatus;
@@ -51,6 +52,36 @@ public class MinhaContaFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_minha_conta, null);
 
         findById();
+
+        habilitarEdicao(false);
+
+        alterar.setOnClickListener(view -> habilitarEdicao(true));
+
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
+        });
+
+        salvar.setOnClickListener(view -> {
+
+            try {
+                atualizarDados();
+
+                if (validateForm()){
+                    updateBD();
+                    msgResposta = "Atualização realizada com sucesso!";
+                    habilitarEdicao(false);
+
+                }else{
+                    msgResposta = "Favor preencha todos campos obrigatorios!";
+                }
+            } catch (Exception e) {
+                msgResposta = "Falha na atualização!";
+                e.printStackTrace();
+            }
+
+            msgTela(msgResposta);
+        });
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
