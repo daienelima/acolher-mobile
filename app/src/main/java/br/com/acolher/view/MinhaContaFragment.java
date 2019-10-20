@@ -1,6 +1,7 @@
 package br.com.acolher.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,42 +20,51 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
-import br.com.acolher.controller.InstituicaoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
-import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Usuario;
 import br.com.acolher.model.ViaCep;
 import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import br.com.acolher.model.Usuario;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MinhaContaFragment extends Fragment {
+public class MinhaContaFragment extends Fragment implements View.OnClickListener {
 
+    //Declarações
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private TextInputLayout nomeCompleto, cpf, dataNascimento, email, crm, telefone, inputRua, inputCep, inputNumero, inputBairro, inputUF, inputCidade;
+    private TextInputLayout nomeCompleto, email, telefone,cpf,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
+    private Button alterar,salvar,btnBuscaCep;
     private View mView;
-    private Button alterar, salvar,btnBuscaCep;
     private String enderecoCompleto;
     private Usuario globalUsuario;
     private Boolean globalStatus;
     private String msgResposta;
 
+    //Levantando Fragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_minha_conta, null);
+        mView = inflater.inflate(R.layout.fragment_minha_conta, container,false);
 
+        //Buscar em Fragments
         findById();
+
+        //Buscar em SharedPreferences
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        //Carregados dados
+        carregarDados(sharedPreferences);
 
         habilitarEdicao(false);
 
+        //Chamar Edição ao clicar alterar
         alterar.setOnClickListener(view -> habilitarEdicao(true));
 
         btnBuscaCep.setOnClickListener(v -> {
@@ -62,6 +72,7 @@ public class MinhaContaFragment extends Fragment {
             buscaCep(cep);
         });
 
+        //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
 
             try {
@@ -83,60 +94,24 @@ public class MinhaContaFragment extends Fragment {
             msgTela(msgResposta);
         });
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
-
-        if (sharedPreferences.getString("TYPE", "").equals("voluntario")) {
-            crm.setVisibility(View.VISIBLE);
-        }
-
-        Call<Usuario> call = retrofitInit.getService().getUsuario(sharedPreferences.getInt("USERCODE", 1));
-        call.enqueue(new Callback<Usuario>() {
-            @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                    meusdados(response.body());
-                    pegarEnderecoUsuario(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-
-            }
-        });
-
         return mView;
     }
+    //incluir dados em campos
+    private void meusdados (Usuario dados){
 
-    private void meusdados(Usuario dados) {
 
+        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
 
         nomeCompleto.getEditText().setText(dados.getNome_completo());
         nomeCompleto.getEditText().setTextColor(Color.BLACK);
-        cpf.getEditText().setText(dados.getCpf());
-        cpf.getEditText().setTextColor(Color.BLACK);
-        dataNascimento.getEditText().setText(dados.getData_nascimento());
-        dataNascimento.getEditText().setTextColor(Color.BLACK);
         email.getEditText().setText(dados.getEmail());
         email.getEditText().setTextColor(Color.BLACK);
         telefone.getEditText().setText(dados.getTelefone());
         telefone.getEditText().setTextColor(Color.BLACK);
-        crm.getEditText().setText(dados.getCrm_crp());
-        crm.getEditText().setTextColor(Color.BLACK);
-
-        nomeCompleto.setEnabled(false);
-        cpf.setEnabled(false);
-        email.setEnabled(false);
-        dataNascimento.setEnabled(false);
-        telefone.setEnabled(false);
-        crm.setEnabled(false);
-
-    }
-
-    private void pegarEnderecoUsuario(Usuario dados) {
-
-        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero() + "," + dados.getEndereco().getCidade() + "-" + dados.getEndereco().getUf() + "," + dados.getEndereco().getCep();
+        cpf.getEditText().setText(dados.getCpf());
+        cpf.getEditText().setTextColor(Color.BLACK);
+        dataNasc.getEditText().setText(dados.getData_nascimento());
+        dataNasc.getEditText().setTextColor(Color.BLACK);
 
         inputRua.getEditText().setText(dados.getEndereco().getLogradouro());
         inputRua.getEditText().setTextColor(Color.BLACK);
@@ -150,18 +125,44 @@ public class MinhaContaFragment extends Fragment {
         inputUF.getEditText().setTextColor(Color.BLACK);
         inputCidade.getEditText().setText(dados.getEndereco().getCidade());
         inputCidade.getEditText().setTextColor(Color.BLACK);
-
     }
 
-    private void habilitarEdicao(boolean opcao) {
-        if (opcao) {
+    //incluir dados em campos
+    private void capturarDadosCampos (Usuario dados){
 
+        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
+
+        nomeCompleto.getEditText().setText(dados.getNome_completo());
+        nomeCompleto.getEditText().setTextColor(Color.BLACK);
+        email.getEditText().setText(dados.getEmail());
+        email.getEditText().setTextColor(Color.BLACK);
+        telefone.getEditText().setText(dados.getTelefone());
+        telefone.getEditText().setTextColor(Color.BLACK);
+        cpf.getEditText().setText(dados.getCpf());
+        cpf.getEditText().setTextColor(Color.BLACK);
+
+        inputRua.getEditText().setText(dados.getEndereco().getLogradouro());
+        inputRua.getEditText().setTextColor(Color.BLACK);
+        inputCep.getEditText().setText(dados.getEndereco().getCep());
+        inputCep.getEditText().setTextColor(Color.BLACK);
+        inputBairro.getEditText().setText(dados.getEndereco().getBairro());
+        inputBairro.getEditText().setTextColor(Color.BLACK);
+        inputNumero.getEditText().setText(dados.getEndereco().getNumero());
+        inputNumero.getEditText().setTextColor(Color.BLACK);
+        inputUF.getEditText().setText(dados.getEndereco().getUf());
+        inputUF.getEditText().setTextColor(Color.BLACK);
+        inputCidade.getEditText().setText(dados.getEndereco().getCidade());
+        inputCidade.getEditText().setTextColor(Color.BLACK);
+    }
+
+    private void habilitarEdicao (boolean opcao){
+        if(opcao){
+            //Habilitar campos
             nomeCompleto.setEnabled(true);
             email.setEnabled(true);
             telefone.setEnabled(true);
             cpf.setEnabled(true);
-            dataNascimento.setEnabled(true);
-            crm.setEnabled(true);
+            dataNasc.setEnabled(true);
 
             inputRua.setEnabled(true);
             inputCep.setEnabled(true);
@@ -170,20 +171,21 @@ public class MinhaContaFragment extends Fragment {
             inputUF.setEnabled(true);
             inputCidade.setEnabled(true);
 
+            btnBuscaCep.setEnabled(true);
             alterar.setEnabled(false);
             alterar.setActivated(false);
             alterar.setVisibility(View.INVISIBLE);
             salvar.setEnabled(true);
             salvar.setVisibility(View.VISIBLE);
 
-        } else {
+        }else{
 
+            //Desabilitar campos
             nomeCompleto.setEnabled(false);
             email.setEnabled(false);
             telefone.setEnabled(false);
             cpf.setEnabled(false);
-            dataNascimento.setEnabled(false);
-            crm.setEnabled(false);
+            dataNasc.setEnabled(false);
 
             inputRua.setEnabled(false);
             inputCep.setEnabled(false);
@@ -192,26 +194,31 @@ public class MinhaContaFragment extends Fragment {
             inputUF.setEnabled(false);
             inputCidade.setEnabled(false);
 
+            btnBuscaCep.setEnabled(false);
             alterar.setEnabled(true);
             alterar.setActivated(true);
             salvar.setEnabled(false);
             alterar.setVisibility(View.VISIBLE);
             salvar.setVisibility(View.INVISIBLE);
         }
+
     }
-
-
+    //Realizar Busca em Fragment
     private void findById() {
         nomeCompleto = mView.findViewById(R.id.inputNome);
-        cpf = mView.findViewById(R.id.inputCPF);
-        dataNascimento = mView.findViewById(R.id.inputDataNasc);
-        email = mView.findViewById(R.id.inputEmail);
-        telefone = mView.findViewById(R.id.inputTelefone);
-        crm = mView.findViewById(R.id.inputCRM);
-        crm.setVisibility(View.GONE);
+        email =  mView.findViewById(R.id.inputEmail);
+        telefone =  mView.findViewById(R.id.inputTelefone);
+        cpf =  mView.findViewById(R.id.inputCpf);
+        dataNasc = mView.findViewById(R.id.inputDataNasc);
+        alterar =  mView.findViewById(R.id.buttonAlterar);
+        salvar =  mView.findViewById(R.id.buttonSalvar);
 
+        // Para endereco
+
+        //pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
+        btnBuscaCep = mView.findViewById(R.id.btnBuscaCep);
         inputRua = mView.findViewById(R.id.inputRua);
-        inputCep = mView.findViewById(R.id.inputCep);
+        inputCep =  mView.findViewById(R.id.inputCep);
         inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
         inputBairro = mView.findViewById(R.id.inputBairro);
         inputNumero = mView.findViewById(R.id.inputNumero);
@@ -219,13 +226,13 @@ public class MinhaContaFragment extends Fragment {
         inputCidade = mView.findViewById(R.id.inputCidade);
     }
 
-    private void carregarDados(SharedPreferences sharedPreferences) {
+    private void carregarDados (SharedPreferences sharedPreferences){
 
         Call<Usuario> call = retrofitInit.getService().getUsuario(sharedPreferences.getInt("USERCODE", 1));
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                if (response.isSuccessful()) {
+                if(response.isSuccessful()){
                     Log.d(TAG, String.valueOf(response.code()));
                     globalUsuario = response.body();
                     meusdados(globalUsuario);
@@ -239,7 +246,7 @@ public class MinhaContaFragment extends Fragment {
         });
     }
 
-    private void atualizarDados() {
+    private void atualizarDados (){
 
         Endereco endereco = globalUsuario.getEndereco();
 
@@ -252,37 +259,20 @@ public class MinhaContaFragment extends Fragment {
         endereco.setUf(inputUF.getEditText().getText().toString());
         endereco.setCidade(inputCidade.getEditText().getText().toString());
 
-        // Para usuario
+        // Para Usuario
 
         globalUsuario.setNome_completo(nomeCompleto.getEditText().getText().toString());
         globalUsuario.setEmail(email.getEditText().getText().toString());
         globalUsuario.setTelefone(telefone.getEditText().getText().toString());
         globalUsuario.setCpf(cpf.getEditText().getText().toString());
+        globalUsuario.setData_nascimento(dataNasc.getEditText().getText().toString());
         globalUsuario.setEndereco(endereco);
-        globalUsuario.setCrm_crp(crm.getEditText().toString());
-        globalUsuario.setData_nascimento(dataNascimento.getEditText().toString());
 
 
-        Call<Usuario> call = retrofitInit.getService().alterarUsuario(globalUsuario);
-        call.enqueue(new Callback<Usuario>() {
-            @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
 
-                if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar o usuario:" + t.getMessage());
-
-            }
-        });
     }
 
-
-    //@Override
+    @Override
     public void onClick(View v) {
 
     }
@@ -292,7 +282,7 @@ public class MinhaContaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void msgTela(String mensagem) {
+    private void msgTela(String mensagem){
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
         alertDialog.setTitle("Atenção!");
         alertDialog.setMessage(mensagem);
@@ -303,7 +293,7 @@ public class MinhaContaFragment extends Fragment {
     }
 
     private void buscaCep(String cep) {
-        if (EnderecoController.empty(cep)) {
+        if(EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -327,37 +317,41 @@ public class MinhaContaFragment extends Fragment {
                     Log.d(TAG, t.getMessage());
                 }
             });
-
-
-        } else {
+        }else{
             inputCep.setError("Campo Obrigatorio");
         }
     }
 
     public boolean validateForm(){
 
-        UsuarioController uc = new UsuarioController();
+        UsuarioController ic = new UsuarioController();
 
         EnderecoController ec = new EnderecoController();
 
 
-        if(uc.validarNome(globalUsuario.getNome_completo()) != ""){
-            nomeCompleto.setError(uc.validarNome(globalUsuario.getNome_completo()));
+        if(ic.validarNome(globalUsuario.getNome_completo()) != ""){
+            nomeCompleto.setError(ic.validarNome(globalUsuario.getNome_completo()));
             return false;
         }
 
-        if(uc.validaCpf(globalUsuario.getCpf()) != ""){
-            cpf.setError(uc.validaCpf(globalUsuario.getCpf()));
+        if(ic.validaCpf(globalUsuario.getCpf()) != ""){
+            cpf.setError(ic.validaCpf(globalUsuario.getCpf()));
             return false;
         }
-        if(uc.validaEmail(globalUsuario.getEmail())){
-            email.setError(uc.validarEmail(globalUsuario.getEmail()));
+
+        if((globalUsuario.getData_nascimento()) == null || globalUsuario.getData_nascimento().trim().isEmpty() || globalUsuario.getData_nascimento() == ""){
+            dataNasc.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(ic.validarEmail(globalUsuario.getEmail()) != ""){
+            email.setError(ic.validarEmail(globalUsuario.getEmail()));
             return false;
         }
 
 
-        if(uc.validarTelefone(globalUsuario.getTelefone()) != ""){
-            telefone.setError(uc.validarTelefone(globalUsuario.getTelefone()));
+        if(ic.validarTelefone(globalUsuario.getTelefone()) != ""){
+            telefone.setError(ic.validarTelefone(globalUsuario.getTelefone()));
             return false;
         }
 
@@ -366,6 +360,7 @@ public class MinhaContaFragment extends Fragment {
             return false;
         }
 
+        //Para endereço
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getLogradouro())){
             inputRua.setError("Campo Obrigatorio");
@@ -413,7 +408,7 @@ public class MinhaContaFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar o usuario:" + t.getMessage());
+                Log.e("UsuarioService   ", "Erro ao atualizar a usuario:" + t.getMessage());
 
             }
         });
@@ -433,10 +428,12 @@ public class MinhaContaFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar endereco instituicao:" + t.getMessage());
+                Log.e("UsuarioService   ", "Erro ao atualizar endereco usuario:" + t.getMessage());
 
             }
         });
 
     }
+
+
 }
