@@ -38,7 +38,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
     //Declarações
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private TextInputLayout nomeCompleto, email, telefone,cpf,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
+    private TextInputLayout nomeCompleto, email, telefone,cpf,crm,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,btnBuscaCep;
     private View mView;
     private String enderecoCompleto;
@@ -58,6 +58,10 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         //Buscar em SharedPreferences
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getString("TYPE", "").equals("voluntario")) {
+            crm.setVisibility(View.VISIBLE);
+        }
 
         //Carregados dados
         carregarDados(sharedPreferences);
@@ -110,6 +114,8 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         telefone.getEditText().setTextColor(Color.BLACK);
         cpf.getEditText().setText(dados.getCpf());
         cpf.getEditText().setTextColor(Color.BLACK);
+        crm.getEditText().setText(dados.getCrm_crp());
+        crm.getEditText().setTextColor(Color.BLACK);
         dataNasc.getEditText().setText(dados.getData_nascimento());
         dataNasc.getEditText().setTextColor(Color.BLACK);
 
@@ -162,6 +168,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             email.setEnabled(true);
             telefone.setEnabled(true);
             cpf.setEnabled(true);
+            crm.setEnabled(true);
             dataNasc.setEnabled(true);
 
             inputRua.setEnabled(true);
@@ -180,11 +187,15 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         }else{
 
+            //Desabilitar crm
+            crm.setVisibility(View.GONE);
+
             //Desabilitar campos
             nomeCompleto.setEnabled(false);
             email.setEnabled(false);
             telefone.setEnabled(false);
             cpf.setEnabled(false);
+            crm.setEnabled(false);
             dataNasc.setEnabled(false);
 
             inputRua.setEnabled(false);
@@ -209,6 +220,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         email =  mView.findViewById(R.id.inputEmail);
         telefone =  mView.findViewById(R.id.inputTelefone);
         cpf =  mView.findViewById(R.id.inputCpf);
+        crm = mView.findViewById(R.id.inputCRM);
         dataNasc = mView.findViewById(R.id.inputDataNasc);
         alterar =  mView.findViewById(R.id.buttonAlterar);
         salvar =  mView.findViewById(R.id.buttonSalvar);
@@ -265,6 +277,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         globalUsuario.setEmail(email.getEditText().getText().toString());
         globalUsuario.setTelefone(telefone.getEditText().getText().toString());
         globalUsuario.setCpf(cpf.getEditText().getText().toString());
+        globalUsuario.setCrm_crp(crm.getEditText().getText().toString());
         globalUsuario.setData_nascimento(dataNasc.getEditText().getText().toString());
         globalUsuario.setEndereco(endereco);
 
