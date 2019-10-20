@@ -19,7 +19,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
+import br.com.acolher.controller.InstituicaoController;
+import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
+import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.ViaCep;
@@ -37,7 +40,7 @@ public class MinhaContaFragment extends Fragment {
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, cpf, dataNascimento, email, crm, telefone, inputRua, inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private View mView;
-    private Button alterar, salvar;
+    private Button alterar, salvar,btnBuscaCep;
     private String enderecoCompleto;
     private Usuario globalUsuario;
     private Boolean globalStatus;
@@ -49,6 +52,36 @@ public class MinhaContaFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_minha_conta, null);
 
         findById();
+
+        habilitarEdicao(false);
+
+        alterar.setOnClickListener(view -> habilitarEdicao(true));
+
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
+        });
+
+        salvar.setOnClickListener(view -> {
+
+            try {
+                atualizarDados();
+
+                if (validateForm()){
+                    updateBD();
+                    msgResposta = "Atualização realizada com sucesso!";
+                    habilitarEdicao(false);
+
+                }else{
+                    msgResposta = "Favor preencha todos campos obrigatorios!";
+                }
+            } catch (Exception e) {
+                msgResposta = "Falha na atualização!";
+                e.printStackTrace();
+            }
+
+            msgTela(msgResposta);
+        });
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
@@ -294,8 +327,116 @@ public class MinhaContaFragment extends Fragment {
                     Log.d(TAG, t.getMessage());
                 }
             });
+
+
         } else {
             inputCep.setError("Campo Obrigatorio");
         }
+    }
+
+    public boolean validateForm(){
+
+        UsuarioController uc = new UsuarioController();
+
+        EnderecoController ec = new EnderecoController();
+
+
+        if(uc.validarNome(globalUsuario.getNome_completo()) != ""){
+            nomeCompleto.setError(uc.validarNome(globalUsuario.getNome_completo()));
+            return false;
+        }
+
+        if(uc.validaCpf(globalUsuario.getCpf()) != ""){
+            cpf.setError(uc.validaCpf(globalUsuario.getCpf()));
+            return false;
+        }
+        if(uc.validaEmail(globalUsuario.getEmail())){
+            email.setError(uc.validarEmail(globalUsuario.getEmail()));
+            return false;
+        }
+
+
+        if(uc.validarTelefone(globalUsuario.getTelefone()) != ""){
+            telefone.setError(uc.validarTelefone(globalUsuario.getTelefone()));
+            return false;
+        }
+
+        if(ec.validaCep(globalUsuario.getEndereco().getCep()) != ""){
+            inputCep.setError(ec.validaCep(globalUsuario.getEndereco().getCep()));
+            return false;
+        }
+
+
+        if(!EnderecoController.empty(globalUsuario.getEndereco().getLogradouro())){
+            inputRua.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalUsuario.getEndereco().getNumero())){
+            inputNumero.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalUsuario.getEndereco().getBairro())){
+            inputBairro.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(!EnderecoController.empty(globalUsuario.getEndereco().getCidade())){
+            inputCidade.setError("Campo Obrigatorio");
+            return false;
+        }
+
+        if(EnderecoController.validaUF(globalUsuario.getEndereco().getUf()) != ""){
+            inputUF.setError(EnderecoController.validaUF(globalUsuario.getEndereco().getUf()));
+            return false;
+        }
+
+
+
+        return true;
+
+    }
+    private void updateBD(){
+
+        updateBDEndereco();
+
+        Call<Usuario> call = retrofitInit.getService().alterarUsuario(globalUsuario);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Log.e("UsuarioService   ", "Erro ao atualizar o usuario:" + t.getMessage());
+
+            }
+        });
+    }
+
+    private void updateBDEndereco(){
+
+        Call<Endereco> call = retrofitInit.getService().atualizarEndereco(globalUsuario.getEndereco());
+        call.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Log.e("UsuarioService   ", "Erro ao atualizar endereco instituicao:" + t.getMessage());
+
+            }
+        });
+
     }
 }
