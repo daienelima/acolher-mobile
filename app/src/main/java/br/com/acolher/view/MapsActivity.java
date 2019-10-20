@@ -101,9 +101,9 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void limparDadosUsuario() {
-        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        editor.clear();
+        editor.putBoolean("logado", false);
         editor.apply();
     }
 
