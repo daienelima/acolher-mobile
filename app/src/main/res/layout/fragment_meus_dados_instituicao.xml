@@ -129,7 +129,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="3"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
                         app:errorEnabled="true">
 
@@ -146,11 +146,11 @@
                     <Button
                         android:id="@+id/btnBuscaCep"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="15dp"
                         android:layout_marginRight="20dp"
+                        android:layout_weight="1"
                         android:background="@drawable/button_cadastro_radius"
                         android:text="Search"
                         android:textColor="#FFF" />
@@ -168,7 +168,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="3"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
                         android:layout_marginTop="10dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -185,7 +185,7 @@
                         android:id="@+id/inputNumero"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginRight="8dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -210,8 +210,8 @@
                         android:id="@+id/inputBairro"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:errorEnabled="true">
@@ -236,7 +236,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="3"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:errorEnabled="true">
@@ -263,39 +263,39 @@
                             android:id="@+id/labelUF"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="UF"
                             android:inputType="text"
-                            android:maxLength="2"
-                            android:hint="UF"/>
+                            android:maxLength="2" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-            </LinearLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/buttonAlterar"
-                    android:layout_width="160dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:textColor="#FFF"
-                    android:background="@drawable/button_cadastro_radius"
-                    android:textSize="18sp"
-                    android:text="Alterar" />
+                    <Button
+                        android:id="@+id/buttonAlterar"
+                        android:layout_width="160dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:textColor="#FFF"
+                        android:background="@drawable/button_cadastro_radius"
+                        android:textSize="18sp"
+                        android:text="Alterar" />
 
-                <Button
-                    android:id="@+id/buttonSalvar"
-                    android:layout_width="160dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:textColor="#FFF"
-                    android:background="@drawable/button_cadastro_radius"
-                    android:textSize="18sp"
-                    android:text="Salvar" />
+                    <Button
+                        android:id="@+id/buttonSalvar"
+                        android:layout_width="160dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/button_cadastro_radius"
+                        android:text="Salvar"
+                        android:textColor="#FFF"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
