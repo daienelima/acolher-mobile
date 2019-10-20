@@ -324,22 +324,22 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
 
         if(ic.validarNome(globalInstituicao.getNome()) != ""){
-            nomeCompleto.getEditText().setError(ic.validarNome(globalInstituicao.getNome()));
+            nomeCompleto.setError(ic.validarNome(globalInstituicao.getNome()));
             return false;
         }
 
         if(ic.validaCnpj(globalInstituicao.getCnpj()) != ""){
-            cnpj.getEditText().setError(ic.validaCnpj(globalInstituicao.getCnpj()));
+            cnpj.setError(ic.validaCnpj(globalInstituicao.getCnpj()));
             return false;
         }
         if(ic.validarEmail(globalInstituicao.getEmail()) != ""){
-            email.getEditText().setError(ic.validarEmail(globalInstituicao.getEmail()));
+            email.setError(ic.validarEmail(globalInstituicao.getEmail()));
             return false;
         }
 
 
         if(ic.validarTelefone(globalInstituicao.getTelefone()) != ""){
-            telefone.getEditText().setError(ic.validarTelefone(globalInstituicao.getTelefone()));
+            telefone.setError(ic.validarTelefone(globalInstituicao.getTelefone()));
             return false;
         }
 
