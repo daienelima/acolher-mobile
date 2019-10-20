@@ -82,6 +82,8 @@ public class ConsultasFragment extends Fragment implements Serializable{
             call = retrofitInit.getService().getConsultasPorPaciente(id);
         }else if(tipo.equals("VOLUNTARIO")){
             call = retrofitInit.getService().getConsultasPorVoluntario(id);
+        }else if(tipo.equals("INSTITUICAO")){
+            call = retrofitInit.getService().getConsultasPorInstituicao(id);
         }else {
             //tem q tratar
         }

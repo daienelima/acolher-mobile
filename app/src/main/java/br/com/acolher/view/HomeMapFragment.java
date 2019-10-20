@@ -339,7 +339,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(typeUser .equals("VOLUNTARIO")){
+                if(typeUser .equals("VOLUNTARIO") || typeUser .equals("INSTITUICAO")){
                     if(markerConsulta != null){
                         markerConsulta.remove();
                     }
