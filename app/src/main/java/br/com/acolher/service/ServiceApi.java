@@ -21,6 +21,10 @@ public interface ServiceApi {
     @POST("endereco")
     Call<Endereco> cadastroEndereco(@Body Endereco endereco);
 
+    @PUT("endereco")
+    Call<Endereco> atualizarEndereco(@Body Endereco endereco);
+
+
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
 

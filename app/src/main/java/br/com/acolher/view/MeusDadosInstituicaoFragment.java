@@ -382,6 +382,8 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     }
     private void updateBD(){
 
+        updateBDEndereco();
+
         Call<Instituicao> call = retrofitInit.getService().atualizarInstituicao(globalInstituicao);
         call.enqueue(new Callback<Instituicao>() {
             @Override
@@ -398,6 +400,27 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
             }
         });
+    }
+
+    private void updateBDEndereco(){
+
+        Call<Endereco> call = retrofitInit.getService().atualizarEndereco(globalInstituicao.getEndereco());
+        call.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Log.e("InstituicaoService   ", "Erro ao atualizar endereco instituicao:" + t.getMessage());
+
+            }
+        });
+
     }
 
 
