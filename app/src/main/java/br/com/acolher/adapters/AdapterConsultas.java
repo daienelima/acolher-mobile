@@ -1,7 +1,6 @@
 package br.com.acolher.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.View;
@@ -9,11 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.acolher.R;
@@ -78,7 +72,6 @@ public class AdapterConsultas extends BaseAdapter {
                 e.printStackTrace();
             }
         }else{
-            //TEM Q TRATAR
         }
         hora.setText(consulta.getHora());
         data.setText(consulta.getData());
@@ -88,7 +81,7 @@ public class AdapterConsultas extends BaseAdapter {
         if(consulta.getStatusConsulta().toString().equals("CANCELADA")){
             status.setTextColor(Color.RED);
         }else{
-            status.setTextColor(Color.GREEN);
+            status.setTextColor(Color.GRAY);
         }
         return view;
     }

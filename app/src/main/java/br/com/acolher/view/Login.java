@@ -245,7 +245,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        // visualizacao do dialogo
         alertDialog.show();
     }
 
@@ -284,12 +283,12 @@ public class Login extends AppCompatActivity {
      */
     private void usuarioLogado() {
         sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
-         if (sharedPreferences.getBoolean("logado", false)) {
-             Intent home = new Intent(this, MapsActivity.class);
-             startActivity(home);
-             finish();
-         } else {
+        if (sharedPreferences.getBoolean("logado", false)) {
+            Intent home = new Intent(this, MapsActivity.class);
+            startActivity(home);
+            finish();
+        } else {
             inputEmail.getEditText().setText(sharedPreferences.getString("email", null));
-         }
+        }
     }
 }
