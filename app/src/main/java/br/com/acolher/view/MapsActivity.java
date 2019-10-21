@@ -1,13 +1,20 @@
 package br.com.acolher.view;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -20,7 +27,8 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     private GoogleMap mMap;
     private ActionBar actionBar;
-    public String tipoUsuario = "Instituição";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -57,7 +65,46 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.navigation_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.tool_sair:
+                limparDadosUsuario();
+                Intent login = new Intent(MapsActivity.this, Login.class);
+                startActivity(login);
+                return true;
+
+            case R.id.tool_ajuda:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public void limparDadosUsuario() {
+        sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putBoolean("logado", false);
+        editor.apply();
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        //Buscar Informação do sharedPreferences Inicio
+
+        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        //Buscar Informação do sharedPreferences Fim
+
 
         Fragment fragment = null;
 
@@ -72,13 +119,12 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
-                /*if (tipoUsuario.equals("Instituição")){
-                fragment = new MeusDadosInstituicaoFragment();
-                }
-                if (tipoUsuario.equals("Usuario")){
+
+                if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+                    fragment = new MeusDadosInstituicaoFragment();
+                }else{
                     fragment = new MinhaContaFragment();
-                }*/
-                fragment = new MinhaContaFragment();
+                }
                 break;
             default:
                 break;
@@ -86,6 +132,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
+
 
 
     /**

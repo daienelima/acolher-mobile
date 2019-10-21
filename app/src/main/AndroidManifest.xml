@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.acolher">
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.MeusDadosInstituicaoActivity"/>
         <activity android:name=".view.CadastroDisponibilidade" />
         <activity android:name=".chamaTelas" />
         <activity android:name=".view.Login" >
@@ -28,17 +29,17 @@
         <activity android:name=".view.AlterarDadosInstituicao" />
         <activity android:name=".view.CadastroInstituicao" />
         <activity android:name=".view.MapsActivity" />
+        <activity android:name=".view.ModalDisponibilidades" />
         <activity android:name=".view.Consultas" />
         <activity
             android:name=".view.MeusDadosActivity"
             android:label="@string/title_activity_maps" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" /> <!-- service android:name=".service.LocationIntentService" android:exported="false"/ -->
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

@@ -1,6 +1,8 @@
 package br.com.acolher.model;
 
-public class Instituicao {
+import java.io.Serializable;
+
+public class Instituicao implements Serializable {
 
     private Integer codigo;
     private String nome;

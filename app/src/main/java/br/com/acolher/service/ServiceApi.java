@@ -21,17 +21,26 @@ public interface ServiceApi {
     @POST("endereco")
     Call<Endereco> cadastroEndereco(@Body Endereco endereco);
 
+    @PUT("endereco")
+    Call<Endereco> atualizarEndereco(@Body Endereco endereco);
+
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
 
+    @PUT("instituicao")
+    Call<Instituicao> atualizarInstituicao(@Body Instituicao instituicao);
+
     @GET("instituicao/{codigo}")
-    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+    Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
 
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
+
+    @PUT("usuario")
+    Call<Usuario> alterarUsuario(@Body Usuario usuario);
 
     @GET("usuario/{codigo}")
     Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
@@ -53,6 +62,9 @@ public interface ServiceApi {
 
     @GET("consulta/voluntario/{id}")
     Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+
+    @GET("consulta/instituicao/{id}")
+    Call<List<Consulta>> getConsultasPorInstituicao(@Path("id") int id);
 
     @PUT("consulta/cancelar")
     Call<Consulta> cancelarConsulta(@Body Consulta consulta);

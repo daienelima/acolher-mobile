@@ -54,13 +54,13 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             mMapView.getMapAsync(this);
         }
 
-        TextView nome = (TextView) findViewById(R.id.nome);
-        TextView data = (TextView) findViewById(R.id.data);
-        TextView hora = (TextView) findViewById(R.id.hora);
-        TextView endereco = (TextView) findViewById(R.id.endereco);
-        TextView nomeLabel = (TextView) findViewById(R.id.nomeLabel);
-        Button cancelarConsulta = (Button) findViewById(R.id.buttonCancelarConsulta) ;
-        TextView voltar = (TextView) findViewById(R.id.labelRetornarConsultas) ;
+        TextView nome =  findViewById(R.id.nome);
+        TextView data =  findViewById(R.id.data);
+        TextView hora =  findViewById(R.id.hora);
+        TextView endereco =  findViewById(R.id.endereco);
+        TextView nomeLabel =  findViewById(R.id.nomeLabel);
+        Button cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
+        TextView voltar =  findViewById(R.id.labelRetornarConsultas) ;
 
         if(c.getStatusConsulta().equals(Status.CANCELADA)){
             cancelarConsulta.setVisibility(View.INVISIBLE);
@@ -70,11 +70,15 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         String tipo = pref.getString("TYPE","tipo não encontrado");
 
 
-
         final Bundle bundle = getIntent().getExtras();
         if(tipo.equals("PACIENTE")){
-            nomeLabel.setText("Nome do voluntário");
-            nome.setText(c.getProfissional().getNome_completo());
+            try {
+                nomeLabel.setText("Nome do voluntário");
+                nome.setText(c.getProfissional().getNome_completo());
+            }catch(Exception e){
+                nomeLabel.setText("Nome da instituicao");
+                nome.setText(c.getInstituicao().getNome());
+            }
         }else if(tipo.equals("VOLUNTARIO")){
             nomeLabel.setText("Nome do paciente");
             try {
@@ -101,10 +105,8 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             public void onClick(View v) {
                 if(tipo.equals("PACIENTE")){
                     call = retrofitInit.getService().cancelarConsultaPaciente(c);
-                    finish();
                 }else if(tipo.equals("VOLUNTARIO")){
                     call = retrofitInit.getService().cancelarConsulta(c);
-                    finish();
                 }else{
                     //tem q tratar
                     //por hora, adicionar mesmo tratamento de voluntario
@@ -113,10 +115,14 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 call.enqueue(new Callback<Consulta>() {
                     @Override
-                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {}
+                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                        finish();
+                    }
 
                     @Override
-                    public void onFailure(Call<Consulta> call, Throwable t) {}
+                    public void onFailure(Call<Consulta> call, Throwable t) {
+                        finish();
+                    }
                 });
             }
         });
