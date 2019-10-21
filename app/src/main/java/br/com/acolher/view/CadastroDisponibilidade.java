@@ -2,6 +2,7 @@ package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
@@ -213,6 +214,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 }
             }
         }, year, month, day);
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
@@ -272,6 +274,11 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));
                     Helper.closeProgressDialog();
+                    if(response.code() == 400){
+                        msgValidacao("Não é possível agendar consultas em intervalo inferior a 1h de consultas já agendadas.");
+                    } else if(response.code() == 409){
+                        msgValidacao("Não é possível agendar consultas para a data e hora atual ou retroativa.");
+                    }
                 }
             }
 
@@ -293,5 +300,19 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         endereco.setCidade(address.getSubAdminArea());
         endereco.setUf(Validacoes.deParaEstados(address.getAdminArea()));
         return endereco;
+    }
+
+    public void msgValidacao(String mensagem){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroDisponibilidade.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(mensagem);
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+            }
+        });
+
+        // visualizacao do dialogo
+        alertDialog.show();
     }
 }
