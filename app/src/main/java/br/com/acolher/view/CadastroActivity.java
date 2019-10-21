@@ -56,8 +56,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
     private Address address;
-    private double latitude;
-    private double longitude;
+    private double latitude, longitude = 0;
     private FusedLocationProviderClient fusedLocation;
     private GoogleApiClient googleApiClient;
     private ImageButton btnCalendar;
@@ -82,6 +81,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
+
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
         if(googleApiClient == null){
 
@@ -126,13 +127,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         pesquisarEndereco.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-            }
-        });
-
-       /* pesquisarEndereco.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
                 if (GetLocalization(CadastroActivity.this)) {
                     if (ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -149,7 +143,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                                         inputRua.getEditText().setText(address.getThoroughfare());
                                         inputCep.getEditText().setText(address.getPostalCode());
                                         inputBairro.getEditText().setText(address.getSubLocality());
-                                        inputUF.getEditText().setText(address.getLocality());
+                                        inputCidade.getEditText().setText(address.getSubAdminArea());
+                                        inputUF.getEditText().setText(Validacoes.deParaEstados(address.getAdminArea()));
                                     }catch (IOException e){
                                         Log.d(TAG, e.getMessage());
                                         e.printStackTrace();
@@ -159,6 +154,13 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         });
                     }
                 }
+            }
+        });
+
+       /* pesquisarEndereco.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });*/
 
@@ -178,7 +180,10 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     endereco.setBairro(inputBairro.getEditText().getText().toString());
                     endereco.setCidade(inputCidade.getEditText().getText().toString());
                     endereco.setUf(inputUF.getEditText().getText().toString());
-                    cadastroEndereco(endereco);
+                    if(latitude != 0.0 && longitude != 0.0){
+                        endereco.setLatitude(String.valueOf(latitude));
+                        endereco.setLongitude(String.valueOf(longitude));
+                    }
 
                     //Montar Usuario
                     usuario.setNome_completo(nome);
@@ -194,9 +199,10 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         usuario.setCrm_crp("");
                     }
 
+                    cadastroEndereco(endereco);
+
                     if(enderecoOK){
-                        usuario.getEndereco().setCodigo(codigo_endereco);
-                        cadastroUsuario(usuario);
+
                     }
                 }
             }
@@ -289,6 +295,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     Log.d(TAG, String.valueOf(response.code()));
                     enderecoOK = true;
                     codigo_endereco = response.body().getCodigo();
+                    usuario.setEndereco(response.body());
+                    cadastroUsuario(usuario);
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
@@ -434,9 +442,9 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
 
                     String tipoUsuario = "";
                     if(response.body().getCrm_crp().isEmpty()){
-                        tipoUsuario = "paciente";
+                        tipoUsuario = "PACIENTE";
                     }else{
-                        tipoUsuario = "voluntario";
+                        tipoUsuario = "VOLUNTARIO";
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
 

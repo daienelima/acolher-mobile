@@ -59,7 +59,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getString("TYPE", "").equals("voluntario")) {
+        if (sharedPreferences.getString("TYPE", "").equals("VOLUNTARIO")) {
             crm.setVisibility(View.VISIBLE);
         }
 
