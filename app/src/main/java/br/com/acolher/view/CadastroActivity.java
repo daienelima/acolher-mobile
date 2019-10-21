@@ -178,6 +178,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     endereco.setBairro(inputBairro.getEditText().getText().toString());
                     endereco.setCidade(inputCidade.getEditText().getText().toString());
                     endereco.setUf(inputUF.getEditText().getText().toString());
+                    cadastroEndereco(endereco);
 
                     //Montar Usuario
                     usuario.setNome_completo(nome);
@@ -193,7 +194,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         usuario.setCrm_crp("");
                     }
 
-                    cadastroEndereco(endereco);
                     if(enderecoOK){
                         usuario.getEndereco().setCodigo(codigo_endereco);
                         cadastroUsuario(usuario);
@@ -263,11 +263,11 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 @Override
                 public void onResponse(Call<ViaCep> call, Response<ViaCep> response) {
                     Log.d(TAG, String.valueOf(response.code()));
-                    ViaCep endereco = response.body();
-                    inputRua.getEditText().setText(endereco.getLogradouro());
-                    inputBairro.getEditText().setText(endereco.getBairro());
-                    inputUF.getEditText().setText(endereco.getUf());
-                    inputCidade.getEditText().setText(endereco.getLocalidade());
+                    inputRua.getEditText().setText(response.body().getLogradouro());
+                    inputBairro.getEditText().setText(response.body().getBairro());
+                    inputUF.getEditText().setText(response.body().getUf());
+                    inputCidade.getEditText().setText(response.body().getLocalidade());
+
                 }
 
                 @Override
@@ -289,7 +289,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     Log.d(TAG, String.valueOf(response.code()));
                     enderecoOK = true;
                     codigo_endereco = response.body().getCodigo();
-                    //chamarProximaTela(response.body().getCodigo());
                 } else {
                     Log.d(TAG, String.valueOf(response.code()));
                 }

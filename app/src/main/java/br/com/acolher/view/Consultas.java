@@ -54,13 +54,13 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             mMapView.getMapAsync(this);
         }
 
-        TextView nome = (TextView) findViewById(R.id.nome);
-        TextView data = (TextView) findViewById(R.id.data);
-        TextView hora = (TextView) findViewById(R.id.hora);
-        TextView endereco = (TextView) findViewById(R.id.endereco);
-        TextView nomeLabel = (TextView) findViewById(R.id.nomeLabel);
-        Button cancelarConsulta = (Button) findViewById(R.id.buttonCancelarConsulta) ;
-        TextView voltar = (TextView) findViewById(R.id.labelRetornarConsultas) ;
+        TextView nome =  findViewById(R.id.nome);
+        TextView data =  findViewById(R.id.data);
+        TextView hora =  findViewById(R.id.hora);
+        TextView endereco =  findViewById(R.id.endereco);
+        TextView nomeLabel =  findViewById(R.id.nomeLabel);
+        Button cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
+        TextView voltar =  findViewById(R.id.labelRetornarConsultas) ;
 
         if(c.getStatusConsulta().equals(Status.CANCELADA)){
             cancelarConsulta.setVisibility(View.INVISIBLE);
@@ -68,7 +68,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("USERDATA", getApplicationContext().MODE_PRIVATE);
         String tipo = pref.getString("TYPE","tipo não encontrado");
-
 
 
         final Bundle bundle = getIntent().getExtras();

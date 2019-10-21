@@ -77,7 +77,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.tool_sair:
                 limparDadosUsuario();
                 Intent login = new Intent(MapsActivity.this, Login.class);
-                login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(login);
                 return true;
 
@@ -85,8 +84,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
