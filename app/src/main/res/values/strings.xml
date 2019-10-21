@@ -94,5 +94,7 @@
     <string name="labelData">Data: </string>
     <string name="labelHora">Hora: </string>
 
+    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!s</string>
+
 
 </resources>
