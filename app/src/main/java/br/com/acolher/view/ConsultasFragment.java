@@ -38,11 +38,13 @@ public class ConsultasFragment extends Fragment implements Serializable{
     private SharedPreferences pref;
     private int id;
     private ListView listaDeConsultas;
+    private TextView labelNenhumaConsulta;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_consultas, null);
+        labelNenhumaConsulta = mView.findViewById(R.id.labelNenhumaConsulta);
         consultas = new ArrayList<>();
         listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
@@ -96,7 +98,10 @@ public class ConsultasFragment extends Fragment implements Serializable{
                     consultas = response.body();
                     if(consultas == null){
                         consultas = new ArrayList<Consulta>();
+                    }else if(consultas.size() == 0){
+                        labelNenhumaConsulta.setVisibility(View.VISIBLE);
                     }
+
                     AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
                     listaDeConsultas.setAdapter(adapter);
                 }
