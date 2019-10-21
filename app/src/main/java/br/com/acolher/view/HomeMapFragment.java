@@ -257,8 +257,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     return false;
                 }
 
-                Integer id = Integer.parseInt(marker.getSnippet());
+                if(consPorUser != null){
+                    Intent intent = new Intent(getContext(), Consultas.class);
+                    intent.putExtra("consulta",consPorUser);
+                    startActivity(intent);
+                    return false;
+                }
 
+                Integer id = Integer.parseInt(marker.getSnippet());
 
                 if(verifyDuplicityLatLng(id)){
                     ArrayList<Consulta> consultasPorLocalz = consultasPorLocalizacao(id);
@@ -401,6 +407,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             LatLng disponibilidade = new LatLng(Double.parseDouble(consultaPorUsuario.getEndereco().getLatitude()), Double.parseDouble(consultaPorUsuario.getEndereco().getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(disponibilidade)
+                    .snippet(String.valueOf(consultaPorUsuario.getCodigo()))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
             );
         }else{
