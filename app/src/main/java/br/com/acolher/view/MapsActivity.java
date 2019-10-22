@@ -78,6 +78,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 limparDadosUsuario();
                 Intent login = new Intent(MapsActivity.this, Login.class);
                 startActivity(login);
+                finish();
                 return true;
 
             case R.id.tool_ajuda:
