@@ -102,29 +102,30 @@ public class Login extends AppCompatActivity {
                 final Button btnPaciente = viewDialog.findViewById(R.id.btnPaciente);
                 final Button btnProfissional = viewDialog.findViewById(R.id.btnProfissional);
                 final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
-                Intent intent = new Intent(login.getContext(), CadastroActivity.class);
+
 
                 btnPaciente.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(login.getContext(), CadastroActivity.class);
                         String perfil = "paciente";
                         intent.putExtra("perfil", perfil);
                         startActivity(intent);
                     }
                 });
-
                 btnProfissional.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(login.getContext(), CadastroActivity.class);
                         String perfil = "profissional";
                         intent.putExtra("perfil", perfil);
                         startActivity(intent);
                     }
                 });
-
                 btnInstituicao.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(login.getContext(), CadastroInstituicao.class);
                         String perfil = "instituicao";
                         intent.putExtra("perfil", perfil);
                         startActivity(intent);
