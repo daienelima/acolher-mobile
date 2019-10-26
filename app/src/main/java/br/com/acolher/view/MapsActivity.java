@@ -1,20 +1,15 @@
 package br.com.acolher.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -68,23 +63,14 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    public void limparDadosUsuario() {
-        sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putBoolean("logado", false);
-        editor.apply();
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         //Buscar Informação do sharedPreferences Inicio
-
         SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
         //Buscar Informação do sharedPreferences Fim
-
-
         Fragment fragment = null;
 
         switch (menuItem.getItemId()){
