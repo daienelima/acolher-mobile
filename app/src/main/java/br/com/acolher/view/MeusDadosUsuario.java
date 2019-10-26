@@ -51,6 +51,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.meus_dados_usuario);
 
         findById();
 
@@ -63,8 +64,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
 
         //Carregados dados
         carregarDados(sharedPreferences);
-
-        habilitarEdicao(false);
 
         //Chamar Edição ao clicar alterar
         alterar.setOnClickListener(new View.OnClickListener() {
@@ -214,7 +213,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
         email = findViewById(R.id.inputEmail);
         telefone =  findViewById(R.id.inputTelefone);
         cpf =  findViewById(R.id.inputCpf);
-        crm = findViewById(R.id.inputCRM);
+        crm = findViewById(R.id.inputCRMMeusDados);
         dataNasc = findViewById(R.id.inputDataNasc);
         cancelarEdicao = findViewById(R.id.buttonCancelarEdicao);
         alterar = findViewById(R.id.buttonAlterar);
@@ -228,6 +227,8 @@ public class MeusDadosUsuario extends AppCompatActivity {
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
+
+        habilitarEdicao(false);
     }
 
     private void carregarDados (SharedPreferences sharedPreferences){
