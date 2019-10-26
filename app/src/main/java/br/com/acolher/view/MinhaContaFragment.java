@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.controller.BasicoController;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
@@ -39,7 +40,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cpf,crm,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
-    private Button alterar,salvar,btnBuscaCep;
+    private Button alterar,salvar,cancelarEdicao,btnBuscaCep;
     private View mView;
     private String enderecoCompleto;
     private Usuario globalUsuario;
@@ -70,6 +71,9 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         //Chamar Edição ao clicar alterar
         alterar.setOnClickListener(view -> habilitarEdicao(true));
+
+        //Cancelar Edição
+        cancelarEdicao.setOnClickListener(view -> habilitarEdicao(false));
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
@@ -110,9 +114,9 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         nomeCompleto.getEditText().setTextColor(Color.BLACK);
         email.getEditText().setText(dados.getEmail());
         email.getEditText().setTextColor(Color.BLACK);
-        telefone.getEditText().setText(dados.getTelefone());
+        telefone.getEditText().setText(MaskWatcher.addMask(dados.getTelefone(),"(##) #####-####"));
         telefone.getEditText().setTextColor(Color.BLACK);
-        cpf.getEditText().setText(dados.getCpf());
+        cpf.getEditText().setText(MaskWatcher.addMask(dados.getCpf(),"###.###.###-##"));
         cpf.getEditText().setTextColor(Color.BLACK);
         crm.getEditText().setText(dados.getCrm_crp());
         crm.getEditText().setTextColor(Color.BLACK);
@@ -121,7 +125,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         inputRua.getEditText().setText(dados.getEndereco().getLogradouro());
         inputRua.getEditText().setTextColor(Color.BLACK);
-        inputCep.getEditText().setText(dados.getEndereco().getCep());
+        inputCep.getEditText().setText(MaskWatcher.addMask(dados.getEndereco().getCep(),"##.###-###"));
         inputCep.getEditText().setTextColor(Color.BLACK);
         inputBairro.getEditText().setText(dados.getEndereco().getBairro());
         inputBairro.getEditText().setTextColor(Color.BLACK);
@@ -131,35 +135,14 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         inputUF.getEditText().setTextColor(Color.BLACK);
         inputCidade.getEditText().setText(dados.getEndereco().getCidade());
         inputCidade.getEditText().setTextColor(Color.BLACK);
+
+        //Acrescentando mascaras
+
+        telefone.getEditText().addTextChangedListener(MaskWatcher.buildFone());
+        cpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+        inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
     }
 
-    //incluir dados em campos
-    private void capturarDadosCampos (Usuario dados){
-
-        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
-
-        nomeCompleto.getEditText().setText(dados.getNome_completo());
-        nomeCompleto.getEditText().setTextColor(Color.BLACK);
-        email.getEditText().setText(dados.getEmail());
-        email.getEditText().setTextColor(Color.BLACK);
-        telefone.getEditText().setText(dados.getTelefone());
-        telefone.getEditText().setTextColor(Color.BLACK);
-        cpf.getEditText().setText(dados.getCpf());
-        cpf.getEditText().setTextColor(Color.BLACK);
-
-        inputRua.getEditText().setText(dados.getEndereco().getLogradouro());
-        inputRua.getEditText().setTextColor(Color.BLACK);
-        inputCep.getEditText().setText(dados.getEndereco().getCep());
-        inputCep.getEditText().setTextColor(Color.BLACK);
-        inputBairro.getEditText().setText(dados.getEndereco().getBairro());
-        inputBairro.getEditText().setTextColor(Color.BLACK);
-        inputNumero.getEditText().setText(dados.getEndereco().getNumero());
-        inputNumero.getEditText().setTextColor(Color.BLACK);
-        inputUF.getEditText().setText(dados.getEndereco().getUf());
-        inputUF.getEditText().setTextColor(Color.BLACK);
-        inputCidade.getEditText().setText(dados.getEndereco().getCidade());
-        inputCidade.getEditText().setTextColor(Color.BLACK);
-    }
 
     private void habilitarEdicao (boolean opcao){
         if(opcao){
@@ -181,7 +164,9 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             btnBuscaCep.setEnabled(true);
             alterar.setEnabled(false);
             alterar.setActivated(false);
-            alterar.setVisibility(View.INVISIBLE);
+            alterar.setVisibility(View.GONE);
+            cancelarEdicao.setEnabled(true);
+            cancelarEdicao.setVisibility(View.VISIBLE);
             salvar.setEnabled(true);
             salvar.setVisibility(View.VISIBLE);
 
@@ -208,9 +193,11 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             btnBuscaCep.setEnabled(false);
             alterar.setEnabled(true);
             alterar.setActivated(true);
+            cancelarEdicao.setEnabled(false);
+            cancelarEdicao.setVisibility(View.GONE);
             salvar.setEnabled(false);
             alterar.setVisibility(View.VISIBLE);
-            salvar.setVisibility(View.INVISIBLE);
+            salvar.setVisibility(View.GONE);
         }
 
     }
@@ -222,6 +209,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         cpf =  mView.findViewById(R.id.inputCpf);
         crm = mView.findViewById(R.id.inputCRM);
         dataNasc = mView.findViewById(R.id.inputDataNasc);
+        cancelarEdicao = mView.findViewById(R.id.buttonCancelarEdicao);
         alterar =  mView.findViewById(R.id.buttonAlterar);
         salvar =  mView.findViewById(R.id.buttonSalvar);
 
@@ -231,7 +219,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         btnBuscaCep = mView.findViewById(R.id.btnBuscaCep);
         inputRua = mView.findViewById(R.id.inputRua);
         inputCep =  mView.findViewById(R.id.inputCep);
-        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
         inputBairro = mView.findViewById(R.id.inputBairro);
         inputNumero = mView.findViewById(R.id.inputNumero);
         inputUF = mView.findViewById(R.id.inputUF);
@@ -265,7 +253,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         // Para endereco
 
         endereco.setLogradouro(inputRua.getEditText().getText().toString());
-        endereco.setCep(inputCep.getEditText().getText().toString());
+        endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
         endereco.setBairro(inputBairro.getEditText().getText().toString());
         endereco.setNumero(inputNumero.getEditText().getText().toString());
         endereco.setUf(inputUF.getEditText().getText().toString());
@@ -275,9 +263,9 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         globalUsuario.setNome_completo(nomeCompleto.getEditText().getText().toString());
         globalUsuario.setEmail(email.getEditText().getText().toString());
-        globalUsuario.setTelefone(telefone.getEditText().getText().toString());
-        globalUsuario.setCpf(cpf.getEditText().getText().toString());
-        globalUsuario.setCrm_crp(crm.getEditText().getText().toString());
+        globalUsuario.setTelefone(Validacoes.cleanTelefone(telefone.getEditText().getText().toString()));
+        globalUsuario.setCpf(Validacoes.cleanCPF(cpf.getEditText().getText().toString()));
+        globalUsuario.setCrm_crp(Validacoes.cleanCPF(crm.getEditText().getText().toString()));
         globalUsuario.setData_nascimento(dataNasc.getEditText().getText().toString());
         globalUsuario.setEndereco(endereco);
 
@@ -337,18 +325,20 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
     public boolean validateForm(){
 
-        UsuarioController ic = new UsuarioController();
+        BasicoController bc = new BasicoController();
+
+        UsuarioController uc = new UsuarioController();
 
         EnderecoController ec = new EnderecoController();
 
 
-        if(ic.validarNome(globalUsuario.getNome_completo()) != ""){
-            nomeCompleto.setError(ic.validarNome(globalUsuario.getNome_completo()));
+        if(bc.validarNome(globalUsuario.getNome_completo()) != ""){
+            nomeCompleto.setError(bc.validarNome(globalUsuario.getNome_completo()));
             return false;
         }
 
-        if(ic.validaCpf(globalUsuario.getCpf()) != ""){
-            cpf.setError(ic.validaCpf(globalUsuario.getCpf()));
+        if(uc.validaCpf(globalUsuario.getCpf()) != ""){
+            cpf.setError(uc.validaCpf(globalUsuario.getCpf()));
             return false;
         }
 
@@ -357,14 +347,14 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             return false;
         }
 
-        if(ic.validarEmail(globalUsuario.getEmail()) != ""){
-            email.setError(ic.validarEmail(globalUsuario.getEmail()));
+        if(bc.validarEmail(globalUsuario.getEmail()) != ""){
+            email.setError(uc.validarEmail(globalUsuario.getEmail()));
             return false;
         }
 
 
-        if(ic.validarTelefone(globalUsuario.getTelefone()) != ""){
-            telefone.setError(ic.validarTelefone(globalUsuario.getTelefone()));
+        if(bc.validarTelefone(globalUsuario.getTelefone()) != ""){
+            telefone.setError(uc.validarTelefone(globalUsuario.getTelefone()));
             return false;
         }
 

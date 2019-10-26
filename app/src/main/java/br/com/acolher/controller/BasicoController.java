@@ -5,23 +5,11 @@ import java.util.regex.Pattern;
 
 import br.com.acolher.helper.Validacoes;
 
-public class UsuarioController {
-
-    /**
-     * Valida se uma String é vazia ou nula
-     * @param s
-     * @return
-     */
-    public static boolean empty(String s){
-        if(s == null){
-            return false;
-        }
-        return s.trim().length() > 0;
-    }
+public class BasicoController {
 
     public String validarNome(String nome){
 
-        if(!empty(nome)) {
+        if(nome == null || nome.trim().isEmpty() || nome == "") {
             return "Campo obrigatorio!";
         }
 
@@ -38,11 +26,11 @@ public class UsuarioController {
 
     public String validarTelefone(String telefone){
 
-        if(telefone == null || telefone.isEmpty() || telefone == "") {
+        if(telefone == null || telefone.trim().isEmpty() || telefone == "") {
             return "Campo obrigatorio!";
         }
 
-        if(telefone.length() < 10 || telefone.length() > 11){
+        if(telefone.length() < 11 || telefone.length() > 12){
             return "favor preencher o DDD + 9 Digitos!";
         }
 
@@ -63,18 +51,13 @@ public class UsuarioController {
         return "";
 
     }
-
-    public static boolean validaEmail(String emailValida) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
-    }
-
     public String validaPassword(String password){
 
         String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%=+-_]).{4,})";
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
 
-        if(password == null || password.isEmpty() || password == ""){
+        if(password == null || password.trim().isEmpty() || password == ""){
             return "Campo obrigatório!";
         }
 
@@ -89,24 +72,4 @@ public class UsuarioController {
         return "";
 
     }
-
-    public String validaCpf(String cpf){
-
-        if(cpf == null || cpf.isEmpty() || cpf == ""){
-            return "Campo obrigatorio!";
-        }
-
-        if(cpf.length() < 11){
-            return "CPF muito curto!";
-        }
-
-        if (!Validacoes.isCPF(cpf)){
-            return "CPF inválido!";
-        }
-
-        return "";
-
-    }
-
-
 }
