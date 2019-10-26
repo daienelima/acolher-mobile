@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MinhaContaFragment">
+    tools:context=".view.MeusDadosInstituicao">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -41,12 +41,12 @@
                     android:id="@+id/labelNome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/label_meusdados_nome"
+                    android:hint="@string/label_cadastro_instituicao_nome"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCpf"
+                android:id="@+id/inputCnpj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -55,44 +55,10 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCpf"
+                    android:id="@+id/labelCnpj"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/label_meusdados_cpf"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCRM"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCRP_CRM"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/label_cadastro_CRP_CRM"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputDataNasc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelDataNasc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/label_meusdados_datanascimento"
+                    android:hint="@string/label_cadastro_instituicao_cnpj"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -326,6 +292,7 @@
                         android:background="@drawable/button_cadastro_radius"
                         android:textSize="18sp"
                         android:text="Alterar" />
+
 
                     <Button
                         android:id="@+id/buttonSalvar"

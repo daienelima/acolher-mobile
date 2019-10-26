@@ -1,19 +1,15 @@
 package br.com.acolher.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -34,31 +30,26 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MeusDadosInstituicaoFragment extends Fragment implements View.OnClickListener {
+public class MeusDadosInstituicao extends AppCompatActivity {
 
     //Declarações
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cnpj,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,btnBuscaCep,cancelarEdicao;
-    private View mView;
     private String enderecoCompleto;
     private Instituicao globalInstituicao;
-    private Boolean globalStatus;
     private String msgResposta;
 
-    //Levantando Fragment
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_meus_dados_instituicao, container,false);
 
-        //Buscar em Fragments
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         findById();
 
         //Buscar em SharedPreferences
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
         //Carregados dados
         carregarDados(sharedPreferences);
@@ -79,31 +70,28 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
 
-                try {
-                    atualizarDados();
+            try {
+                atualizarDados();
 
-                    if (validateForm()){
-                        updateBD();
-                        msgResposta = "Atualização realizada com sucesso!";
-                        habilitarEdicao(false);
+                if (validateForm()){
+                    updateBD();
+                    msgResposta = "Atualização realizada com sucesso!";
+                    habilitarEdicao(false);
 
-                    }else{
-                        msgResposta = "Favor preencha todos campos obrigatorios!";
-                    }
-                } catch (Exception e) {
-                    msgResposta = "Falha na atualização!";
-                    e.printStackTrace();
+                }else{
+                    msgResposta = "Favor preencha todos campos obrigatorios!";
                 }
+            } catch (Exception e) {
+                msgResposta = "Falha na atualização!";
+                e.printStackTrace();
+            }
 
-                msgTela(msgResposta);
+            msgTela(msgResposta);
         });
-
-        return mView;
     }
+
     //incluir dados em campos
     private void meusdados (Instituicao dados){
-
-
         enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
 
         nomeCompleto.getEditText().setText(dados.getNome());
@@ -128,85 +116,76 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         inputCidade.getEditText().setText(dados.getEndereco().getCidade());
         inputCidade.getEditText().setTextColor(Color.BLACK);
 
-
         //Acrescentando mascaras
-
         telefone.getEditText().addTextChangedListener(MaskWatcher.buildFone());
         cnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
         inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
     }
 
     private void habilitarEdicao (boolean opcao){
-    if(opcao){
-        //Habilitar campos
-        nomeCompleto.setEnabled(true);
-        email.setEnabled(true);
-        telefone.setEnabled(true);
-        cnpj.setEnabled(true);
+        if(opcao){
+            nomeCompleto.setEnabled(true);
+            email.setEnabled(true);
+            telefone.setEnabled(true);
+            cnpj.setEnabled(true);
 
-        inputRua.setEnabled(true);
-        inputCep.setEnabled(true);
-        inputBairro.setEnabled(true);
-        inputNumero.setEnabled(true);
-        inputUF.setEnabled(true);
-        inputCidade.setEnabled(true);
+            inputRua.setEnabled(true);
+            inputCep.setEnabled(true);
+            inputBairro.setEnabled(true);
+            inputNumero.setEnabled(true);
+            inputUF.setEnabled(true);
+            inputCidade.setEnabled(true);
 
-        btnBuscaCep.setEnabled(true);
-        alterar.setEnabled(false);
-        alterar.setActivated(false);
-        alterar.setVisibility(View.GONE);
-        cancelarEdicao.setEnabled(true);
-        cancelarEdicao.setVisibility(View.VISIBLE);
-        salvar.setEnabled(true);
-        salvar.setVisibility(View.VISIBLE);
+            btnBuscaCep.setEnabled(true);
+            alterar.setEnabled(false);
+            alterar.setActivated(false);
+            alterar.setVisibility(View.GONE);
+            cancelarEdicao.setEnabled(true);
+            cancelarEdicao.setVisibility(View.VISIBLE);
+            salvar.setEnabled(true);
+            salvar.setVisibility(View.VISIBLE);
+        }else{
+            nomeCompleto.setEnabled(false);
+            email.setEnabled(false);
+            telefone.setEnabled(false);
+            cnpj.setEnabled(false);
 
+            inputRua.setEnabled(false);
+            inputCep.setEnabled(false);
+            inputBairro.setEnabled(false);
+            inputNumero.setEnabled(false);
+            inputUF.setEnabled(false);
+            inputCidade.setEnabled(false);
 
-    }else{
-
-        //Desabilitar campos
-        nomeCompleto.setEnabled(false);
-        email.setEnabled(false);
-        telefone.setEnabled(false);
-        cnpj.setEnabled(false);
-
-        inputRua.setEnabled(false);
-        inputCep.setEnabled(false);
-        inputBairro.setEnabled(false);
-        inputNumero.setEnabled(false);
-        inputUF.setEnabled(false);
-        inputCidade.setEnabled(false);
-
-        btnBuscaCep.setEnabled(false);
-        alterar.setEnabled(true);
-        alterar.setActivated(true);
-        cancelarEdicao.setEnabled(false);
-        cancelarEdicao.setVisibility(View.GONE);
-        salvar.setEnabled(false);
-        alterar.setVisibility(View.VISIBLE);
-        salvar.setVisibility(View.GONE);
+            btnBuscaCep.setEnabled(false);
+            alterar.setEnabled(true);
+            alterar.setActivated(true);
+            cancelarEdicao.setEnabled(false);
+            cancelarEdicao.setVisibility(View.GONE);
+            salvar.setEnabled(false);
+            alterar.setVisibility(View.VISIBLE);
+            salvar.setVisibility(View.GONE);
+        }
     }
 
-    }
-        //Realizar Busca em Fragment
+    //Realizar Busca em Fragment
     private void findById() {
-        nomeCompleto = mView.findViewById(R.id.inputNome);
-        email =  mView.findViewById(R.id.inputEmail);
-        telefone =  mView.findViewById(R.id.inputTelefone);
-        cnpj =  mView.findViewById(R.id.inputCnpj);
-        alterar =  mView.findViewById(R.id.buttonAlterar);
-        salvar =  mView.findViewById(R.id.buttonSalvar);
-        cancelarEdicao = mView.findViewById(R.id.buttonCancelarEdicao);
+        nomeCompleto = findViewById(R.id.inputNome);
+        email =  findViewById(R.id.inputEmail);
+        telefone =  findViewById(R.id.inputTelefone);
+        cnpj =  findViewById(R.id.inputCnpj);
+        alterar =  findViewById(R.id.buttonAlterar);
+        salvar =  findViewById(R.id.buttonSalvar);
+        cancelarEdicao = findViewById(R.id.buttonCancelarEdicao);
 
         // Para endereco
-
-        //pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
-        btnBuscaCep = mView.findViewById(R.id.btnBuscaCep);
-        inputRua = mView.findViewById(R.id.inputRua);
-        inputCep =  mView.findViewById(R.id.inputCep);
-        inputBairro = mView.findViewById(R.id.inputBairro);
-        inputNumero = mView.findViewById(R.id.inputNumero);
-        inputUF = mView.findViewById(R.id.inputUF);
-        inputCidade = mView.findViewById(R.id.inputCidade);
+        btnBuscaCep = findViewById(R.id.btnBuscaCep);
+        inputRua = findViewById(R.id.inputRua);
+        inputCep =  findViewById(R.id.inputCep);
+        inputBairro = findViewById(R.id.inputBairro);
+        inputNumero = findViewById(R.id.inputNumero);
+        inputUF = findViewById(R.id.inputUF);
+        inputCidade = findViewById(R.id.inputCidade);
     }
 
     private void carregarDados (SharedPreferences sharedPreferences){
@@ -230,11 +209,9 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     }
 
     private void atualizarDados (){
-
         Endereco endereco = globalInstituicao.getEndereco();
 
         // Para endereco
-
         endereco.setLogradouro(inputRua.getEditText().getText().toString());
         endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
         endereco.setBairro(inputBairro.getEditText().getText().toString());
@@ -243,7 +220,6 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         endereco.setCidade(inputCidade.getEditText().getText().toString());
 
         // Para instituicao
-
         globalInstituicao.setNome(nomeCompleto.getEditText().getText().toString());
         globalInstituicao.setEmail(email.getEditText().getText().toString());
         globalInstituicao.setTelefone(Validacoes.cleanTelefone(telefone.getEditText().getText().toString()));
@@ -252,23 +228,11 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
 
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
     private void msgTela(String mensagem){
-        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
         alertDialog.setTitle("Atenção!");
         alertDialog.setMessage(mensagem);
         alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
-
-        // visualizacao do dialogo
         alertDialog.show();
     }
 
@@ -305,9 +269,7 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
     public boolean validateForm(){
 
         BasicoController bc = new BasicoController();
-
         InstituicaoController ic = new InstituicaoController();
-
         EnderecoController ec = new EnderecoController();
 
 
@@ -325,7 +287,6 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
             return false;
         }
 
-
         if(bc.validarTelefone(globalInstituicao.getTelefone()) != ""){
             telefone.setError(ic.validarTelefone(globalInstituicao.getTelefone()));
             return false;
@@ -337,7 +298,6 @@ public class MeusDadosInstituicaoFragment extends Fragment implements View.OnCli
         }
 
         //Para endereço
-
         if(!EnderecoController.empty(globalInstituicao.getEndereco().getLogradouro())){
             inputRua.setError("Campo Obrigatorio");
             return false;

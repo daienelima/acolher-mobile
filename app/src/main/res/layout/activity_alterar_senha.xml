@@ -10,7 +10,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="6dp"
         android:minHeight="200dp">
 
@@ -31,7 +31,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputSenhaAtual"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
@@ -50,10 +50,9 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputNovaSenha"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:passwordToggleEnabled="true"
                 app:errorEnabled="true">
@@ -69,10 +68,9 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputConfirmarNovaSenha"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:passwordToggleEnabled="true"
                 app:errorEnabled="true">

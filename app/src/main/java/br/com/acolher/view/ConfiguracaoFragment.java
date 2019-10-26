@@ -1,5 +1,8 @@
 package br.com.acolher.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConfiguracoes;
@@ -28,6 +29,8 @@ public class ConfiguracaoFragment extends Fragment {
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    AlertDialog alertDialog;
+    AlertDialog.Builder builder;
 
     @Nullable
     @Override
@@ -47,11 +50,11 @@ public class ConfiguracaoFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
-                    case 0: teste();
+                    case 0: meusDados();
                         break;
-                    case 1: teste1();
+                    case 1: alterarSenha();
                         break;
-                    case 2: teste2();
+                    case 2: desativarConta();
                         break;
                     case 3: sair();
                         break;
@@ -79,14 +82,34 @@ public class ConfiguracaoFragment extends Fragment {
         return opces;
     }
 
-    private void teste(){
-        
+    private void meusDados(){
+        Intent intent = new Intent(getContext(), MeusDadosUsuario.class);
+        startActivity(intent);
     }
-    private void teste1(){
-
+    private void alterarSenha(){
+        Intent intent = new Intent(getContext(), AlterarSenha.class);
+        startActivity(intent);
     }
-    private void teste2(){
+    private void desativarConta(){
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Desativar Conta");
+        builder.setMessage("Tem certeza que deseja desativar a conta ?");
 
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        alertDialog = builder.create();
+        alertDialog.show();
     }
     private void sair(){
         sharedPreferences = getContext().getSharedPreferences("Login", MODE_PRIVATE);
