@@ -74,16 +74,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.tool_sair:
-                limparDadosUsuario();
-                Intent login = new Intent(MapsActivity.this, Login.class);
-                startActivity(login);
-                finish();
-                return true;
-
-            case R.id.tool_ajuda:
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -122,9 +112,11 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.conta :
 
                 if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
-                    fragment = new MeusDadosInstituicaoFragment();
+                    //fragment = new MeusDadosInstituicaoFragment();
+                    fragment = new ConfiguracaoFragment();
                 }else{
-                    fragment = new MinhaContaFragment();
+                    //fragment = new MinhaContaFragment();
+                    fragment = new ConfiguracaoFragment();
                 }
                 break;
             default:

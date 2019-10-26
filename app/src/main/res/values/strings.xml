@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">acolher</string>
+    <string name="app_name">Acolher</string>
     <string name="title_activity_maps">Map</string>
     <string name="label_cadastro_nome">Nome completo</string>
     <string name="label_cadastro_email">Email</string>
