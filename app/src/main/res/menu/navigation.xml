@@ -18,5 +18,5 @@
     <item
         android:id="@+id/conta"
         android:icon="@drawable/ic_person"
-        android:title="Minha conta"/>
+        android:title="Configuração"/>
 </menu>

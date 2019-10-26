@@ -44,11 +44,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
 
-        /*setContentView(R.layout.activity_main);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);*/
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -62,13 +57,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         return false;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.navigation_toolbar, menu);
-        return true;
     }
 
     @Override
@@ -112,10 +100,8 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.conta :
 
                 if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
-                    //fragment = new MeusDadosInstituicaoFragment();
                     fragment = new ConfiguracaoFragment();
                 }else{
-                    //fragment = new MinhaContaFragment();
                     fragment = new ConfiguracaoFragment();
                 }
                 break;
@@ -125,8 +111,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
-
-
 
     /**
      * Manipulates the map once available.
