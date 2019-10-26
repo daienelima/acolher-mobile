@@ -22,8 +22,8 @@ public class InstituicaoController {
             return "Campo obrigatorio!";
         }
 
-        if(telefone.length() < 10 || telefone.length() > 11){
-            return "favor preencher o DDD + 8 Digitos!";
+        if(telefone.length() < 11 || telefone.length() > 12){
+            return "favor preencher o DDD + 9 Digitos!";
         }
 
         return "";
