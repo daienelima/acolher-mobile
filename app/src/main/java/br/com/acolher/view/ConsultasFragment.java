@@ -17,23 +17,29 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConsultas;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
+import br.com.acolher.model.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import java.text.SimpleDateFormat;
 
 public class ConsultasFragment extends Fragment implements Serializable{
 
     View mView;
     private List<Consulta> consultas;
     Call<List<Consulta>> call;
+    private SimpleDateFormat formataData = new SimpleDateFormat("dd-MM-yyyy");
+    Date data = new Date();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private SharedPreferences pref;
     private int id;
@@ -51,6 +57,8 @@ public class ConsultasFragment extends Fragment implements Serializable{
         id = pref.getInt("USERCODE",0);
 
         loadLista();
+
+
 
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -96,12 +104,27 @@ public class ConsultasFragment extends Fragment implements Serializable{
             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
                 if(response.isSuccessful()){
                     consultas = response.body();
+
+                    //Verificar consulta, caso não vigente mudar status para CANCELADA
+                    for(Consulta con : consultas){
+                        try {
+                            Date dataConsulta=new SimpleDateFormat("dd/MM/yyyy").parse(con.getData());
+
+                            if(!con.getStatusConsulta().equals("REALIZADA") && (dataConsulta.before(data))){
+                                con.setStatusConsulta(Status.CANCELADA);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
                     if(consultas == null){
                         consultas = new ArrayList<Consulta>();
                     }else if(consultas.size() == 0){
                         labelNenhumaConsulta.setVisibility(View.VISIBLE);
                     }
-
                     AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
                     listaDeConsultas.setAdapter(adapter);
                 }
@@ -112,6 +135,8 @@ public class ConsultasFragment extends Fragment implements Serializable{
 
             }
         });
+
+
     }
 
     @Override
