@@ -3,16 +3,24 @@ package br.com.acolher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
+import br.com.acolher.helper.Helper;
 import br.com.acolher.view.AlterarSenha;
 import br.com.acolher.view.CadastroActivity;
 import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
-import br.com.acolher.view.Login;
+
 import br.com.acolher.view.MeusDadosActivity;
 
 public class chamaTelas extends AppCompatActivity {
@@ -34,8 +42,23 @@ public class chamaTelas extends AppCompatActivity {
 
         switch (v.getId()) {
             case R.id.telaLogin:
-                intent = new Intent(chamaTelas.this, Login.class);
-                startActivity(intent);
+                //intent = new Intent(chamaTelas.this, Login.class);
+                //startActivity(intent);
+                Geocoder coder = new Geocoder(chamaTelas.this);
+                List<Address> addresses;
+                LatLng coordinates = null;
+
+                try {
+                    addresses = coder.getFromLocationName("Pernambuco, Cajueiro seco", 5);
+                    if(addresses == null){
+                    }
+                    Address location = addresses.get(0);
+                    coordinates = new LatLng(location.getLatitude(), location.getLongitude());
+                    LatLng latTest = Helper.openModalMap(chamaTelas.this, coordinates);
+                    Toast.makeText(chamaTelas.this, String.valueOf(latTest.latitude), Toast.LENGTH_LONG).show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case R.id.telaCadastro:
                 intent = new Intent(chamaTelas.this, CadastroActivity.class);
