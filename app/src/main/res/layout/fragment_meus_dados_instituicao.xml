@@ -271,6 +271,18 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/buttonCancelarEdicao"
+                        android:layout_width="160dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/button_cadastro_radius"
+                        android:text="Cancelar"
+                        android:backgroundTint="#ff0d00"
+                        android:textColor="#FFF"
+                        android:textSize="18sp" />
+
+                    <Button
                         android:id="@+id/buttonAlterar"
                         android:layout_width="160dp"
                         android:layout_height="48dp"
@@ -280,6 +292,7 @@
                         android:background="@drawable/button_cadastro_radius"
                         android:textSize="18sp"
                         android:text="Alterar" />
+
 
                     <Button
                         android:id="@+id/buttonSalvar"
