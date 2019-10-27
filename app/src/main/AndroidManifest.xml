@@ -16,7 +16,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".view.CadastroDisponibilidade" />
-        <activity android:name=".chamaTelas" />
         <activity android:name=".view.Login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,16 +23,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.AlterarSenha" />
-        <activity android:name=".view.CadastroEndereco" />
         <activity android:name=".view.CadastroActivity" />
-        <activity android:name=".view.AlterarDadosInstituicao" />
+        <activity android:name=".view.MeusDadosInstituicao" />
+        <activity android:name=".view.MeusDadosUsuario" />
         <activity android:name=".view.CadastroInstituicao" />
         <activity android:name=".view.MapsActivity" />
         <activity android:name=".view.ModalDisponibilidades" />
         <activity android:name=".view.Consultas" />
-        <activity
-            android:name=".view.MeusDadosActivity"
-            android:label="@string/title_activity_maps" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

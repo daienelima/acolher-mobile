@@ -3,6 +3,7 @@ package br.com.acolher.service;
 
 import java.util.List;
 
+import br.com.acolher.dto.AlterarSenha;
 import br.com.acolher.dto.Login;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
@@ -77,4 +78,16 @@ public interface ServiceApi {
 
     @POST("instituicao/login")
     Call<Instituicao> validarLoginInstituicao(@Body Login login);
+
+    @PUT("usuario/senha")
+    Call<Usuario> alterarSenhaUsuario(@Body AlterarSenha alterarSenha);
+
+    @PUT("instituicao/senha")
+    Call<Instituicao> alterarSenhaInstituicao(@Body AlterarSenha alterarSenha);
+
+    @PUT("desativar")
+    Call<Usuario> desativarUsuario(@Body Usuario usuario);
+
+    @PUT("desativar")
+    Call<Instituicao> desativarInstituicao(@Body Instituicao instituicao);
 }

@@ -1,20 +1,15 @@
 package br.com.acolher.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -44,11 +39,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
 
-        /*setContentView(R.layout.activity_main);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);*/
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -65,48 +55,22 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.navigation_toolbar, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.tool_sair:
-                limparDadosUsuario();
-                Intent login = new Intent(MapsActivity.this, Login.class);
-                startActivity(login);
-                finish();
-                return true;
-
-            case R.id.tool_ajuda:
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
 
         }
     }
 
-    public void limparDadosUsuario() {
-        sharedPreferences = this.getSharedPreferences("Login", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putBoolean("logado", false);
-        editor.apply();
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         //Buscar Informação do sharedPreferences Inicio
-
         SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
         //Buscar Informação do sharedPreferences Fim
-
-
         Fragment fragment = null;
 
         switch (menuItem.getItemId()){
@@ -122,9 +86,9 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.conta :
 
                 if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
-                    fragment = new MeusDadosInstituicaoFragment();
+                    fragment = new ConfiguracaoFragment();
                 }else{
-                    fragment = new MinhaContaFragment();
+                    fragment = new ConfiguracaoFragment();
                 }
                 break;
             default:
@@ -133,8 +97,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
-
-
 
     /**
      * Manipulates the map once available.

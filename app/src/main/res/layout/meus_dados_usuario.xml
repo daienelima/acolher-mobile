@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MinhaContaFragment">
+    tools:context=".view.MeusDadosUsuario">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputCRM"
+                android:id="@+id/inputCRMMeusDados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -186,7 +186,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_cadastro_radius"
-                        android:text="Search"
+                        android:text="Buscar"
                         android:textColor="#FFF" />
 
                 </LinearLayout>

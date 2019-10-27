@@ -13,6 +13,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -34,31 +35,28 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MinhaContaFragment extends Fragment implements View.OnClickListener {
+public class MeusDadosUsuario extends AppCompatActivity {
 
-    //Declarações
+    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório!";
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cpf,crm,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,cancelarEdicao,btnBuscaCep;
-    private View mView;
     private String enderecoCompleto;
     private Usuario globalUsuario;
     private Boolean globalStatus;
     private String msgResposta;
 
-    //Levantando Fragment
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_minha_conta, container,false);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.meus_dados_usuario);
+        getSupportActionBar().hide();
 
-        //Buscar em Fragments
         findById();
 
         //Buscar em SharedPreferences
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
 
         if (sharedPreferences.getString("TYPE", "").equals("VOLUNTARIO")) {
             crm.setVisibility(View.VISIBLE);
@@ -67,13 +65,11 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         //Carregados dados
         carregarDados(sharedPreferences);
 
-        habilitarEdicao(false);
-
         //Chamar Edição ao clicar alterar
         alterar.setOnClickListener(view -> habilitarEdicao(true));
 
         //Cancelar Edição
-        cancelarEdicao.setOnClickListener(view -> habilitarEdicao(false));
+        cancelarEdicao.setOnClickListener(view -> habilitarEdicao(false) );
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
@@ -82,32 +78,25 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
 
         //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
-
             try {
                 atualizarDados();
-
                 if (validateForm()){
                     updateBD();
                     msgResposta = "Atualização realizada com sucesso!";
                     habilitarEdicao(false);
-
                 }else{
-                    msgResposta = "Favor preencha todos campos obrigatorios!";
+                    msgResposta = "Campos Obrigatorio não devem ficar vazio";
                 }
             } catch (Exception e) {
                 msgResposta = "Falha na atualização!";
                 e.printStackTrace();
             }
-
             msgTela(msgResposta);
         });
-
-        return mView;
     }
+
     //incluir dados em campos
     private void meusdados (Usuario dados){
-
-
         enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
 
         nomeCompleto.getEditText().setText(dados.getNome_completo());
@@ -137,7 +126,6 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         inputCidade.getEditText().setTextColor(Color.BLACK);
 
         //Acrescentando mascaras
-
         telefone.getEditText().addTextChangedListener(MaskWatcher.buildFone());
         cpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
         inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
@@ -171,11 +159,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             salvar.setVisibility(View.VISIBLE);
 
         }else{
-
-            //Desabilitar crm
             crm.setVisibility(View.GONE);
-
-            //Desabilitar campos
             nomeCompleto.setEnabled(false);
             email.setEnabled(false);
             telefone.setEnabled(false);
@@ -201,33 +185,30 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         }
 
     }
-    //Realizar Busca em Fragment
+
     private void findById() {
-        nomeCompleto = mView.findViewById(R.id.inputNome);
-        email =  mView.findViewById(R.id.inputEmail);
-        telefone =  mView.findViewById(R.id.inputTelefone);
-        cpf =  mView.findViewById(R.id.inputCpf);
-        crm = mView.findViewById(R.id.inputCRM);
-        dataNasc = mView.findViewById(R.id.inputDataNasc);
-        cancelarEdicao = mView.findViewById(R.id.buttonCancelarEdicao);
-        alterar =  mView.findViewById(R.id.buttonAlterar);
-        salvar =  mView.findViewById(R.id.buttonSalvar);
+        nomeCompleto = findViewById(R.id.inputNome);
+        email = findViewById(R.id.inputEmail);
+        telefone =  findViewById(R.id.inputTelefone);
+        cpf =  findViewById(R.id.inputCpf);
+        crm = findViewById(R.id.inputCRMMeusDados);
+        dataNasc = findViewById(R.id.inputDataNasc);
+        cancelarEdicao = findViewById(R.id.buttonCancelarEdicao);
+        alterar = findViewById(R.id.buttonAlterar);
+        salvar = findViewById(R.id.buttonSalvar);
 
-        // Para endereco
-
-        //pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
-        btnBuscaCep = mView.findViewById(R.id.btnBuscaCep);
-        inputRua = mView.findViewById(R.id.inputRua);
-        inputCep =  mView.findViewById(R.id.inputCep);
-        inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
-        inputBairro = mView.findViewById(R.id.inputBairro);
-        inputNumero = mView.findViewById(R.id.inputNumero);
-        inputUF = mView.findViewById(R.id.inputUF);
-        inputCidade = mView.findViewById(R.id.inputCidade);
+        btnBuscaCep = findViewById(R.id.btnBuscaCep);
+        inputRua = findViewById(R.id.inputRua);
+        inputCep =  findViewById(R.id.inputCep);
+        //inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
+        inputBairro = findViewById(R.id.inputBairro);
+        inputNumero = findViewById(R.id.inputNumero);
+        inputUF = findViewById(R.id.inputUF);
+        inputCidade = findViewById(R.id.inputCidade);
+        habilitarEdicao(false);
     }
 
     private void carregarDados (SharedPreferences sharedPreferences){
-
         Call<Usuario> call = retrofitInit.getService().getUsuario(sharedPreferences.getInt("USERCODE", 1));
         call.enqueue(new Callback<Usuario>() {
             @Override
@@ -238,7 +219,6 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
                     meusdados(globalUsuario);
                 }
             }
-
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
 
@@ -247,11 +227,8 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
     }
 
     private void atualizarDados (){
-
         Endereco endereco = globalUsuario.getEndereco();
-
         // Para endereco
-
         endereco.setLogradouro(inputRua.getEditText().getText().toString());
         endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
         endereco.setBairro(inputBairro.getEditText().getText().toString());
@@ -260,7 +237,6 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         endereco.setCidade(inputCidade.getEditText().getText().toString());
 
         // Para Usuario
-
         globalUsuario.setNome_completo(nomeCompleto.getEditText().getText().toString());
         globalUsuario.setEmail(email.getEditText().getText().toString());
         globalUsuario.setTelefone(Validacoes.cleanTelefone(telefone.getEditText().getText().toString()));
@@ -268,28 +244,13 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         globalUsuario.setCrm_crp(Validacoes.cleanCPF(crm.getEditText().getText().toString()));
         globalUsuario.setData_nascimento(dataNasc.getEditText().getText().toString());
         globalUsuario.setEndereco(endereco);
-
-
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private void msgTela(String mensagem){
-        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
         alertDialog.setTitle("Atenção!");
         alertDialog.setMessage(mensagem);
         alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
-
-        // visualizacao do dialogo
         alertDialog.show();
     }
 
@@ -324,13 +285,9 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
     }
 
     public boolean validateForm(){
-
         BasicoController bc = new BasicoController();
-
         UsuarioController uc = new UsuarioController();
-
         EnderecoController ec = new EnderecoController();
-
 
         if(bc.validarNome(globalUsuario.getNome_completo()) != ""){
             nomeCompleto.setError(bc.validarNome(globalUsuario.getNome_completo()));
@@ -343,7 +300,7 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         }
 
         if((globalUsuario.getData_nascimento()) == null || globalUsuario.getData_nascimento().trim().isEmpty() || globalUsuario.getData_nascimento() == ""){
-            dataNasc.setError("Campo Obrigatorio");
+            dataNasc.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
@@ -351,7 +308,6 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             email.setError(uc.validarEmail(globalUsuario.getEmail()));
             return false;
         }
-
 
         if(bc.validarTelefone(globalUsuario.getTelefone()) != ""){
             telefone.setError(uc.validarTelefone(globalUsuario.getTelefone()));
@@ -364,24 +320,23 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
         }
 
         //Para endereço
-
         if(!EnderecoController.empty(globalUsuario.getEndereco().getLogradouro())){
-            inputRua.setError("Campo Obrigatorio");
+            inputRua.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getNumero())){
-            inputNumero.setError("Campo Obrigatorio");
+            inputNumero.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getBairro())){
-            inputBairro.setError("Campo Obrigatorio");
+            inputBairro.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getCidade())){
-            inputCidade.setError("Campo Obrigatorio");
+            inputCidade.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
@@ -389,16 +344,11 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
             inputUF.setError(EnderecoController.validaUF(globalUsuario.getEndereco().getUf()));
             return false;
         }
-
-
-
         return true;
-
     }
+
     private void updateBD(){
-
         updateBDEndereco();
-
         Call<Usuario> call = retrofitInit.getService().alterarUsuario(globalUsuario);
         call.enqueue(new Callback<Usuario>() {
             @Override
@@ -408,35 +358,30 @@ public class MinhaContaFragment extends Fragment implements View.OnClickListener
                     Log.d(TAG, String.valueOf(response.code()));
                 }
             }
-
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar a usuario:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
     }
 
     private void updateBDEndereco(){
-
         Call<Endereco> call = retrofitInit.getService().atualizarEndereco(globalUsuario.getEndereco());
         call.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
-
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
             }
-
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar endereco usuario:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
 
     }
-
 
 }
