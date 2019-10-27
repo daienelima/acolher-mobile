@@ -79,10 +79,10 @@ public interface ServiceApi {
     @POST("instituicao/login")
     Call<Instituicao> validarLoginInstituicao(@Body Login login);
 
-    @PUT("senha")
+    @PUT("usuario/senha")
     Call<Usuario> alterarSenhaUsuario(@Body AlterarSenha alterarSenha);
 
-    @PUT("senha")
+    @PUT("instituicao/senha")
     Call<Instituicao> alterarSenhaInstituicao(@Body AlterarSenha alterarSenha);
 
     @PUT("desativar")

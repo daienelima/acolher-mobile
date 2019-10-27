@@ -32,12 +32,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MeusDadosInstituicao extends AppCompatActivity {
 
-    //Declarações
+    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório!";
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cnpj,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,btnBuscaCep,cancelarEdicao;
-    private String enderecoCompleto;
     private Instituicao globalInstituicao;
     private String msgResposta;
 
@@ -45,6 +44,8 @@ public class MeusDadosInstituicao extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.meus_dados_instituicao);
+        getSupportActionBar().hide();
 
         findById();
 
@@ -53,7 +54,6 @@ public class MeusDadosInstituicao extends AppCompatActivity {
 
         //Carregados dados
         carregarDados(sharedPreferences);
-
         habilitarEdicao(false);
 
         //Chamar Edição ao clicar alterar
@@ -69,31 +69,25 @@ public class MeusDadosInstituicao extends AppCompatActivity {
 
         //Chamar Put ao clicar Salvar
         salvar.setOnClickListener(view -> {
-
             try {
                 atualizarDados();
-
                 if (validateForm()){
                     updateBD();
                     msgResposta = "Atualização realizada com sucesso!";
                     habilitarEdicao(false);
-
                 }else{
-                    msgResposta = "Favor preencha todos campos obrigatorios!";
+                    msgResposta = "Campos Obrigatorio não devem ficar vazio";
                 }
             } catch (Exception e) {
                 msgResposta = "Falha na atualização!";
                 e.printStackTrace();
             }
-
             msgTela(msgResposta);
         });
     }
 
     //incluir dados em campos
     private void meusdados (Instituicao dados){
-        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
-
         nomeCompleto.getEditText().setText(dados.getNome());
         nomeCompleto.getEditText().setTextColor(Color.BLACK);
         email.getEditText().setText(dados.getEmail());
@@ -210,7 +204,6 @@ public class MeusDadosInstituicao extends AppCompatActivity {
 
     private void atualizarDados (){
         Endereco endereco = globalInstituicao.getEndereco();
-
         // Para endereco
         endereco.setLogradouro(inputRua.getEditText().getText().toString());
         endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
@@ -224,7 +217,6 @@ public class MeusDadosInstituicao extends AppCompatActivity {
         globalInstituicao.setEmail(email.getEditText().getText().toString());
         globalInstituicao.setTelefone(Validacoes.cleanTelefone(telefone.getEditText().getText().toString()));
         globalInstituicao.setCnpj(Validacoes.cleanCNPJ(cnpj.getEditText().getText().toString()));
-
 
     }
 
@@ -255,14 +247,13 @@ public class MeusDadosInstituicao extends AppCompatActivity {
                     inputUF.getEditText().setText(endereco.getUf());
                     inputCidade.getEditText().setText(endereco.getLocalidade());
                 }
-
                 @Override
                 public void onFailure(Call<ViaCep> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
                 }
             });
         }else{
-            inputCep.setError("Campo Obrigatorio");
+            inputCep.setError(CAMPO_OBRIGATORIO);
         }
     }
 
@@ -299,22 +290,22 @@ public class MeusDadosInstituicao extends AppCompatActivity {
 
         //Para endereço
         if(!EnderecoController.empty(globalInstituicao.getEndereco().getLogradouro())){
-            inputRua.setError("Campo Obrigatorio");
+            inputRua.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalInstituicao.getEndereco().getNumero())){
-            inputNumero.setError("Campo Obrigatorio");
+            inputNumero.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalInstituicao.getEndereco().getBairro())){
-            inputBairro.setError("Campo Obrigatorio");
+            inputBairro.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalInstituicao.getEndereco().getCidade())){
-            inputCidade.setError("Campo Obrigatorio");
+            inputCidade.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
@@ -323,28 +314,20 @@ public class MeusDadosInstituicao extends AppCompatActivity {
             return false;
         }
 
-
-
         return true;
-
     }
     private void updateBD(){
-
         updateBDEndereco();
-
         Call<Instituicao> call = retrofitInit.getService().atualizarInstituicao(globalInstituicao);
         call.enqueue(new Callback<Instituicao>() {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-
-                if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                }
+                Log.d(TAG, String.valueOf(response.code()));
             }
 
             @Override
             public void onFailure(Call<Instituicao> call, Throwable t) {
-                Log.e("InstituicaoService   ", "Erro ao atualizar a instituicao:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
@@ -356,7 +339,6 @@ public class MeusDadosInstituicao extends AppCompatActivity {
         call.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
-
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
@@ -364,12 +346,10 @@ public class MeusDadosInstituicao extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.e("InstituicaoService   ", "Erro ao atualizar endereco instituicao:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
 
     }
-
-
 }

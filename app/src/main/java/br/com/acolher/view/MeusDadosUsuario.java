@@ -37,21 +37,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MeusDadosUsuario extends AppCompatActivity {
 
+    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório!";
     private String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cpf,crm,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,cancelarEdicao,btnBuscaCep;
-    private View mView;
     private String enderecoCompleto;
     private Usuario globalUsuario;
     private Boolean globalStatus;
     private String msgResposta;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.meus_dados_usuario);
+        getSupportActionBar().hide();
 
         findById();
 
@@ -66,53 +66,33 @@ public class MeusDadosUsuario extends AppCompatActivity {
         carregarDados(sharedPreferences);
 
         //Chamar Edição ao clicar alterar
-        alterar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                habilitarEdicao(true);
-            }
-        });
+        alterar.setOnClickListener(view -> habilitarEdicao(true));
 
         //Cancelar Edição
-        cancelarEdicao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                habilitarEdicao(false);
-            }
-        });
+        cancelarEdicao.setOnClickListener(view -> habilitarEdicao(false) );
 
-        btnBuscaCep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-                buscaCep(cep);
-            }
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
         });
 
         //Chamar Put ao clicar Salvar
-        salvar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    atualizarDados();
-
-                    if (validateForm()){
-                        updateBD();
-                        msgResposta = "Atualização realizada com sucesso!";
-                        habilitarEdicao(false);
-
-                    }else{
-                        msgResposta = "Favor preencha todos campos obrigatorios!";
-                    }
-                } catch (Exception e) {
-                    msgResposta = "Falha na atualização!";
-                    e.printStackTrace();
+        salvar.setOnClickListener(view -> {
+            try {
+                atualizarDados();
+                if (validateForm()){
+                    updateBD();
+                    msgResposta = "Atualização realizada com sucesso!";
+                    habilitarEdicao(false);
+                }else{
+                    msgResposta = "Campos Obrigatorio não devem ficar vazio";
                 }
-
-                msgTela(msgResposta);
+            } catch (Exception e) {
+                msgResposta = "Falha na atualização!";
+                e.printStackTrace();
             }
+            msgTela(msgResposta);
         });
-
     }
 
     //incluir dados em campos
@@ -179,9 +159,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
             salvar.setVisibility(View.VISIBLE);
 
         }else{
-            //Desabilitar crm
             crm.setVisibility(View.GONE);
-            //Desabilitar campos
             nomeCompleto.setEnabled(false);
             email.setEnabled(false);
             telefone.setEnabled(false);
@@ -207,7 +185,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
         }
 
     }
-    //Realizar Busca em Fragment
+
     private void findById() {
         nomeCompleto = findViewById(R.id.inputNome);
         email = findViewById(R.id.inputEmail);
@@ -227,7 +205,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
-
         habilitarEdicao(false);
     }
 
@@ -242,7 +219,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
                     meusdados(globalUsuario);
                 }
             }
-
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
 
@@ -269,7 +245,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
         globalUsuario.setData_nascimento(dataNasc.getEditText().getText().toString());
         globalUsuario.setEndereco(endereco);
     }
-
 
     private void msgTela(String mensagem){
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
@@ -310,13 +285,9 @@ public class MeusDadosUsuario extends AppCompatActivity {
     }
 
     public boolean validateForm(){
-
         BasicoController bc = new BasicoController();
-
         UsuarioController uc = new UsuarioController();
-
         EnderecoController ec = new EnderecoController();
-
 
         if(bc.validarNome(globalUsuario.getNome_completo()) != ""){
             nomeCompleto.setError(bc.validarNome(globalUsuario.getNome_completo()));
@@ -329,7 +300,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
         }
 
         if((globalUsuario.getData_nascimento()) == null || globalUsuario.getData_nascimento().trim().isEmpty() || globalUsuario.getData_nascimento() == ""){
-            dataNasc.setError("Campo Obrigatorio");
+            dataNasc.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
@@ -337,7 +308,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
             email.setError(uc.validarEmail(globalUsuario.getEmail()));
             return false;
         }
-
 
         if(bc.validarTelefone(globalUsuario.getTelefone()) != ""){
             telefone.setError(uc.validarTelefone(globalUsuario.getTelefone()));
@@ -350,24 +320,23 @@ public class MeusDadosUsuario extends AppCompatActivity {
         }
 
         //Para endereço
-
         if(!EnderecoController.empty(globalUsuario.getEndereco().getLogradouro())){
-            inputRua.setError("Campo Obrigatorio");
+            inputRua.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getNumero())){
-            inputNumero.setError("Campo Obrigatorio");
+            inputNumero.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getBairro())){
-            inputBairro.setError("Campo Obrigatorio");
+            inputBairro.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(globalUsuario.getEndereco().getCidade())){
-            inputCidade.setError("Campo Obrigatorio");
+            inputCidade.setError(CAMPO_OBRIGATORIO);
             return false;
         }
 
@@ -391,7 +360,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar a usuario:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
@@ -402,20 +371,17 @@ public class MeusDadosUsuario extends AppCompatActivity {
         call.enqueue(new Callback<Endereco>() {
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
-
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
             }
-
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.e("UsuarioService   ", "Erro ao atualizar endereco usuario:" + t.getMessage());
+                Log.e(TAG, t.getMessage());
 
             }
         });
 
     }
-
 
 }

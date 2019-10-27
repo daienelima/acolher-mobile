@@ -39,10 +39,7 @@ public class ConfiguracaoFragment extends Fragment {
         listView = mView.findViewById(R.id.menu_item_id);
 
         sharedPreferences = getContext().getSharedPreferences("USERDATA",MODE_PRIVATE);
-
-
         opces = MontarMenu();
-
         AdapterConfiguracoes adapter = new AdapterConfiguracoes(opces, getContext());
         listView.setAdapter(adapter);
 
@@ -61,7 +58,6 @@ public class ConfiguracaoFragment extends Fragment {
                 }
             }
         });
-
         return mView;
     }
 
@@ -83,8 +79,13 @@ public class ConfiguracaoFragment extends Fragment {
     }
 
     private void meusDados(){
-        Intent intent = new Intent(getContext(), MeusDadosUsuario.class);
-        startActivity(intent);
+        if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+            Intent intent = new Intent(getContext(), MeusDadosInstituicao.class);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(getContext(), MeusDadosUsuario.class);
+            startActivity(intent);
+        }
     }
     private void alterarSenha(){
         Intent intent = new Intent(getContext(), AlterarSenha.class);
@@ -112,10 +113,11 @@ public class ConfiguracaoFragment extends Fragment {
         alertDialog.show();
     }
     private void sair(){
-        sharedPreferences = getContext().getSharedPreferences("Login", MODE_PRIVATE);
+        sharedPreferences = this.getContext().getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putBoolean("logado", false);
         editor.apply();
+        getActivity().finish();
     }
 
 }

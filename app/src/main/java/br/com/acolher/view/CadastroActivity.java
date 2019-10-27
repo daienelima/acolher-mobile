@@ -157,13 +157,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             }
         });
 
-       /* pesquisarEndereco.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });*/
-
         btnFinalizarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
