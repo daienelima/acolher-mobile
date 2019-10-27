@@ -109,4 +109,20 @@ public class Usuario implements Serializable {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "codigo=" + codigo +
+                ", nome_completo='" + nome_completo + '\'' +
+                ", data_nascimento='" + data_nascimento + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", endereco=" + endereco +
+                ", telefone='" + telefone + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", crm_crp='" + crm_crp + '\'' +
+                ", ativo=" + ativo +
+                '}';
+    }
 }

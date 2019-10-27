@@ -85,9 +85,9 @@ public interface ServiceApi {
     @PUT("instituicao/senha")
     Call<Instituicao> alterarSenhaInstituicao(@Body AlterarSenha alterarSenha);
 
-    @PUT("desativar")
+    @PUT("usuario/desativar")
     Call<Usuario> desativarUsuario(@Body Usuario usuario);
 
-    @PUT("desativar")
+    @PUT("instituicao/desativar")
     Call<Instituicao> desativarInstituicao(@Body Instituicao instituicao);
 }

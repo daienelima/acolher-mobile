@@ -183,7 +183,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="13dp"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_cadastro_radius"
                         android:text="Buscar"
@@ -284,7 +284,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginRight="10dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:errorEnabled="true">
 

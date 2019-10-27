@@ -1,15 +1,15 @@
 package br.com.acolher.view;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,16 +19,23 @@ import java.util.ArrayList;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConfiguracoes;
+import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.model.Usuario;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class ConfiguracaoFragment extends Fragment {
 
-    View mView;
-    private ArrayList<String> opces = new ArrayList<>();
+    private final static String TAG = "API";
+    private View mView;
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private RetrofitInit retrofitInit = new RetrofitInit();
+    Usuario usuarioLogado;
     AlertDialog alertDialog;
     AlertDialog.Builder builder;
 
@@ -39,23 +46,20 @@ public class ConfiguracaoFragment extends Fragment {
         listView = mView.findViewById(R.id.menu_item_id);
 
         sharedPreferences = getContext().getSharedPreferences("USERDATA",MODE_PRIVATE);
-        opces = MontarMenu();
+        ArrayList<String> opces = MontarMenu();
         AdapterConfiguracoes adapter = new AdapterConfiguracoes(opces, getContext());
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i) {
-                    case 0: meusDados();
-                        break;
-                    case 1: alterarSenha();
-                        break;
-                    case 2: desativarConta();
-                        break;
-                    case 3: sair();
-                        break;
-                }
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            switch (i) {
+                case 0: meusDados();
+                    break;
+                case 1: alterarSenha();
+                    break;
+                case 2: desativarConta();
+                    break;
+                case 3: sair();
+                    break;
             }
         });
         return mView;
@@ -63,7 +67,7 @@ public class ConfiguracaoFragment extends Fragment {
 
     /**
      * Montar itens do menu na lista
-     * @return
+     * @return menu de opcoes
      */
     private ArrayList<String> MontarMenu() {
         ArrayList<String> opces = new ArrayList<>();
@@ -96,17 +100,16 @@ public class ConfiguracaoFragment extends Fragment {
         builder.setTitle("Desativar Conta");
         builder.setMessage("Tem certeza que deseja desativar a conta ?");
 
-        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
+        builder.setPositiveButton("Sim", (dialogInterface, i) -> {
+            if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+                desativarContaInstituicao();
+            }else{
+                desativarContaUsuario();
             }
+
         });
-        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setNegativeButton("Não", (dialogInterface, i) -> {
 
-            }
         });
 
         alertDialog = builder.create();
@@ -120,6 +123,65 @@ public class ConfiguracaoFragment extends Fragment {
         Intent intent = new Intent(getContext(), Login.class);
         startActivity(intent);
         getActivity().finish();
+    }
+
+    private void desativarContaUsuario(){
+        getUsuer(sharedPreferences.getInt("USERCODE", 1));
+        Call<Usuario> call = retrofitInit.getService().desativarUsuario(usuarioLogado);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                Log.d(TAG,String.valueOf(response.code()));
+                if(response.isSuccessful()){
+                    finalizaApp();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+    }
+
+    private void getUsuer(Integer codigo){
+        Call<Usuario> call = retrofitInit.getService().getUsuario(codigo);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                usuarioLogado = response.body();
+                pegaUser(usuarioLogado);
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void desativarContaInstituicao(){
+    }
+
+    private void finalizaApp(){
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Sucesso");
+        builder.setMessage("Conta Desativada Com Sucesso");
+        builder.setPositiveButton("Sim", (dialogInterface, i) -> this.sair());
+    }
+
+    private void pegaUser(Usuario u){
+        usuarioLogado = new Usuario();
+        usuarioLogado.setCodigo(u.getCodigo());
+        usuarioLogado.setAtivo(u.isAtivo());
+        usuarioLogado.setCpf(u.getCpf());
+        usuarioLogado.setCrm_crp(u.getCrm_crp());
+        usuarioLogado.setData_nascimento(u.getData_nascimento());
+        usuarioLogado.setEndereco(u.getEndereco());
+        usuarioLogado.setEmail(u.getEmail());
+        usuarioLogado.setPassword(u.getPassword());
+        usuarioLogado.setTelefone(u.getTelefone());
     }
 
 }
