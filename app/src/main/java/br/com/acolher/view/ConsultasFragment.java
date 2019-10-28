@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
     private Integer codigo;
     private ListView listaDeConsultas;
     private TextView labelNenhumaConsulta;
+    private TextView labelPergunta, labelSim, labelNao;
 
     @Nullable
     @Override
@@ -50,6 +53,9 @@ public class ConsultasFragment extends Fragment implements Serializable{
         labelNenhumaConsulta = mView.findViewById(R.id.labelNenhumaConsulta);
         consultas = new ArrayList<>();
         listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
+        labelPergunta = mView.findViewById(R.id.pergunta);
+        labelSim = mView.findViewById(R.id.sim);
+        labelNao = mView.findViewById(R.id.nao);
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
         codigo = pref.getInt("USERCODE",0);
 
@@ -79,6 +85,16 @@ public class ConsultasFragment extends Fragment implements Serializable{
             }
         });
 
+        labelSim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cod = (String) ((TextView) mView.findViewById(R.id.cod)).getText();
+
+                Consulta c = new Consulta();
+                c.setCodigo(Integer.parseInt(cod));
+
+            }
+        });
 
         return mView;
     }
@@ -106,7 +122,11 @@ public class ConsultasFragment extends Fragment implements Serializable{
                     for(Consulta con : consultas){
                         try {
                             Date dataConsulta=new SimpleDateFormat("dd/MM/yyyy").parse(con.getData());
+                            Date horaConsulta = new SimpleDateFormat("HH:mm").parse(con.getHora());
 
+                            if(dataConsulta.before(data) || (dataConsulta.equals(data) && horaConsulta.before(data))){
+
+                            }
                             if(!con.getStatusConsulta().equals("REALIZADA") && (dataConsulta.before(data))){
                                 con.setStatusConsulta(Status.CANCELADA);
                             }
