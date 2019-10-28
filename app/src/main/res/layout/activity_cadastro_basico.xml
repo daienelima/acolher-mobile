@@ -112,6 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                app:passwordToggleEnabled="true"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
 
@@ -181,6 +182,20 @@
                     android:inputType="number"
                     android:hint="@string/label_cadastro_CRP_CRM" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnSearchLocale"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_cadastro_radius"
+                android:text="@string/button_localizacao"
+                android:textColor="#FFF"
+                android:textSize="18dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -328,20 +343,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btnSearchLocale"
-                android:layout_width="match_parent"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:textColor="#FFF"
-                android:background="@drawable/button_cadastro_radius"
-                android:textSize="18dp"
-                android:text="@string/button_localizacao" />
 
             <Button
                 android:id="@+id/btnFinalizarCadastro"

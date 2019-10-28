@@ -27,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -37,6 +38,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
@@ -164,38 +166,45 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 ec = new EnderecoController();
                 if(validateForm()) {
                     Intent intent = getIntent();
-                    endereco.setCodigo(intent.getIntExtra("codigoEndereco", 0));
+                    //endereco.setCodigo(intent.getIntExtra("codigoEndereco", 0));
 
-                    //Montar Endereço
-                    endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
-                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());
-                    endereco.setBairro(inputBairro.getEditText().getText().toString());
-                    endereco.setCidade(inputCidade.getEditText().getText().toString());
-                    endereco.setUf(inputUF.getEditText().getText().toString());
-                    if(latitude != 0.0 && longitude != 0.0){
-                        endereco.setLatitude(String.valueOf(latitude));
-                        endereco.setLongitude(String.valueOf(longitude));
-                    }
+                    if(Helper.getSharedPreferences("LAT_END", "", 2, CadastroActivity.this) != ""){
+                        endereco.setLatitude((String)Helper.getSharedPreferences("LAT_END", "", 2, CadastroActivity.this));
+                        endereco.setLongitude((String)Helper.getSharedPreferences("LON_END", "", 2, CadastroActivity.this));
+                        Helper.removeSharedPreferences("LAT_END", CadastroActivity.this);
+                        Helper.removeSharedPreferences("LON_END", CadastroActivity.this);
+                        //Montar Endereço
+                        endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
+                        endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                        endereco.setNumero(inputNumero.getEditText().getText().toString());
+                        endereco.setBairro(inputBairro.getEditText().getText().toString());
+                        endereco.setCidade(inputCidade.getEditText().getText().toString());
+                        endereco.setUf(inputUF.getEditText().getText().toString());
 
-                    //Montar Usuario
-                    usuario.setNome_completo(nome);
-                    usuario.setData_nascimento(data);
-                    usuario.setCpf(cpf);
-                    usuario.setTelefone(telefone);
-                    usuario.setEmail(email);
-                    usuario.setPassword(password);
+                        //Montar Usuario
+                        usuario.setNome_completo(nome);
+                        usuario.setData_nascimento(data);
+                        usuario.setCpf(cpf);
+                        usuario.setTelefone(telefone);
+                        usuario.setEmail(email);
+                        usuario.setPassword(password);
 
-                    if (hasCrpCrm) {
-                        usuario.setCrm_crp(crpCrm);
-                    } else {
-                        usuario.setCrm_crp("");
-                    }
+                        if (hasCrpCrm) {
+                            usuario.setCrm_crp(crpCrm);
+                        } else {
+                            usuario.setCrm_crp("");
+                        }
 
-                    cadastroEndereco(endereco);
-
-                    if(enderecoOK){
-
+                        cadastroEndereco(endereco);
+                    }else {
+                        String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
+                        LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
+                        try {
+                            Helper.openModalMap(CadastroActivity.this, focoMap);
+                            return;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
