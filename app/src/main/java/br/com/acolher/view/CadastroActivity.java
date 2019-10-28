@@ -4,12 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +26,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
@@ -38,6 +35,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
@@ -52,8 +50,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CadastroActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
-    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório";
 
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
@@ -70,14 +66,12 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private String nome, data, email, password, cpf, telefone, crpCrm;
     private String cep, rua, bairro, cidade, uf, numero;
     private boolean hasCrpCrm;
-    public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private Usuario usuario = new Usuario();
     private Endereco endereco = new Endereco();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private boolean enderecoOK;
-    private Integer codigo_endereco;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +87,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     .addOnConnectionFailedListener(CadastroActivity.this)
                     .addApi(LocationServices.API)
                     .build();
-
         }
 
         hasCrpCrm = false;
@@ -102,120 +95,96 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         findById();
 
         Intent intent = getIntent();
-        if(intent.getStringExtra("perfil") != null){
-            if(intent.getStringExtra("perfil").equals("profissional")) {
+        if(intent.getStringExtra(CONSTANTES.PERFIL) != null){
+            if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.PROFISSIONAL)) {
                 hasCrpCrm = true;
                 inputCRM_CRP.setVisibility(View.VISIBLE);
             }
         }
 
-        btnCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btnCalendar.setOnClickListener(view -> openCalendar());
+
+        inputDataNasc.getEditText().setOnFocusChangeListener((view, b) -> {
+            if (b){
+                inputDataNasc.getEditText().clearFocus();
                 openCalendar();
             }
         });
 
-        inputDataNasc.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b){
-                    inputDataNasc.getEditText().clearFocus();
-                    openCalendar();
-                }
-            }
-        });
-
-        pesquisarEndereco.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (GetLocalization(CadastroActivity.this)) {
-                    if (ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }else{
-                        fusedLocation.getLastLocation().addOnSuccessListener(CadastroActivity.this, new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                if(location != null){
-                                    latitude = location.getLatitude();
-                                    longitude = location.getLongitude();
-                                    try {
-                                        address = Validacoes.buscarEndereco(latitude, longitude, getApplicationContext());
-                                        inputRua.getEditText().setText(address.getThoroughfare());
-                                        inputCep.getEditText().setText(address.getPostalCode());
-                                        inputBairro.getEditText().setText(address.getSubLocality());
-                                        inputCidade.getEditText().setText(address.getSubAdminArea());
-                                        inputUF.getEditText().setText(Validacoes.deParaEstados(address.getAdminArea()));
-                                    }catch (IOException e){
-                                        Log.d(TAG, e.getMessage());
-                                        e.printStackTrace();
-                                    }
-                                }
+        pesquisarEndereco.setOnClickListener(view -> {
+            if (GetLocalization(CadastroActivity.this)) {
+                if (ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(CadastroActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }else{
+                    fusedLocation.getLastLocation().addOnSuccessListener(CadastroActivity.this, location -> {
+                        if(location != null){
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            try {
+                                address = Validacoes.buscarEndereco(latitude, longitude, getApplicationContext());
+                                inputRua.getEditText().setText(address.getThoroughfare());
+                                inputCep.getEditText().setText(address.getPostalCode());
+                                inputBairro.getEditText().setText(address.getSubLocality());
+                                inputCidade.getEditText().setText(address.getSubAdminArea());
+                                inputUF.getEditText().setText(Validacoes.deParaEstados(address.getAdminArea()));
+                            }catch (IOException e){
+                                Log.d(CONSTANTES.TAG, e.getMessage());
                             }
-                        });
+                        }
+                    });
+                }
+            }
+        });
+
+        btnFinalizarCadastro.setOnClickListener(view -> {
+            uc = new UsuarioController();
+            ec = new EnderecoController();
+            if(validateForm()) {
+                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this) != ""){
+                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this));
+                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, "", 2, CadastroActivity.this));
+                    Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroActivity.this);
+                    Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroActivity.this);
+                    //Montar Endereço
+                    endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
+                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCidade(inputCidade.getEditText().getText().toString());
+                    endereco.setUf(inputUF.getEditText().getText().toString());
+
+                    //Montar Usuario
+                    usuario.setNome_completo(nome);
+                    usuario.setData_nascimento(data);
+                    usuario.setCpf(cpf);
+                    usuario.setTelefone(telefone);
+                    usuario.setEmail(email);
+                    usuario.setPassword(password);
+
+                    if (hasCrpCrm) {
+                        usuario.setCrm_crp(crpCrm);
+                    } else {
+                        usuario.setCrm_crp(CONSTANTES.VAZIO);
+                    }
+
+                    cadastroEndereco(endereco);
+                }else {
+                    String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
+                    LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
+                    try {
+                        Helper.openModalMap(CadastroActivity.this, focoMap);
+                        return;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         });
 
-        btnFinalizarCadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uc = new UsuarioController();
-                ec = new EnderecoController();
-                if(validateForm()) {
-                    Intent intent = getIntent();
-                    //endereco.setCodigo(intent.getIntExtra("codigoEndereco", 0));
-
-                    if(Helper.getSharedPreferences("LAT_END", "", 2, CadastroActivity.this) != ""){
-                        endereco.setLatitude((String)Helper.getSharedPreferences("LAT_END", "", 2, CadastroActivity.this));
-                        endereco.setLongitude((String)Helper.getSharedPreferences("LON_END", "", 2, CadastroActivity.this));
-                        Helper.removeSharedPreferences("LAT_END", CadastroActivity.this);
-                        Helper.removeSharedPreferences("LON_END", CadastroActivity.this);
-                        //Montar Endereço
-                        endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
-                        endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                        endereco.setNumero(inputNumero.getEditText().getText().toString());
-                        endereco.setBairro(inputBairro.getEditText().getText().toString());
-                        endereco.setCidade(inputCidade.getEditText().getText().toString());
-                        endereco.setUf(inputUF.getEditText().getText().toString());
-
-                        //Montar Usuario
-                        usuario.setNome_completo(nome);
-                        usuario.setData_nascimento(data);
-                        usuario.setCpf(cpf);
-                        usuario.setTelefone(telefone);
-                        usuario.setEmail(email);
-                        usuario.setPassword(password);
-
-                        if (hasCrpCrm) {
-                            usuario.setCrm_crp(crpCrm);
-                        } else {
-                            usuario.setCrm_crp("");
-                        }
-
-                        cadastroEndereco(endereco);
-                    }else {
-                        String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
-                        LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
-                        try {
-                            Helper.openModalMap(CadastroActivity.this, focoMap);
-                            return;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-
-        btnBuscaCep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-                buscaCep(cep);
-            }
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
         });
 
     }
@@ -270,21 +239,20 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             retorno.enqueue(new Callback<ViaCep>() {
                 @Override
                 public void onResponse(Call<ViaCep> call, Response<ViaCep> response) {
-                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     inputRua.getEditText().setText(response.body().getLogradouro());
                     inputBairro.getEditText().setText(response.body().getBairro());
                     inputUF.getEditText().setText(response.body().getUf());
                     inputCidade.getEditText().setText(response.body().getLocalidade());
-
                 }
 
                 @Override
                 public void onFailure(Call<ViaCep> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
+                    Log.d(CONSTANTES.TAG, t.getMessage());
                 }
             });
         }else{
-            inputCep.setError("Campo Obrigatorio");
+            inputCep.setError(CONSTANTES.CAMPO_OBRIGATORIO);
         }
     }
 
@@ -294,20 +262,17 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onResponse(Call<Endereco> call, Response<Endereco> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                    enderecoOK = true;
-                    codigo_endereco = response.body().getCodigo();
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     usuario.setEndereco(response.body());
                     cadastroUsuario(usuario);
                 } else {
-                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 }
-
             }
 
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
+                Log.d(CONSTANTES.TAG, t.getMessage());
             }
         });
     }
@@ -331,7 +296,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     public void openCalendar(){
 
         inputDataNasc.setErrorEnabled(false);
-
         calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -362,75 +326,74 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         uf = inputUF.getEditText().getText().toString();
         cidade = inputCidade.getEditText().getText().toString();
 
-        if(uc.validarNome(nome) != ""){
+        if(uc.validarNome(nome) != CONSTANTES.VAZIO){
             inputNome.setError(uc.validarNome(nome));
             return false;
         }
 
         if(!UsuarioController.empty(data)){
-            inputDataNasc.setError("Campo Obrigatorio");
+            inputDataNasc.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!UsuarioController.validaEmail(email)){
-            inputEmail.setError("E-mail Invalido");
+            inputEmail.setError(CONSTANTES.EMAIL_INVALIDO);
             return false;
         }
 
-        if(uc.validaPassword(password) != ""){
+        if(uc.validaPassword(password) != CONSTANTES.VAZIO){
             inputPassword.setError(uc.validaPassword(password));
             return false;
         }
 
-        if(uc.validarTelefone(telefone) != ""){
+        if(uc.validarTelefone(telefone) != CONSTANTES.VAZIO){
             inputTelefone.setError(uc.validarTelefone(telefone));
             return false;
         }
 
-        if(uc.validaCpf(cpf) != ""){
+        if(uc.validaCpf(cpf) != CONSTANTES.VAZIO){
             inputCpf.setError(uc.validaCpf(cpf));
             return false;
         }
 
         if(hasCrpCrm){
             if(UsuarioController.empty(crpCrm)){
-                inputCRM_CRP.setError(CAMPO_OBRIGATORIO);
+                inputCRM_CRP.setError(CONSTANTES.CAMPO_OBRIGATORIO);
                 return false;
             }
         }
 
-        if(ec.validaCep(cep) != ""){
+        if(ec.validaCep(cep) != CONSTANTES.VAZIO){
             inputCep.setError(ec.validaCep(cep));
             return false;
         }
 
         if(!EnderecoController.empty(rua)){
-            inputRua.setError("Campo Obrigatorio");
+            inputRua.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(numero)){
-            inputNumero.setError("Campo Obrigatorio");
+            inputNumero.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(bairro)){
-            inputBairro.setError("Campo Obrigatorio");
+            inputBairro.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
         }
 
         if(!EnderecoController.empty(cidade)){
-            inputCidade.setError("Campo Obrigatorio");
+            inputCidade.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
         }
 
-        if(EnderecoController.validaUF(uf) != ""){
+        if(EnderecoController.validaUF(uf) != CONSTANTES.VAZIO){
             inputUF.setError(EnderecoController.validaUF(uf));
             return false;
         }
 
         return true;
-
     }
 
     private void cadastroUsuario(Usuario usuario){
@@ -439,21 +402,20 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                    Log.d(TAG, response.body().toString());
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
 
                     String tipoUsuario = "";
                     if(response.body().getCrm_crp().isEmpty()){
-                        tipoUsuario = "PACIENTE";
+                        tipoUsuario = CONSTANTES.PACIENTE;
                     }else{
-                        tipoUsuario = "VOLUNTARIO";
+                        tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
 
                     Intent home = new Intent(CadastroActivity.this, MapsActivity.class);
                     startActivity(home);
                 } else {
-                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
                         if(response.errorBody().contentLength() == 18){
                             msgJaCadastrado("CPF");
@@ -476,21 +438,17 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroActivity.this);
         alertDialog.setTitle("Atenção");
         alertDialog.setMessage(campo + " " + "já cadastrado.");
-        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
-                dialog.cancel();
-            }
-        });
+        alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
 
         // visualizacao do dialogo
         alertDialog.show();
     }
 
     public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
-        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", codigoUsuario);
-        editor.putString("TYPE", tipoUsuario);
+        editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
+        editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.apply();
     }
 

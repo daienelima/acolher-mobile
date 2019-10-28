@@ -9,7 +9,6 @@ import android.location.Geocoder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,11 +19,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.security.Key;
 import java.util.List;
 
 import br.com.acolher.R;
-import br.com.acolher.chamaTelas;
 
 public class Helper implements OnMapReadyCallback{
 
@@ -33,6 +30,13 @@ public class Helper implements OnMapReadyCallback{
     private static LatLng latLng = null;
     static Marker markerLocale = null;
 
+    /**
+     *
+     * @param key
+     * @param value
+     * @param type
+     * @param context
+     */
     public static void setSharedPreferences(String key, Object value, Integer type, Context context){
         SharedPreferences sharedPreferences = initSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -61,6 +65,14 @@ public class Helper implements OnMapReadyCallback{
 
     }
 
+    /**
+     *
+     * @param key
+     * @param defaultValue
+     * @param type
+     * @param context
+     * @return
+     */
     public static Object getSharedPreferences(String key, Object defaultValue, Integer type, Context context){
         SharedPreferences sharedPreferences = initSharedPreferences(context);
         switch (type){
@@ -79,6 +91,11 @@ public class Helper implements OnMapReadyCallback{
         }
     }
 
+    /**
+     *
+     * @param key
+     * @param context
+     */
     public static void removeSharedPreferences(String key, Context context){
         SharedPreferences sharedPreferences = initSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -86,11 +103,21 @@ public class Helper implements OnMapReadyCallback{
         editor.commit();
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static SharedPreferences initSharedPreferences(Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CONSTANTES.USERDATA, Context.MODE_PRIVATE);
         return sharedPreferences;
     }
 
+    /**
+     *
+     * @param text
+     * @param context
+     */
     public static void openProgressDialog(String text, Context context){
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(text);
@@ -98,12 +125,21 @@ public class Helper implements OnMapReadyCallback{
         progressDialog.show();
     }
 
+    /**
+     *
+     */
     public static void closeProgressDialog(){
         if(progressDialog.isShowing()){
             progressDialog.dismiss();
         }
     }
 
+    /**
+     *
+     * @param context
+     * @param coordinates
+     * @throws InterruptedException
+     */
     public static void openModalMap(Context context, LatLng coordinates) throws InterruptedException {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
@@ -117,48 +153,45 @@ public class Helper implements OnMapReadyCallback{
 
         mapView.onCreate(null);
         mapView.onResume();
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
+        mapView.getMapAsync(googleMap -> {
 
-                mMap = googleMap;
-                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        Log.d("map", "CLicou");
-                        if(markerLocale != null){
-                            markerLocale.remove();
-                        }
-                        double lat = latLng.latitude;
-                        double lon = latLng.longitude;
-                        markerLocale = mMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .draggable(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin))
-                        );
-
-                    }
-                });
-
-                if(coordinates != null){
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 13.0f));
+            mMap = googleMap;
+            mMap.setOnMapClickListener(latLng -> {
+                Log.d("map", "CLicou");
+                if(markerLocale != null){
+                    markerLocale.remove();
                 }
+                double lat = latLng.latitude;
+                double lon = latLng.longitude;
+                markerLocale = mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .draggable(true)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin))
+                );
+
+            });
+
+            if(coordinates != null){
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 13.0f));
             }
         });
 
-        btnPoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(markerLocale != null){
-                    Helper.setSharedPreferences("LAT_END", String.valueOf(markerLocale.getPosition().latitude), 2, context);
-                    Helper.setSharedPreferences("LON_END", String.valueOf(markerLocale.getPosition().longitude), 2, context);
-                    dialog.dismiss();
-                }
+        btnPoint.setOnClickListener(v -> {
+            if(markerLocale != null){
+                Helper.setSharedPreferences(CONSTANTES.LAT_END, String.valueOf(markerLocale.getPosition().latitude), 2, context);
+                Helper.setSharedPreferences(CONSTANTES.LON_END, String.valueOf(markerLocale.getPosition().longitude), 2, context);
+                dialog.dismiss();
             }
         });
         dialog.show();
     }
 
+    /**
+     *
+     * @param locationName
+     * @param c
+     * @return
+     */
     public static LatLng getAddressFromLocationName(String locationName, Context c){
         Geocoder coder = new Geocoder(c);
         List<Address> addresses;
@@ -177,6 +210,12 @@ public class Helper implements OnMapReadyCallback{
         return p1;
     }
 
+    /**
+     *
+     * @param locationName
+     * @param context
+     * @return
+     */
     public static LatLng getAddressForLocationName(String locationName, Context context){
         Geocoder coder = new Geocoder(context);
         List<Address> addresses;
