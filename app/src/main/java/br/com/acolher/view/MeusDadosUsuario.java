@@ -1,20 +1,15 @@
 package br.com.acolher.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -42,9 +37,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
     private RetrofitInit retrofitInit = new RetrofitInit();
     private TextInputLayout nomeCompleto, email, telefone,cpf,crm,dataNasc,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
     private Button alterar,salvar,cancelarEdicao,btnBuscaCep;
-    private String enderecoCompleto;
     private Usuario globalUsuario;
-    private Boolean globalStatus;
     private String msgResposta;
 
     @Override
@@ -97,8 +90,6 @@ public class MeusDadosUsuario extends AppCompatActivity {
 
     //incluir dados em campos
     private void meusdados (Usuario dados){
-        enderecoCompleto = dados.getEndereco().getLogradouro() + "," + dados.getEndereco().getNumero()+ "," + dados.getEndereco().getCidade()+ "-" + dados.getEndereco().getUf()+ "," + dados.getEndereco().getCep();
-
         nomeCompleto.getEditText().setText(dados.getNome_completo());
         nomeCompleto.getEditText().setTextColor(Color.BLACK);
         email.getEditText().setText(dados.getEmail());
@@ -221,7 +212,7 @@ public class MeusDadosUsuario extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-
+                Log.d(TAG, t.getMessage());
             }
         });
     }
