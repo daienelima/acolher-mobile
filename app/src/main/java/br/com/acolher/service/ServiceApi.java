@@ -58,14 +58,14 @@ public interface ServiceApi {
     @GET("{cep}/json")
     Call<ViaCep> buscarCEP(@Path("cep") String cep);
 
-    @GET("consulta/paciente/{id}")
-    Call<List<Consulta>> getConsultasPorPaciente(@Path("id") int id);
+    @GET("consulta/paciente/{codigo}")
+    Call<List<Consulta>> getConsultasPorPacientes(@Path("codigo") int codigo);
 
-    @GET("consulta/voluntario/{id}")
-    Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+    @GET("consulta/voluntario/{codigo}")
+    Call<List<Consulta>> getConsultasPorVoluntario(@Path("codigo") int codigo);
 
-    @GET("consulta/instituicao/{id}")
-    Call<List<Consulta>> getConsultasPorInstituicao(@Path("id") int id);
+    @GET("consulta/instituicao/{codigo}")
+    Call<List<Consulta>> getConsultasPorInstituicao(@Path("codigo") int codigo);
 
     @PUT("consulta/cancelar")
     Call<Consulta> cancelarConsulta(@Body Consulta consulta);
@@ -85,9 +85,9 @@ public interface ServiceApi {
     @PUT("instituicao/senha")
     Call<Instituicao> alterarSenhaInstituicao(@Body AlterarSenha alterarSenha);
 
-    @PUT("usuario/desativar")
-    Call<Usuario> desativarUsuario(@Body Usuario usuario);
+    @GET("usuario/desativar/{codigo}")
+    Call<Usuario> desativarUsuario(@Path("codigo") Integer codigo);
 
-    @PUT("instituicao/desativar")
-    Call<Instituicao> desativarInstituicao(@Body Instituicao instituicao);
+    @GET("instituicao/desativar/{codigo}")
+    Call<Instituicao> desativarInstituicao(@Path("codigo") Integer codigo);
 }

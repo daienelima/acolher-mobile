@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConfiguracoes;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.Helper;
+import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -91,10 +93,12 @@ public class ConfiguracaoFragment extends Fragment {
             startActivity(intent);
         }
     }
+
     private void alterarSenha(){
         Intent intent = new Intent(getContext(), AlterarSenha.class);
         startActivity(intent);
     }
+
     private void desativarConta(){
         builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Desativar Conta");
@@ -103,8 +107,10 @@ public class ConfiguracaoFragment extends Fragment {
         builder.setPositiveButton("Sim", (dialogInterface, i) -> {
             if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
                 desativarContaInstituicao();
+                this.sair();
             }else{
                 desativarContaUsuario();
+                this.sair();
             }
 
         });
@@ -126,16 +132,12 @@ public class ConfiguracaoFragment extends Fragment {
     }
 
     private void desativarContaUsuario(){
-        getUsuer(sharedPreferences.getInt("USERCODE", 1));
-        Call<Usuario> call = retrofitInit.getService().desativarUsuario(usuarioLogado);
+        Integer codeUser = (Integer) Helper.getSharedPreferences("USERCODE",  0, 1, getContext());
+        Call<Usuario> call = retrofitInit.getService().desativarUsuario(codeUser);
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                Log.d(TAG,String.valueOf(response.code()));
-                if(response.isSuccessful()){
-                    finalizaApp();
-                }
+
             }
 
             @Override
@@ -145,43 +147,18 @@ public class ConfiguracaoFragment extends Fragment {
         });
     }
 
-    private void getUsuer(Integer codigo){
-        Call<Usuario> call = retrofitInit.getService().getUsuario(codigo);
-        call.enqueue(new Callback<Usuario>() {
+    private void desativarContaInstituicao(){
+        Call<Instituicao> call = retrofitInit.getService().desativarInstituicao(sharedPreferences.getInt("USERCODE", 1));
+        call.enqueue(new Callback<Instituicao>() {
             @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                usuarioLogado = response.body();
-                pegaUser(usuarioLogado);
+            public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
+
             }
 
             @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-
+            public void onFailure(Call<Instituicao> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
             }
         });
     }
-
-    private void desativarContaInstituicao(){
-    }
-
-    private void finalizaApp(){
-        builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Sucesso");
-        builder.setMessage("Conta Desativada Com Sucesso");
-        builder.setPositiveButton("Sim", (dialogInterface, i) -> this.sair());
-    }
-
-    private void pegaUser(Usuario u){
-        usuarioLogado = new Usuario();
-        usuarioLogado.setCodigo(u.getCodigo());
-        usuarioLogado.setAtivo(u.isAtivo());
-        usuarioLogado.setCpf(u.getCpf());
-        usuarioLogado.setCrm_crp(u.getCrm_crp());
-        usuarioLogado.setData_nascimento(u.getData_nascimento());
-        usuarioLogado.setEndereco(u.getEndereco());
-        usuarioLogado.setEmail(u.getEmail());
-        usuarioLogado.setPassword(u.getPassword());
-        usuarioLogado.setTelefone(u.getTelefone());
-    }
-
 }

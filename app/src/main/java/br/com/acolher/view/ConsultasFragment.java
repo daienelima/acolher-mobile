@@ -2,9 +2,7 @@ package br.com.acolher.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +39,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
     Date data = new Date();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private SharedPreferences pref;
-    private int id;
+    private Integer codigo;
     private ListView listaDeConsultas;
     private TextView labelNenhumaConsulta;
 
@@ -54,7 +51,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
         consultas = new ArrayList<>();
         listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
-        id = pref.getInt("USERCODE",0);
+        codigo = pref.getInt("USERCODE",0);
 
         loadLista();
 
@@ -89,11 +86,11 @@ public class ConsultasFragment extends Fragment implements Serializable{
     public void loadLista(){
         String tipo = pref.getString("TYPE","erro");
         if(tipo.equals("PACIENTE")) {
-            call = retrofitInit.getService().getConsultasPorPaciente(id);
+            call = retrofitInit.getService().getConsultasPorPacientes(codigo);
         }else if(tipo.equals("VOLUNTARIO")){
-            call = retrofitInit.getService().getConsultasPorVoluntario(id);
+            call = retrofitInit.getService().getConsultasPorVoluntario(codigo);
         }else if(tipo.equals("INSTITUICAO")){
-            call = retrofitInit.getService().getConsultasPorInstituicao(id);
+            call = retrofitInit.getService().getConsultasPorInstituicao(codigo);
         }else {
             //tem q tratar
         }
