@@ -21,6 +21,7 @@ import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
 
+import br.com.acolher.view.Login;
 import br.com.acolher.view.MeusDadosActivity;
 
 public class chamaTelas extends AppCompatActivity {
@@ -42,24 +43,7 @@ public class chamaTelas extends AppCompatActivity {
 
         switch (v.getId()) {
             case R.id.telaLogin:
-                //intent = new Intent(chamaTelas.this, Login.class);
-                //startActivity(intent);
-                /*Geocoder coder = new Geocoder(chamaTelas.this);
-                List<Address> addresses;
-                LatLng coordinates = null;
-
-                try {
-                    addresses = coder.getFromLocationName("Pernambuco, Cajueiro seco", 5);
-                    if(addresses == null){
-                    }
-                    Address location = addresses.get(0);
-                    coordinates = new LatLng(location.getLatitude(), location.getLongitude());
-                    Helper.openModalMap(chamaTelas.this, coordinates);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }*/
-                Helper.removeSharedPreferences("LAT_END", chamaTelas.this);
-                Helper.removeSharedPreferences("LON_END", chamaTelas.this);
+                intent = new Intent(chamaTelas.this, Login.class);
                 break;
             case R.id.telaCadastro:
                 intent = new Intent(chamaTelas.this, CadastroActivity.class);
