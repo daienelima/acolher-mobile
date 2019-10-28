@@ -2,7 +2,6 @@ package br.com.acolher.view;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -32,7 +32,6 @@ public class Login extends AppCompatActivity {
     private TextInputLayout inputEmail, inputSenha;
     private Button login;
     private TextView cadastro;
-    public static final String TAG = "API";
     private RetrofitInit retrofitInit = new RetrofitInit();
     private ProgressDialog progressDialogLogin;
     private SharedPreferences sharedPreferences;
@@ -50,90 +49,67 @@ public class Login extends AppCompatActivity {
         findById();
         usuarioLogado();
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(validateLogin()){
-                    String email = inputEmail.getEditText().getText().toString();
-                    String senha = inputSenha.getEditText().getText().toString();
-                    progressDialogLogin.setMessage("Entrando...");
-                    progressDialogLogin.setCancelable(false);
-                    progressDialogLogin.show();
-                    br.com.acolher.dto.Login login = new br.com.acolher.dto.Login();
-                    login.setEmail(email);
-                    login.setSenha(senha);
+        login.setOnClickListener(v -> {
+            if(validateLogin()){
+                String email = inputEmail.getEditText().getText().toString();
+                String senha = inputSenha.getEditText().getText().toString();
+                progressDialogLogin.setMessage("Entrando...");
+                progressDialogLogin.setCancelable(false);
+                progressDialogLogin.show();
+                br.com.acolher.dto.Login login = new br.com.acolher.dto.Login();
+                login.setEmail(email);
+                login.setSenha(senha);
 
-                    salvarLogin(login.getEmail());
-                    validarLoginUsuario(login);
-                }
+                salvarLogin(login.getEmail());
+                validarLoginUsuario(login);
             }
         });
 
-        cadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(login.getContext());
-                View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_user_type, null);
-                mBuilder.setView(viewDialog);
-                final AlertDialog dialog = mBuilder.create();
+        cadastro.setOnClickListener(view -> {
+            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(login.getContext());
+            View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_user_type, null);
+            mBuilder.setView(viewDialog);
+            final AlertDialog dialog = mBuilder.create();
 
-                TextView btnClose = viewDialog.findViewById(R.id.closeDialogDisp);
+            TextView btnClose = viewDialog.findViewById(R.id.closeDialogDisp);
 
-                btnClose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
+            btnClose.setOnClickListener(view14 -> dialog.dismiss());
 
-                TextView labelDescricao = viewDialog.findViewById(R.id.label_perfil);
+            TextView labelDescricao = viewDialog.findViewById(R.id.label_perfil);
 
-                labelDescricao.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final AlertDialog.Builder dialogInfos = new AlertDialog.Builder(login.getContext());
-                        View viewInfos = getLayoutInflater().inflate(R.layout.custom_dialog_info_perfil, null);
-                        dialogInfos.setView(viewInfos);
-                        final  AlertDialog alertInfos = dialogInfos.create();
-                        alertInfos.show();
-                    }
-                });
+            labelDescricao.setOnClickListener(view15 -> {
+                final AlertDialog.Builder dialogInfos = new AlertDialog.Builder(login.getContext());
+                View viewInfos = getLayoutInflater().inflate(R.layout.custom_dialog_info_perfil, null);
+                dialogInfos.setView(viewInfos);
+                final  AlertDialog alertInfos = dialogInfos.create();
+                alertInfos.show();
+            });
 
-                final Button btnPaciente = viewDialog.findViewById(R.id.btnPaciente);
-                final Button btnProfissional = viewDialog.findViewById(R.id.btnProfissional);
-                final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
+            final Button btnPaciente = viewDialog.findViewById(R.id.btnPaciente);
+            final Button btnProfissional = viewDialog.findViewById(R.id.btnProfissional);
+            final Button btnInstituicao = viewDialog.findViewById(R.id.btnInstituicao);
 
 
-                btnPaciente.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(login.getContext(), CadastroActivity.class);
-                        String perfil = "paciente";
-                        intent.putExtra("perfil", perfil);
-                        startActivity(intent);
-                    }
-                });
-                btnProfissional.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(login.getContext(), CadastroActivity.class);
-                        String perfil = "profissional";
-                        intent.putExtra("perfil", perfil);
-                        startActivity(intent);
-                    }
-                });
-                btnInstituicao.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(login.getContext(), CadastroInstituicao.class);
-                        String perfil = "instituicao";
-                        intent.putExtra("perfil", perfil);
-                        startActivity(intent);
-                    }
-                });
+            btnPaciente.setOnClickListener(view1 -> {
+                Intent intent = new Intent(login.getContext(), CadastroActivity.class);
+                String perfil = CONSTANTES.PACIENTE;
+                intent.putExtra(CONSTANTES.PERFIL, perfil);
+                startActivity(intent);
+            });
+            btnProfissional.setOnClickListener(view12 -> {
+                Intent intent = new Intent(login.getContext(), CadastroActivity.class);
+                String perfil = CONSTANTES.PROFISSIONAL;
+                intent.putExtra(CONSTANTES.PERFIL, perfil);
+                startActivity(intent);
+            });
+            btnInstituicao.setOnClickListener(view13 -> {
+                Intent intent = new Intent(login.getContext(), CadastroInstituicao.class);
+                String perfil = CONSTANTES.INSTITUICAO;
+                intent.putExtra(CONSTANTES.PERFIL, perfil);
+                startActivity(intent);
+            });
 
-                dialog.show();
-            }
+            dialog.show();
         });
     }
 
@@ -143,7 +119,7 @@ public class Login extends AppCompatActivity {
         String senha = inputSenha.getEditText().getText().toString();
 
         if(!UsuarioController.empty(email)){
-            inputEmail.setError("E-mail inválido!");
+            inputEmail.setError(CONSTANTES.EMAIL_INVALIDO);
             return false;
         }
         if(!UsuarioController.empty(senha)) {
@@ -167,13 +143,12 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                    Log.d(TAG, response.body().toString());
-                    String tipoUsuario = "";
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                    String tipoUsuario;
                     if(response.body().getCrm_crp().isEmpty()){
-                        tipoUsuario = "PACIENTE";
+                        tipoUsuario = CONSTANTES.PACIENTE;
                     }else{
-                        tipoUsuario = "VOLUNTARIO";
+                        tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
                     Intent home = new Intent(Login.this, MapsActivity.class);
@@ -186,14 +161,13 @@ public class Login extends AppCompatActivity {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
                     }
-                    Log.d(TAG, String.valueOf(response.code()));
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
                         validarLoginInstituicao(login);
                     }
 
                 }
             }
-
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
 
@@ -209,8 +183,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, String.valueOf(response.code()));
-                    Log.d(TAG, response.body().toString());
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     salvarDadosInstituicao(response.body().getCodigo());
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
@@ -218,7 +191,6 @@ public class Login extends AppCompatActivity {
                     }
                     startActivity(home);
                 } else {
-                    Log.d(TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
                         msgLoginInvalido();
                     }
@@ -240,20 +212,16 @@ public class Login extends AppCompatActivity {
         }
         alertDialog.setTitle("Atenção");
         alertDialog.setMessage("Login inválido!");
-        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
-                dialog.cancel();
-            }
-        });
+        alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
 
         alertDialog.show();
     }
 
     public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
-        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", codigoUsuario);
-        editor.putString("TYPE", tipoUsuario);
+        editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
+        editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.apply();
     }
 
