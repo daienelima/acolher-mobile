@@ -1,6 +1,5 @@
 package br.com.acolher.view;
 
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,19 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.Calendar;
-
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.InstituicaoController;
-import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
@@ -55,7 +49,7 @@ public class CadastroInstituicao extends AppCompatActivity{
         getSupportActionBar().hide();
 
         //Configurações da activity
-        setContentView(R.layout.cadastro_instituicao_activity);
+        setContentView(R.layout.activity_cadastro_instituicao);
 
         continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
 
@@ -183,7 +177,7 @@ public class CadastroInstituicao extends AppCompatActivity{
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
-        editor.putString("TYPE", "instituicao");
+        editor.putString("TYPE", "INSTITUICAO");
         editor.apply();
     }
 }

@@ -1,5 +1,7 @@
 package br.com.acolher.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -20,7 +22,8 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     private GoogleMap mMap;
     private ActionBar actionBar;
-    public String tipoUsuario = "Instituição";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -36,11 +39,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
 
-        /*setContentView(R.layout.activity_main);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);*/
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -57,8 +55,22 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
+        //Buscar Informação do sharedPreferences Inicio
+        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+
+        //Buscar Informação do sharedPreferences Fim
         Fragment fragment = null;
 
         switch (menuItem.getItemId()){
@@ -72,13 +84,12 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ChatFragment();
                 break;
             case R.id.conta :
-                /*if (tipoUsuario.equals("Instituição")){
-                fragment = new MeusDadosInstituicaoFragment();
+
+                if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+                    fragment = new ConfiguracaoFragment();
+                }else{
+                    fragment = new ConfiguracaoFragment();
                 }
-                if (tipoUsuario.equals("Usuario")){
-                    fragment = new MinhaContaFragment();
-                }*/
-                fragment = new MinhaContaFragment();
                 break;
             default:
                 break;
@@ -86,7 +97,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
-
 
     /**
      * Manipulates the map once available.

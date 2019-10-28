@@ -2,9 +2,8 @@ package br.com.acolher.view;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,9 +29,11 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.DisponibilidadeController;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
+import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -46,24 +47,20 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Calendar calendar;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-    private TextInputLayout inputNome, inputData, inputHora, inputCPR_CRM, inputNumero;
+    private TextInputLayout inputData, inputHora, inputNumero;
     private ImageButton btnCalendar;
     private Button concluirCadastro, buttonCancelar;
-    private int currentHour;
-    private int currentMinute;
+    private int currentHour, currentMinute;
     private Address address;
-    private Double lon;
-    private Double lat;
+    private Double lon, lat;
     private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
-    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_cadastro_disponibilidade);
-
         pegaIdCampos();
 
         Intent intent = getIntent();
@@ -76,16 +73,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             inputNumero.setVisibility(View.VISIBLE);
         }
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("LAT", lat.toString());
-        editor.putString("LON", lon.toString());
-        editor.apply();
-
-     /*   inputCPR_CRM.getEditText().setText("8454654");
-        inputCPR_CRM.setEnabled(false);
-        inputNome.getEditText().setText("Medico");
-        inputNome.setEnabled(false);*/
+        Helper.setSharedPreferences("LAT", lat.toString(), 2, CadastroDisponibilidade.this);
+        Helper.setSharedPreferences("LON", lon.toString(), 2, CadastroDisponibilidade.this);
 
         if(lat != 0.0 && lon != 0.0){
             try {
@@ -94,23 +83,34 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
         concluirCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Helper.openProgressDialog("Cadastrando disponibilidade", CadastroDisponibilidade.this);
                 if ( validateForm() ){
                     Consulta novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
-                    Usuario profissional = new Usuario();
-                    profissional.setCodigo(sharedPreferences.getInt("USERCODE", 1));
+                    String typeUser = (String) Helper.getSharedPreferences("TYPE", "", 2, getApplicationContext());
+                    if(typeUser.equals("VOLUNTARIO")){
+                        Usuario profissional = new Usuario();
+                        profissional.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
+                        novaConsulta.setProfissional(profissional);
+                    }else if(typeUser.equals("INSTITUICAO")){
+                        Instituicao instituicao = new Instituicao();
+                        instituicao.setCodigo((Integer) Helper.getSharedPreferences("USERCODE", 0, 1, CadastroDisponibilidade.this));
+                        novaConsulta.setInstituicao(instituicao);
+                    }
+
                     String hora = inputHora.getEditText().getText().toString();
                     String sData = inputData.getEditText().getText().toString();
 
                     novaConsulta.setData(sData);
                     novaConsulta.setHora(hora);
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
-                    novaConsulta.setProfissional(profissional);
 
                     if(codigoEnderecoRecente == 0){
                         Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);
@@ -121,8 +121,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                                     Log.d(TAG, String.valueOf(response.code()));
                                     enderecoConsulta = response.body();
                                     codigoEnderecoRecente = enderecoConsulta.getCodigo();
-                                    editor.putInt("COD_END_RECENT", enderecoConsulta.getCodigo());
-                                    editor.apply();
+                                    Helper.setSharedPreferences("COD_END_RECENT", enderecoConsulta.getCodigo(), 1, CadastroDisponibilidade.this);
                                     novaConsulta.setEndereco(enderecoConsulta);
                                     cadastroConsulta(novaConsulta);
                                 } else {
@@ -142,6 +141,8 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                         cadastroConsulta(novaConsulta);
                     }
 
+                }else{
+                    Helper.closeProgressDialog();
                 }
 
             }
@@ -186,8 +187,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     }
 
     private void pegaIdCampos() {
-        // = findViewById(R.id.input_CRP_CRM);
-        //inputNome = findViewById(R.id.inputNomeCompleto);
         inputData = findViewById(R.id.inputDataNasc);
         btnCalendar = findViewById(R.id.btnCalendar);
         inputHora = findViewById(R.id.inputHora);
@@ -200,7 +199,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     public void openCalendar(){
 
         inputData.setErrorEnabled(false);
-
         calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -216,6 +214,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 }
             }
         }, year, month, day);
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
@@ -236,14 +235,14 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
     public boolean validateForm(){
 
-        //String nome = inputNome.getEditText().getText().toString();
+        String numero = inputNumero.getEditText().getText().toString();
         String data = inputData.getEditText().getText().toString();
         String hora = inputHora.getEditText().getText().toString();
 
-       /* if(!DisponibilidadeController.empty(nome)){
-            inputNome.setError("Nome não dede ficar em branco");
-            return false;
-        }*/
+        if(!DisponibilidadeController.empty(numero) && inputNumero.getVisibility() == View.VISIBLE){
+            inputNumero.setError("Campo Obrigatorio");
+            return  false;
+        }
 
         if(!DisponibilidadeController.empty(data)){
             inputData.setError("Campo Obrigatorio");
@@ -254,7 +253,6 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             inputHora.setError("Campo Obrigatorio");
             return false;
         }
-
 
         return true;
     }
@@ -270,23 +268,30 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                     Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
+                    Helper.closeProgressDialog();
                     startActivity(home);
                 } else {
                     Log.d(TAG, "erro");
                     Log.d(TAG, String.valueOf(response.code()));
+                    Helper.closeProgressDialog();
+                    if(response.code() == 400){
+                        msgValidacao("Não é possível agendar consultas em intervalo inferior a 1h de consultas já agendadas.");
+                    } else if(response.code() == 409){
+                        msgValidacao("Não é possível agendar consultas para a data e hora atual ou retroativa.");
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Consulta> call, Throwable t) {
-
+                Helper.closeProgressDialog();
             }
         });
     }
 
     public Endereco pegarEndereco(Address address){
-        Endereco endereco = new Endereco();
 
+        Endereco endereco = new Endereco();
         endereco.setLongitude(lon.toString());
         endereco.setLatitude(lat.toString());
         endereco.setLogradouro(address.getThoroughfare());
@@ -294,7 +299,20 @@ public class CadastroDisponibilidade extends AppCompatActivity {
         endereco.setCep(Validacoes.cleanCep(address.getPostalCode()));
         endereco.setCidade(address.getSubAdminArea());
         endereco.setUf(Validacoes.deParaEstados(address.getAdminArea()));
-
         return endereco;
+    }
+
+    public void msgValidacao(String mensagem){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(CadastroDisponibilidade.this);
+        alertDialog.setTitle("Atenção");
+        alertDialog.setMessage(mensagem);
+        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+            }
+        });
+
+        // visualizacao do dialogo
+        alertDialog.show();
     }
 }

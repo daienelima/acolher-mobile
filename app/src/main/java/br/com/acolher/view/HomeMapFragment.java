@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -14,16 +13,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.DialogInterface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -44,27 +43,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
-import br.com.acolher.model.Endereco;
-import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
-import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener ,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private Integer consultaSelecionada;
+    private Integer codigoRecente;
     private GoogleMap mMap;
     private MapView mMapView;
     private View mView;
@@ -80,7 +75,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private Consulta consPorUser;
     private RetrofitInit retrofitInit = new RetrofitInit();
     private static final int REQUEST_PHONE_CALL = 1;
-    private SharedPreferences sharedPreferences;
     private Integer codeUser;
     private String typeUser;
     private ProgressDialog progressDialog;
@@ -102,39 +96,16 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressDialog = new ProgressDialog(getContext());
-        navigationView = getActivity().findViewById(R.id.bottom_navigation);
-        /**
-         * Shared Preferences Mocado
-         */
+        findById(view);
 
-        sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
-/*
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", 4);
-        editor.putString("TYPE", "PACIENTE");
-        editor.apply();
-*/
-        btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
-        btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
-        latDisp = 0.0;
-        longDisp = 0.0;
-
-        if(!sharedPreferences.getString("TYPE", "").equals("PACIENTE")) {
-            if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0){
-                btnAddLastConsulta.show();
-            }
-        }
-
-        MapsInitializer.initialize(getContext());
-        fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
-
-        mMapView = (MapView) mView.findViewById(R.id.map);
         if(mMapView != null){
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
+
+        MapsInitializer.initialize(getContext());
+        fusedLocation = LocationServices.getFusedLocationProviderClient(getContext());
 
         if(googleApiClient == null){
 
@@ -146,8 +117,31 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         }
 
-        codeUser = sharedPreferences.getInt("USERCODE", 0);
-        typeUser = sharedPreferences.getString("TYPE", "");
+        /**
+         * Shared Preferences Mocado
+         */
+
+        //sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
+
+        /*SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("USERCODE", 4);
+        editor.putString("TYPE", "PACIENTE");
+        editor.apply();*/
+
+
+        latDisp = 0.0;
+        longDisp = 0.0;
+        codeUser = (Integer) Helper.getSharedPreferences("USERCODE",  0, 1, getContext());
+        typeUser = (String) Helper.getSharedPreferences("TYPE", "", 2, getContext());
+        codigoRecente = (Integer) Helper.getSharedPreferences("COD_END_RECENT", 0, 1, getContext());
+
+        if(!typeUser.equals("PACIENTE")) {
+            if(codigoRecente != 0){
+                btnAddLastConsulta.show();
+            }
+        }
+
+
 
 
     }
@@ -250,20 +244,66 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             });
         }else{
             btnAddConsulta.show();
-            //btnAddLastConsulta.show();
+            if(((Integer) Helper.getSharedPreferences("COD_END_RECENT", 0, 1, getContext())) != 0){
+                btnAddLastConsulta.show();
+            }
         }
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                if(!marker.equals(myMarker)){
+                if(marker.equals(myMarker)){
+                    return false;
+                }
+
+                if(consPorUser != null){
+                    Intent intent = new Intent(getContext(), Consultas.class);
+                    intent.putExtra("consulta",consPorUser);
+                    startActivity(intent);
+                    return false;
+                }
+
+                Integer id = Integer.parseInt(marker.getSnippet());
+
+                if(verifyDuplicityLatLng(id)){
+                    ArrayList<Consulta> consultasPorLocalz = consultasPorLocalizacao(id);
+
+                    View view = getLayoutInflater().inflate(R.layout.modal_disponibilidades, null);
+                    ListView listView = view.findViewById(R.id.listaDisponibilidades);
+                    AdapterDisponibilidades adapterDisponibilidades = new AdapterDisponibilidades(consultasPorLocalz, getContext());
+                    listView.setAdapter(adapterDisponibilidades);
+
+                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setView(view);
+                    final AlertDialog dialog = mBuilder.create();
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Toast.makeText(getContext(), String.valueOf(id), Toast.LENGTH_LONG).show();
+                            openModal(Integer.parseInt(String.valueOf(id)));
+                        }
+                    });
+
+                    dialog.show();
+                }else {
+                    openModal(id);
+                }
+
+                //ModalDisponibilidades.listaConsultas = consultas;
+
+                /*ModalDisponibilidades.listaConsultas = consultas;
+                Intent modal = new Intent(getContext(), ModalDisponibilidades.class);
+                startActivity(modal);*/
+
+                /*if(!marker.equals(myMarker)){
                     if(consPorUser != null){
                         openDetails(consPorUser);
                     }else if(consultas != null){
                         openModal(Integer.parseInt(marker.getSnippet()));
                     }
-                }
+                }*/
                 /*if(marker.equals(myMarker)){
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
@@ -296,9 +336,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         btnAddLastConsulta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer codigoRecente = sharedPreferences.getInt("COD_END_RECENT", 0);
-                latDisp = Double.parseDouble(sharedPreferences.getString("LAT", "0.0"));
-                longDisp = Double.parseDouble(sharedPreferences.getString("LON", "0.0"));
+                latDisp = Double.parseDouble((String) Helper.getSharedPreferences("LAT", "0.0", 2, getContext()));
+                longDisp = Double.parseDouble((String) Helper.getSharedPreferences("LON", "0.0", 2, getContext()));
                 callCadastroDisp(codigoRecente);
             }
         });
@@ -306,7 +345,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(typeUser .equals("VOLUNTARIO")){
+                if(typeUser .equals("VOLUNTARIO") || typeUser .equals("INSTITUICAO")){
                     if(markerConsulta != null){
                         markerConsulta.remove();
                     }
@@ -321,6 +360,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         });
 
+    }
+
+    public void findById(View view){
+        progressDialog = new ProgressDialog(getContext());
+        navigationView = getActivity().findViewById(R.id.bottom_navigation);
+        btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
+        btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
+        mMapView = (MapView) mView.findViewById(R.id.map);
     }
 
     public void callCadastroDisp(Integer codigo){
@@ -338,6 +385,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
     public void generateMarkers(List<Consulta> consultas, Consulta consultaPorUsuario){
         if(consultas != null){
+            List<LatLng> listLatLng = new ArrayList<LatLng>();
             for(int i=0; i<consultas.size(); i++){
                 LatLng disponibilidade;
                 try{
@@ -346,16 +394,20 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     e.printStackTrace();
                     continue;
                 }
-                mMap.addMarker(new MarkerOptions()
-                        .position(disponibilidade)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
-                        .snippet(String.valueOf(i))
-                );
+                if(!listLatLng.contains(disponibilidade)){
+                    listLatLng.add(disponibilidade);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(disponibilidade)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
+                            .snippet(String.valueOf(consultas.get(i).getCodigo()))
+                    );
+                }
             }
         }else if(consultaPorUsuario != null){
             LatLng disponibilidade = new LatLng(Double.parseDouble(consultaPorUsuario.getEndereco().getLatitude()), Double.parseDouble(consultaPorUsuario.getEndereco().getLongitude()));
             mMap.addMarker(new MarkerOptions()
                     .position(disponibilidade)
+                    .snippet(String.valueOf(consultaPorUsuario.getCodigo()))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
             );
         }else{
@@ -369,10 +421,13 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         if(mMap != null){
             onMapReady(mMap);
         }
+        if(markerConsulta != null){
+            markerConsulta.remove();
+        }
         googleApiClient.connect();
         progressDialog.dismiss();
-        if(sharedPreferences.getInt("COD_END_RECENT", 0) != 0 && !typeUser.equals("PACIENTE")){
-            btnAddLastConsulta.show();
+        if(typeUser.equals("PACIENTE")){
+            //btnAddLastConsulta.show();
         }
         super.onResume();
     }
@@ -421,14 +476,14 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         return res;
     }
 
-    public void openModal(int index){
+    public void openModal(int codigo){
 
-        Consulta consulta = consultas.get(index);
+        Consulta consulta = getConsulta(codigo);
 
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
         View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_disponibilidade, null);
         mBuilder.setView(viewDialog);
-        final AlertDialog dialog = mBuilder.create();
+        AlertDialog dialog = mBuilder.create();
 
         TextView labelVoluntario = viewDialog.findViewById(R.id.tvVoluntario);
         TextView valueVoluntario = viewDialog.findViewById(R.id.vlVoluntario);
@@ -536,5 +591,49 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         });
         alerta = builder.create();
         alerta.show();
+    }
+
+    public Consulta getConsulta(Integer codigo){
+        Consulta consulta = null;
+        for(Consulta c : consultas){
+            if(c.getCodigo() == codigo){
+                consulta = c;
+            }
+        }
+        return consulta;
+    }
+
+    public boolean verifyDuplicityLatLng(Integer codigo){
+
+        Consulta consulta = getConsulta(codigo);
+        LatLng localConsulta = new LatLng(Double.parseDouble(consulta.getEndereco().getLatitude()), Double.parseDouble(consulta.getEndereco().getLongitude()));
+
+        for(Consulta c : consultas){
+            if(c.getCodigo() != codigo){
+                LatLng testeDuplicLocalz = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
+                if(testeDuplicLocalz.equals(localConsulta)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public ArrayList<Consulta> consultasPorLocalizacao(Integer codigo){
+
+        ArrayList<Consulta> consultasPorLocalz = new ArrayList<Consulta>();
+        Consulta cons = getConsulta(codigo);
+        LatLng testarLatLng = new LatLng(Double.parseDouble(cons.getEndereco().getLatitude()), Double.parseDouble(cons.getEndereco().getLongitude()));
+
+        for(Consulta c : consultas){
+            LatLng latLng = new LatLng(Double.parseDouble(c.getEndereco().getLatitude()), Double.parseDouble(c.getEndereco().getLongitude()));
+            if(latLng.equals(testarLatLng)){
+                consultasPorLocalz.add(c);
+            }
+        }
+
+        return consultasPorLocalz;
+
     }
 }

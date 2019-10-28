@@ -2,9 +2,7 @@ package br.com.acolher.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,38 +15,47 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConsultas;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
+import br.com.acolher.model.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import java.text.SimpleDateFormat;
 
 public class ConsultasFragment extends Fragment implements Serializable{
 
     View mView;
     private List<Consulta> consultas;
     Call<List<Consulta>> call;
+    private SimpleDateFormat formataData = new SimpleDateFormat("dd-MM-yyyy");
+    Date data = new Date();
     private RetrofitInit retrofitInit = new RetrofitInit();
     private SharedPreferences pref;
-    private int id;
+    private Integer codigo;
     private ListView listaDeConsultas;
+    private TextView labelNenhumaConsulta;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_consultas, null);
+        labelNenhumaConsulta = mView.findViewById(R.id.labelNenhumaConsulta);
         consultas = new ArrayList<>();
         listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
-        id = pref.getInt("USERCODE",0);
+        codigo = pref.getInt("USERCODE",0);
 
         loadLista();
+
+
 
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,9 +86,11 @@ public class ConsultasFragment extends Fragment implements Serializable{
     public void loadLista(){
         String tipo = pref.getString("TYPE","erro");
         if(tipo.equals("PACIENTE")) {
-            call = retrofitInit.getService().getConsultasPorPaciente(id);
+            call = retrofitInit.getService().getConsultasPorPacientes(codigo);
         }else if(tipo.equals("VOLUNTARIO")){
-            call = retrofitInit.getService().getConsultasPorVoluntario(id);
+            call = retrofitInit.getService().getConsultasPorVoluntario(codigo);
+        }else if(tipo.equals("INSTITUICAO")){
+            call = retrofitInit.getService().getConsultasPorInstituicao(codigo);
         }else {
             //tem q tratar
         }
@@ -92,8 +101,26 @@ public class ConsultasFragment extends Fragment implements Serializable{
             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
                 if(response.isSuccessful()){
                     consultas = response.body();
+
+                    //Verificar consulta, caso não vigente mudar status para CANCELADA
+                    for(Consulta con : consultas){
+                        try {
+                            Date dataConsulta=new SimpleDateFormat("dd/MM/yyyy").parse(con.getData());
+
+                            if(!con.getStatusConsulta().equals("REALIZADA") && (dataConsulta.before(data))){
+                                con.setStatusConsulta(Status.CANCELADA);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
                     if(consultas == null){
                         consultas = new ArrayList<Consulta>();
+                    }else if(consultas.size() == 0){
+                        labelNenhumaConsulta.setVisibility(View.VISIBLE);
                     }
                     AdapterConsultas adapter = new AdapterConsultas(consultas, getActivity());
                     listaDeConsultas.setAdapter(adapter);
@@ -105,6 +132,8 @@ public class ConsultasFragment extends Fragment implements Serializable{
 
             }
         });
+
+
     }
 
     @Override

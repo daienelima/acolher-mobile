@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">acolher</string>
+    <string name="app_name">Acolher</string>
     <string name="title_activity_maps">Map</string>
     <string name="label_cadastro_nome">Nome completo</string>
     <string name="label_cadastro_email">Email</string>
@@ -86,7 +86,15 @@
     <string name="tvDataHora">Data e Hora : </string>
     <string name="headerModalDisp">Disponibilidade</string>
 
-    <string name="google_maps_key">AIzaSyBpex0TRdOrtQk3XVO-DiReMdPH_0Bz84Q</string>
+    <string name="google_maps_key">AIzaSyB1YDTp_7jMoToVqDmNTmHuVtHJCsR36uo</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Textos - Listview Disponibilidades-->
+    <string name="labelProfissional">Profissional: </string>
+    <string name="labelData">Data: </string>
+    <string name="labelHora">Hora: </string>
+
+    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!s</string>
+
 
 </resources>

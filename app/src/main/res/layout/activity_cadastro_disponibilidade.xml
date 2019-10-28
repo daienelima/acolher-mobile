@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
+    android:focusableInTouchMode="true"
     tools:context=".view.CadastroDisponibilidade">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="6dp"
         android:minHeight="200dp">
 
@@ -28,41 +29,6 @@
                 android:gravity="center_horizontal"
                 android:textSize="25dp" />
 
-<!--            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_CRP_CRM"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelCRP_CRM"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:hint="CRM ou CRP" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputNomeCompleto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/labelNomeCompleto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:hint="@string/label_cadastro_nome" />
-            </com.google.android.material.textfield.TextInputLayout>-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +41,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_weight="4"
                     android:layout_marginTop="10dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:errorEnabled="true">

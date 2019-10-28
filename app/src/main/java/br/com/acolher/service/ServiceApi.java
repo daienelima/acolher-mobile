@@ -3,6 +3,7 @@ package br.com.acolher.service;
 
 import java.util.List;
 
+import br.com.acolher.dto.AlterarSenha;
 import br.com.acolher.dto.Login;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
@@ -21,17 +22,26 @@ public interface ServiceApi {
     @POST("endereco")
     Call<Endereco> cadastroEndereco(@Body Endereco endereco);
 
+    @PUT("endereco")
+    Call<Endereco> atualizarEndereco(@Body Endereco endereco);
+
     @POST("instituicao")
     Call<Instituicao> cadastroInstituicao(@Body Instituicao instituicao);
 
+    @PUT("instituicao")
+    Call<Instituicao> atualizarInstituicao(@Body Instituicao instituicao);
+
     @GET("instituicao/{codigo}")
-    public Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
+    Call<Instituicao> consultaInstituicao(@Path("codigo") Integer codigo);
 
     @GET("consulta/disponiveis")
     Call<List<Consulta>> getConsultas();
 
     @POST("usuario")
     Call<Usuario> cadastroUsuario(@Body Usuario usuario);
+
+    @PUT("usuario")
+    Call<Usuario> alterarUsuario(@Body Usuario usuario);
 
     @GET("usuario/{codigo}")
     Call<Usuario>getUsuario(@Path("codigo")Integer codigo);
@@ -48,11 +58,14 @@ public interface ServiceApi {
     @GET("{cep}/json")
     Call<ViaCep> buscarCEP(@Path("cep") String cep);
 
-    @GET("consulta/paciente/{id}")
-    Call<List<Consulta>> getConsultasPorPaciente(@Path("id") int id);
+    @GET("consulta/paciente/{codigo}")
+    Call<List<Consulta>> getConsultasPorPacientes(@Path("codigo") int codigo);
 
-    @GET("consulta/voluntario/{id}")
-    Call<List<Consulta>> getConsultasPorVoluntario(@Path("id") int id);
+    @GET("consulta/voluntario/{codigo}")
+    Call<List<Consulta>> getConsultasPorVoluntario(@Path("codigo") int codigo);
+
+    @GET("consulta/instituicao/{codigo}")
+    Call<List<Consulta>> getConsultasPorInstituicao(@Path("codigo") int codigo);
 
     @PUT("consulta/cancelar")
     Call<Consulta> cancelarConsulta(@Body Consulta consulta);
@@ -65,4 +78,16 @@ public interface ServiceApi {
 
     @POST("instituicao/login")
     Call<Instituicao> validarLoginInstituicao(@Body Login login);
+
+    @PUT("usuario/senha")
+    Call<Usuario> alterarSenhaUsuario(@Body AlterarSenha alterarSenha);
+
+    @PUT("instituicao/senha")
+    Call<Instituicao> alterarSenhaInstituicao(@Body AlterarSenha alterarSenha);
+
+    @GET("usuario/desativar/{codigo}")
+    Call<Usuario> desativarUsuario(@Path("codigo") Integer codigo);
+
+    @GET("instituicao/desativar/{codigo}")
+    Call<Instituicao> desativarInstituicao(@Path("codigo") Integer codigo);
 }

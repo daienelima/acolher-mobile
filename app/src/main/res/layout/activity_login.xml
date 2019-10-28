@@ -10,13 +10,14 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="6dp"
         android:minHeight="200dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <TextView
@@ -30,10 +31,10 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputEmail"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
 
@@ -41,16 +42,17 @@
                     android:id="@+id/labelEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:hint="@string/label_cadastro_email" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputSenha"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:passwordToggleEnabled="true"
                 app:errorEnabled="true">
@@ -60,19 +62,9 @@
                     android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:hint="@string/label_senha" />
             </com.google.android.material.textfield.TextInputLayout>
-
-            <!--ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="false"
-                android:max="100"
-                android:min="20"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="150dp">
-
-            </ProgressBar-->
 
             <Button
                 android:id="@+id/buttonLogin"
@@ -88,12 +80,16 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:gravity="center_horizontal"
                 android:text="Não é cadastrado? Cadastre-se"
-                android:textColor="@color/blue"
                 android:id="@+id/cadastro"
+                android:textColor="@color/corLink"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="50dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
                 android:clickable="true"/>
 
         </LinearLayout>

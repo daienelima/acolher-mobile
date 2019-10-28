@@ -141,18 +141,18 @@ public class Validacoes {
     public static String cleanCNPJ(String cnpj){
         return cnpj.replaceAll("[/.-]","");
     }
+    public static String cleanCep(String cep){
+        return cep.replaceAll("[.-]","");
+    }
+    public static String cleanTelefone(String telefone){
+        return telefone.replaceAll("[-() ]","");
+    }
 
     public static boolean validaEmail(String emailValida) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailValida).matches();
     }
 
-    public static String cleanCep(String cep){
-        return cep.replaceAll("[.-]","");
-    }
 
-    public static String cleanTelefone(String telefone){
-        return telefone.replaceAll("[-() ]","");
-    }
 
     public static boolean hasString(String data){
 
