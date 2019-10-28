@@ -12,7 +12,6 @@ import br.com.acolher.view.CadastroActivity;
 import br.com.acolher.view.CadastroEndereco;
 import br.com.acolher.view.CadastroInstituicao;
 import br.com.acolher.view.CadastroDisponibilidade;
-
 import br.com.acolher.view.Login;
 import br.com.acolher.view.MeusDadosActivity;
 import br.com.acolher.view.MeusDadosInstituicaoActivity;
