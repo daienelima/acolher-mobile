@@ -16,14 +16,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".view.CadastroDisponibilidade" />
-        <activity android:name=".chamaTelas" >
+        <activity android:name=".view.Login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".view.Login" >
-
         </activity>
         <activity android:name=".view.AlterarSenha" />
         <activity android:name=".view.CadastroEndereco" />
