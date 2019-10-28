@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -141,9 +140,9 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             uc = new UsuarioController();
             ec = new EnderecoController();
             if(validateForm()) {
-                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this) != ""){
-                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this));
-                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, "", 2, CadastroActivity.this));
+                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this) != CONSTANTES.VAZIO){
+                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
+                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
                     Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroActivity.this);
                     Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroActivity.this);
                     //Montar Endereço
@@ -301,12 +300,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
 
-        datePickerDialog = new DatePickerDialog(CadastroActivity.this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int mYear, int mMonth, int mDay) {
-                inputDataNasc.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear);
-            }
-        }, year, month, day);
+        datePickerDialog = new DatePickerDialog(CadastroActivity.this, (datePicker, mYear, mMonth, mDay) -> inputDataNasc.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear), year, month, day);
         datePickerDialog.show();
     }
 
@@ -404,7 +398,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
 
-                    String tipoUsuario = "";
+                    String tipoUsuario;
                     if(response.body().getCrm_crp().isEmpty()){
                         tipoUsuario = CONSTANTES.PACIENTE;
                     }else{

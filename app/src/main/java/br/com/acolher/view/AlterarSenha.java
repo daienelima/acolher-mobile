@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -22,8 +23,6 @@ import retrofit2.Response;
 
 public class AlterarSenha extends AppCompatActivity {
 
-    public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório!";
-    public static final String TAG = "API";
     private TextInputLayout inputSenhaAtual, inputNovaSenha, inputNovaSenhaConfirmacao;
     private Button altearSenha;
     br.com.acolher.dto.AlterarSenha alterarSenha = new br.com.acolher.dto.AlterarSenha();
@@ -38,18 +37,18 @@ public class AlterarSenha extends AppCompatActivity {
 
         findById();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(CONSTANTES.USERDATA, Context.MODE_PRIVATE);
         altearSenha.setOnClickListener(view -> {
             senha = inputSenhaAtual.getEditText().getText().toString();
             novaSenha = inputNovaSenha.getEditText().getText().toString();
             senhaConfimacao = inputNovaSenhaConfirmacao.getEditText().getText().toString();
 
             if(validateForm(senha, novaSenha, senhaConfimacao)){
-                alterarSenha.setCodigo(sharedPreferences.getInt("USERCODE", 1));
+                alterarSenha.setCodigo(sharedPreferences.getInt(CONSTANTES.USERCODE, 1));
                 alterarSenha.setNovaSenha(novaSenha);
                 alterarSenha.setSenhaAntiga(senha);
 
-                if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+                if (sharedPreferences.getString(CONSTANTES.TYPE, CONSTANTES.VAZIO).equals(CONSTANTES.INSTITUICAO)) {
                     alterarSenhaInstituicao();
                     msgSucesso();
                 }else{
@@ -66,7 +65,7 @@ public class AlterarSenha extends AppCompatActivity {
         call.enqueue(new Callback<Instituicao>() {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-                Log.d(TAG,String.valueOf(response.code()));
+                Log.d(CONSTANTES.TAG,String.valueOf(response.code()));
                 if(response.code() == 403){
                     msgErro("A senha atual está incorreta");
                 }
@@ -74,7 +73,7 @@ public class AlterarSenha extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Instituicao> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
+                Log.d(CONSTANTES.TAG, t.getMessage());
             }
         });
     }
@@ -84,7 +83,7 @@ public class AlterarSenha extends AppCompatActivity {
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                Log.d(TAG,String.valueOf(response.code()));
+                Log.d(CONSTANTES.TAG,String.valueOf(response.code()));
                 if(response.code() == 403){
                     msgErro("A senha atual está incorreta");
                 }
@@ -92,7 +91,7 @@ public class AlterarSenha extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
+                Log.d(CONSTANTES.TAG, t.getMessage());
             }
         });
     }
@@ -126,21 +125,21 @@ public class AlterarSenha extends AppCompatActivity {
         UsuarioController uc = new UsuarioController();
 
         if(!UsuarioController.empty(sennha)){
-            inputSenhaAtual.setError(CAMPO_OBRIGATORIO);
+            inputSenhaAtual.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return  false;
         }
 
         if(!UsuarioController.empty(novaSenha)){
-            inputNovaSenha.setError(CAMPO_OBRIGATORIO);
+            inputNovaSenha.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return  false;
         }
 
         if(!UsuarioController.empty(SenhaConfirmacao)){
-            inputNovaSenhaConfirmacao.setError(CAMPO_OBRIGATORIO);
+            inputNovaSenhaConfirmacao.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return  false;
         }
 
-        if(uc.validaPassword(novaSenha) != ""){
+        if(uc.validaPassword(novaSenha) != CONSTANTES.VAZIO){
             inputNovaSenha.setError(uc.validaPassword(novaSenha));
             return false;
         }
