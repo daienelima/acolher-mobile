@@ -351,7 +351,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         }
 
         if(hasCrpCrm){
-            if(UsuarioController.empty(crpCrm)){
+            if(!UsuarioController.empty(crpCrm)){
                 inputCRM_CRP.setError(CONSTANTES.CAMPO_OBRIGATORIO);
                 return false;
             }
