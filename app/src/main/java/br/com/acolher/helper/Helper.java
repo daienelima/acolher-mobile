@@ -24,6 +24,7 @@ import java.security.Key;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.chamaTelas;
 
 public class Helper implements OnMapReadyCallback{
 
@@ -33,7 +34,7 @@ public class Helper implements OnMapReadyCallback{
     static Marker markerLocale = null;
 
     public static void setSharedPreferences(String key, Object value, Integer type, Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = initSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         switch (type){
@@ -61,7 +62,7 @@ public class Helper implements OnMapReadyCallback{
     }
 
     public static Object getSharedPreferences(String key, Object defaultValue, Integer type, Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = initSharedPreferences(context);
         switch (type){
             case 1:
                 return sharedPreferences.getInt(key, (Integer) defaultValue);
@@ -78,6 +79,18 @@ public class Helper implements OnMapReadyCallback{
         }
     }
 
+    public static void removeSharedPreferences(String key, Context context){
+        SharedPreferences sharedPreferences = initSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.commit();
+    }
+
+    public static SharedPreferences initSharedPreferences(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("USERDATA", Context.MODE_PRIVATE);
+        return sharedPreferences;
+    }
+
     public static void openProgressDialog(String text, Context context){
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(text);
@@ -91,12 +104,13 @@ public class Helper implements OnMapReadyCallback{
         }
     }
 
-    public static LatLng openModalMap(Context c, LatLng coordinates) throws InterruptedException {
+    public static void openModalMap(Context context, LatLng coordinates) throws InterruptedException {
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(c);
-        View viewDialog = View.inflate(c, R.layout.custom_dialog_map, null);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        View viewDialog = View.inflate(context, R.layout.custom_dialog_map, null);
         mBuilder.setView(viewDialog);
         AlertDialog dialog = mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
 
         final MapView mapView = viewDialog.findViewById(R.id.mapLatLon);
         final Button btnPoint = viewDialog.findViewById(R.id.usePoint);
@@ -136,15 +150,13 @@ public class Helper implements OnMapReadyCallback{
             @Override
             public void onClick(View v) {
                 if(markerLocale != null){
-                    latLng = new LatLng(markerLocale.getPosition().latitude, markerLocale.getPosition().longitude);
+                    Helper.setSharedPreferences("LAT_END", String.valueOf(markerLocale.getPosition().latitude), 2, context);
+                    Helper.setSharedPreferences("LON_END", String.valueOf(markerLocale.getPosition().longitude), 2, context);
+                    dialog.dismiss();
                 }
-                dialog.dismiss();
             }
         });
-
-        mBuilder.show();
-
-        return latLng;
+        dialog.show();
     }
 
     public static LatLng getAddressFromLocationName(String locationName, Context c){
@@ -163,6 +175,22 @@ public class Helper implements OnMapReadyCallback{
             e.printStackTrace();
         }
         return p1;
+    }
+
+    public static LatLng getAddressForLocationName(String locationName, Context context){
+        Geocoder coder = new Geocoder(context);
+        List<Address> addresses;
+        LatLng coordinates = null;
+        try {
+            addresses = coder.getFromLocationName("Pernambuco, Cajueiro seco", 5);
+            if(addresses != null){
+                Address location = addresses.get(0);
+                coordinates = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return coordinates;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class chamaTelas extends AppCompatActivity {
             case R.id.telaLogin:
                 //intent = new Intent(chamaTelas.this, Login.class);
                 //startActivity(intent);
-                Geocoder coder = new Geocoder(chamaTelas.this);
+                /*Geocoder coder = new Geocoder(chamaTelas.this);
                 List<Address> addresses;
                 LatLng coordinates = null;
 
@@ -54,11 +54,12 @@ public class chamaTelas extends AppCompatActivity {
                     }
                     Address location = addresses.get(0);
                     coordinates = new LatLng(location.getLatitude(), location.getLongitude());
-                    LatLng latTest = Helper.openModalMap(chamaTelas.this, coordinates);
-                    Toast.makeText(chamaTelas.this, String.valueOf(latTest.latitude), Toast.LENGTH_LONG).show();
+                    Helper.openModalMap(chamaTelas.this, coordinates);
                 }catch (Exception e){
                     e.printStackTrace();
-                }
+                }*/
+                Helper.removeSharedPreferences("LAT_END", chamaTelas.this);
+                Helper.removeSharedPreferences("LON_END", chamaTelas.this);
                 break;
             case R.id.telaCadastro:
                 intent = new Intent(chamaTelas.this, CadastroActivity.class);
