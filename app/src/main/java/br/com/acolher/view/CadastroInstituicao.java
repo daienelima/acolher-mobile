@@ -1,20 +1,36 @@
 package br.com.acolher.view;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.io.IOException;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.InstituicaoController;
+import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
@@ -23,48 +39,73 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class CadastroInstituicao extends AppCompatActivity{
 
-    Button continuarCadastro;
-    TextInputLayout inputPassword;
-    TextInputLayout inputTelefone;
-    TextInputLayout inputCnpj;
-    TextInputLayout inputNome;
-    TextInputLayout inputEmail;
+    private Address address;
     InstituicaoController ic;
+    private boolean hasCnpj;
+    private EnderecoController ec;
+    SharedPreferences.Editor editor;
+    SharedPreferences sharedPreferences;
     public static final String TAG = "API";
+    private double latitude, longitude = 0;
+    private Endereco endereco = new Endereco();
+    private FusedLocationProviderClient fusedLocation;
     private Instituicao instituicao = new Instituicao();
     private RetrofitInit retrofitInit = new RetrofitInit();
-    private String nome;
-    private String email;
-    private String password;
-    private String cnpj;
-    private String telefone;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    Button btnFinalizarCadastro, btnBuscaCep, pesquisarEndereco, continuarCadastro;
+    private String nome,email,password,cnpj,cep, rua, bairro, cidade, uf, numero,telefone;
+    private TextInputLayout inputPassword,inputCnpj,inputTelefone,inputNome,inputEmail,inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this);
+
+        hasCnpj = false;
         //Configurações da activity
         setContentView(R.layout.activity_cadastro_instituicao);
 
-        continuarCadastro = (Button) findViewById(R.id.buttonContinuarCadastro);
+        findById();
 
-        inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        Intent intent = getIntent();
+        if(intent.getStringExtra(CONSTANTES.PERFIL) != null){
+            if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.INSTITUICAO)) {
+                hasCnpj = true;
+                inputCnpj.setVisibility(View.VISIBLE);
+            }
+        }
 
-        inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
-        inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
+        pesquisarEndereco.setOnClickListener(view -> {
+            if (GetLocalization(CadastroInstituicao.this)) {
+                if (ActivityCompat.checkSelfPermission(CadastroInstituicao.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(CadastroInstituicao.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }else{
+                    fusedLocation.getLastLocation().addOnSuccessListener(CadastroInstituicao.this, location -> {
+                        if(location != null){
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            try {
+                                address = Validacoes.buscarEndereco(latitude, longitude, getApplicationContext());
+                                inputRua.getEditText().setText(address.getThoroughfare());
+                                inputCep.getEditText().setText(address.getPostalCode());
+                                inputBairro.getEditText().setText(address.getSubLocality());
+                                inputCidade.getEditText().setText(address.getSubAdminArea());
+                                inputUF.getEditText().setText(Validacoes.deParaEstados(address.getAdminArea()));
+                            }catch (IOException e){
+                                Log.d(CONSTANTES.TAG, e.getMessage());
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
-        inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
-        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
-        inputNome = (TextInputLayout) findViewById(R.id.inputNome);
-
-        inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
-
-        continuarCadastro.setOnClickListener(new View.OnClickListener() {
+        /*continuarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -84,6 +125,51 @@ public class CadastroInstituicao extends AppCompatActivity{
                     cadastroInstituicao(instituicao);
                 }
             }
+        });*/
+
+        btnFinalizarCadastro.setOnClickListener(view -> {
+            ic = new InstituicaoController();
+            ec = new EnderecoController();
+            if(validateForm()) {
+                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroInstituicao.this) != CONSTANTES.VAZIO){
+                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
+                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
+                    Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroInstituicao.this);
+                    Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroInstituicao.this);
+                    //Montar Endereço
+                    endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
+                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                    endereco.setNumero(inputNumero.getEditText().getText().toString());
+                    endereco.setBairro(inputBairro.getEditText().getText().toString());
+                    endereco.setCidade(inputCidade.getEditText().getText().toString());
+                    endereco.setUf(inputUF.getEditText().getText().toString());
+
+                    //Montar Instituição
+                    instituicao.setEndereco(endereco);
+                    instituicao.setNome(nome);
+                    instituicao.setCnpj(cnpj);
+                    instituicao.setTelefone(telefone);
+                    instituicao.setEmail(email);
+                    instituicao.setSenha(password);
+
+                    if (hasCnpj) {
+                        instituicao.setCnpj(cnpj);
+                    } else {
+                        instituicao.setCnpj(CONSTANTES.VAZIO);
+                    }
+
+                    cadastroEndereco(endereco);
+                }else {
+                    String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
+                    LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroInstituicao.this);
+                    try {
+                        Helper.openModalMap(CadastroInstituicao.this, focoMap);
+                        return;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         });
 
     }
@@ -95,6 +181,13 @@ public class CadastroInstituicao extends AppCompatActivity{
         password = inputPassword.getEditText().getText().toString();
         cnpj = Validacoes.cleanCNPJ(inputCnpj.getEditText().getText().toString());
         telefone = Validacoes.cleanTelefone(inputTelefone.getEditText().getText().toString());
+        cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+        rua = inputRua.getEditText().getText().toString();
+        numero = inputNumero.getEditText().getText().toString();
+        bairro = inputBairro.getEditText().getText().toString();
+        uf = inputUF.getEditText().getText().toString();
+        cidade = inputCidade.getEditText().getText().toString();
+
 
         if(ic.validarNome(nome) != ""){
             inputNome.getEditText().setError(ic.validarNome(nome));
@@ -119,9 +212,61 @@ public class CadastroInstituicao extends AppCompatActivity{
             inputTelefone.getEditText().setError(ic.validarTelefone(telefone));
             return false;
         }
-        return true;
+        if(ec.validaCep(cep) != CONSTANTES.VAZIO){
+            inputCep.setError(ec.validaCep(cep));
+            return false;
+        }
 
+        if(!EnderecoController.empty(rua)){
+            inputRua.setError(CONSTANTES.CAMPO_OBRIGATORIO);
+            return false;
+        }
+
+        if(!EnderecoController.empty(numero)){
+            inputNumero.setError(CONSTANTES.CAMPO_OBRIGATORIO);
+            return false;
+        }
+
+        if(!EnderecoController.empty(bairro)){
+            inputBairro.setError(CONSTANTES.CAMPO_OBRIGATORIO);
+            return false;
+        }
+
+        if(!EnderecoController.empty(cidade)){
+            inputCidade.setError(CONSTANTES.CAMPO_OBRIGATORIO);
+            return false;
+        }
+
+        if(EnderecoController.validaUF(uf) != CONSTANTES.VAZIO){
+            inputUF.setError(EnderecoController.validaUF(uf));
+            return false;
+        }
+
+
+        return true;
     }
+
+    private void cadastroEndereco(Endereco endereco){
+        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(endereco);
+        cadastroEndereco.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if (response.isSuccessful()) {
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                    instituicao.setEndereco(response.body());
+                    cadastroInstituicao(instituicao);
+                } else {
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Log.d(CONSTANTES.TAG, t.getMessage());
+            }
+        });
+    }
+
 
     private void cadastroInstituicao(Instituicao instituicao){
 
@@ -179,5 +324,42 @@ public class CadastroInstituicao extends AppCompatActivity{
         editor.putInt("USERCODE", codigoUsuario);
         editor.putString("TYPE", "INSTITUICAO");
         editor.apply();
+    }
+
+    private void findById() {
+        inputPassword = (TextInputLayout) findViewById(R.id.inputPassword);
+        inputCnpj = (TextInputLayout) findViewById(R.id.inputCnpj);
+        inputCnpj.getEditText().addTextChangedListener(MaskWatcher.buildCnpj());
+        inputTelefone = (TextInputLayout) findViewById(R.id.inputTelefone);
+        inputTelefone.getEditText().addTextChangedListener(new MaskWatcher("(##) #####-####"));
+        inputNome = (TextInputLayout) findViewById(R.id.inputNome);
+        inputEmail = (TextInputLayout) findViewById(R.id.inputEmail);
+        pesquisarEndereco =  findViewById(R.id.btnSearchLocale);
+        btnBuscaCep = findViewById(R.id.btnBuscaCep);
+        inputRua = findViewById(R.id.inputRua);
+        inputCep =  findViewById(R.id.inputCep);
+        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        btnFinalizarCadastro = findViewById(R.id.buttonContinuarCadastro);
+        inputBairro = findViewById(R.id.inputBairro);
+        inputNumero = findViewById(R.id.inputNumero);
+        inputUF = findViewById(R.id.inputUF);
+        inputCidade = findViewById(R.id.inputCidade);
+
+    }
+
+    public boolean GetLocalization(Context context){
+        int REQUEST_PERMISSION_LOCALIZATION = 221;
+        boolean res=true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                res = false;
+                ActivityCompat.requestPermissions((Activity) context, new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_PERMISSION_LOCALIZATION);
+
+            }
+        }
+        return res;
     }
 }
