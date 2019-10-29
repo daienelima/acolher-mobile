@@ -32,13 +32,13 @@
                 android:layout_marginLeft="15dp"/>
 
             <TextView
-                android:id="@+id/pergunta"
+                android:id="@+id/labelPergunta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Consulta realizada?"
+                android:text="@string/labelPerguntaConsultaRealizada"
                 android:textSize="14dp"
                 android:layout_marginLeft="200dp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,17 +58,17 @@
                 android:id="@+id/sim"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sim"
+                android:text="@string/labelSim"
                 android:textSize="14dp"
                 android:layout_marginLeft="230dp"
                 android:clickable="true"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/nao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Não"
+                android:text="@string/labelNao"
                 android:textSize="14dp"
                 android:layout_marginLeft="14dp"
                 android:clickable="true"

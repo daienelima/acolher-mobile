@@ -94,7 +94,11 @@
     <string name="labelData">Data: </string>
     <string name="labelHora">Hora: </string>
 
-    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!s</string>
+    <!--Textos - Listview Consultas-->
+    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!</string>
+    <string name="labelPerguntaConsultaRealizada">Consulta realizada?</string>
+    <string name="labelSim">Sim</string>
+    <string name="labelNao">Não</string>
 
 
 </resources>
