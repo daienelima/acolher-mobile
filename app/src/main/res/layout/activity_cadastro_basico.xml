@@ -20,6 +20,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/labelCadastro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cadastro"
@@ -31,12 +32,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputNomeCompleto"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginRight="20dp"
                 app:boxStrokeColor="@color/buttonSalvarDados"
                 app:errorEnabled="true">
 
@@ -44,9 +45,9 @@
                     android:id="@+id/labelNomeCompleto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/label_cadastro_nome"
                     android:inputType="textFilter"
-                    android:singleLine="true"
-                    android:hint="@string/label_cadastro_nome" />
+                    android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout

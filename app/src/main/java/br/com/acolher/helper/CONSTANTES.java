@@ -16,5 +16,6 @@ public class CONSTANTES {
     public static final String VAZIO = "";
     public static final String EMAIL_INVALIDO = "E-mail Invalido";
     public static final String CAMPO_OBRIGATORIO = "Campo Obrigatório";
+    public static final String CODIGO_ENDERECO = "CODIGO_ENDERECO";
 
 }

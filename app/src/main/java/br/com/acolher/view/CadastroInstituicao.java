@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -35,9 +36,13 @@ import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.ViaCep;
+import br.com.acolher.service.ServiceApi;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class CadastroInstituicao extends AppCompatActivity{
@@ -127,51 +132,82 @@ public class CadastroInstituicao extends AppCompatActivity{
             }
         });*/
 
+        btnBuscaCep.setOnClickListener(v -> {
+            String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
+            buscaCep(cep);
+        });
+
         btnFinalizarCadastro.setOnClickListener(view -> {
             ic = new InstituicaoController();
             ec = new EnderecoController();
             if(validateForm()) {
-                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroInstituicao.this) != CONSTANTES.VAZIO){
-                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
-                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
-                    Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroInstituicao.this);
-                    Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroInstituicao.this);
-                    //Montar Endereço
-                    endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
-                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());
-                    endereco.setBairro(inputBairro.getEditText().getText().toString());
-                    endereco.setCidade(inputCidade.getEditText().getText().toString());
-                    endereco.setUf(inputUF.getEditText().getText().toString());
 
-                    //Montar Instituição
-                    instituicao.setEndereco(endereco);
-                    instituicao.setNome(nome);
+                //Montar Endereço
+                endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
+                endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                endereco.setNumero(inputNumero.getEditText().getText().toString());
+                endereco.setBairro(inputBairro.getEditText().getText().toString());
+                endereco.setCidade(inputCidade.getEditText().getText().toString());
+                endereco.setUf(inputUF.getEditText().getText().toString());
+
+                //Montar Instituição
+                instituicao.setEndereco(endereco);
+                instituicao.setNome(nome);
+                instituicao.setCnpj(cnpj);
+                instituicao.setTelefone(telefone);
+                instituicao.setEmail(email);
+                instituicao.setSenha(password);
+
+                if (hasCnpj) {
                     instituicao.setCnpj(cnpj);
-                    instituicao.setTelefone(telefone);
-                    instituicao.setEmail(email);
-                    instituicao.setSenha(password);
-
-                    if (hasCnpj) {
-                        instituicao.setCnpj(cnpj);
-                    } else {
-                        instituicao.setCnpj(CONSTANTES.VAZIO);
-                    }
-
-                    cadastroEndereco(endereco);
-                }else {
-                    String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
-                    LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroInstituicao.this);
-                    try {
-                        Helper.openModalMap(CadastroInstituicao.this, focoMap);
-                        return;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                } else {
+                    instituicao.setCnpj(CONSTANTES.VAZIO);
                 }
+
+                geAddressByParameters(endereco);
             }
         });
 
+    }
+
+    public void geAddressByParameters(Endereco address){
+        Call<Endereco> getByParameters = retrofitInit.getService().getAddressByParameters(address);
+        getByParameters.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if(response.isSuccessful()){
+                    instituicao.setEndereco(response.body());
+                    cadastroInstituicao(instituicao);
+                }else {
+                    if(endereco.getLatitude() == null){
+                        if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroInstituicao.this) != CONSTANTES.VAZIO){
+
+                            endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
+                            endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroInstituicao.this));
+                            Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroInstituicao.this);
+                            Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroInstituicao.this);
+
+                        }else {
+                            String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
+                            LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroInstituicao.this);
+                            try {
+                                Helper.openModalMap(CadastroInstituicao.this, focoMap);
+                                return;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                    cadastroEndereco(endereco);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+                Toast.makeText(CadastroInstituicao.this, t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public boolean validateForm(){
@@ -379,6 +415,35 @@ public class CadastroInstituicao extends AppCompatActivity{
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
 
+    }
+
+    private void buscaCep(String cep) {
+        if(EnderecoController.empty(cep)){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://viacep.com.br/ws/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ServiceApi api = retrofit.create(ServiceApi.class);
+
+            Call<ViaCep> retorno = api.buscarCEP(cep);
+            retorno.enqueue(new Callback<ViaCep>() {
+                @Override
+                public void onResponse(Call<ViaCep> call, Response<ViaCep> response) {
+                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                    inputRua.getEditText().setText(response.body().getLogradouro());
+                    inputBairro.getEditText().setText(response.body().getBairro());
+                    inputUF.getEditText().setText(response.body().getUf());
+                    inputCidade.getEditText().setText(response.body().getLocalidade());
+                }
+
+                @Override
+                public void onFailure(Call<ViaCep> call, Throwable t) {
+                    Log.d(CONSTANTES.TAG, t.getMessage());
+                }
+            });
+        }else{
+            inputCep.setError(CONSTANTES.CAMPO_OBRIGATORIO);
+        }
     }
 
     public boolean GetLocalization(Context context){

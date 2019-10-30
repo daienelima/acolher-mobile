@@ -50,6 +50,7 @@ import java.util.List;
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Usuario;
@@ -326,7 +327,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onClick(View v) {
                 if(latDisp == 0.0 && longDisp == 0.0){
-                    openGenericModal("Selecione o local", "Selecione no mapa o local que será realizada a consulta!", getContext() );
+                    openGenericModal("Selecione o local", "Selecione no mapa o local que será realizada a consulta!", "Ou, usar endereço de cadastro", getContext() );
                 }else{
                     callCadastroDisp(0);
                 }
@@ -579,7 +580,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         startActivity(telaConsulta);
     }
 
-    public void openGenericModal(String title, String text, Context context){
+    public void openGenericModal(String title, String text, String btnEndereco, Context context){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(text);
@@ -587,6 +588,13 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+            }
+        });
+        builder.setNeutralButton(btnEndereco, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Integer codigo = (Integer) Helper.getSharedPreferences(CONSTANTES.CODIGO_ENDERECO, 0, 1, getContext());
+                callCadastroDisp(codigo);
             }
         });
         alerta = builder.create();
