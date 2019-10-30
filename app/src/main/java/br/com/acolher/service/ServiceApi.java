@@ -91,6 +91,9 @@ public interface ServiceApi {
     @GET("instituicao/desativar/{codigo}")
     Call<Instituicao> desativarInstituicao(@Path("codigo") Integer codigo);
 
+    @POST("endereco/getByParameters")
+    Call<Endereco> getAddressByParameters(@Body Endereco endereco);
+
     @PUT("consulta/confirmarRealizacao")
     Call<Consulta> confirmarRealizacaoConsulta(@Body Consulta consulta);
 }

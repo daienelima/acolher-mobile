@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,6 +73,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private TextView labelCadastro;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +131,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                                 inputBairro.getEditText().setText(address.getSubLocality());
                                 inputCidade.getEditText().setText(address.getSubAdminArea());
                                 inputUF.getEditText().setText(Validacoes.deParaEstados(address.getAdminArea()));
+                                endereco.setLongitude(String.valueOf(longitude));
+                                endereco.setLatitude(String.valueOf(latitude));
                             }catch (IOException e){
                                 Log.d(CONSTANTES.TAG, e.getMessage());
                             }
@@ -137,53 +143,53 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         });
 
         btnFinalizarCadastro.setOnClickListener(view -> {
+
             uc = new UsuarioController();
             ec = new EnderecoController();
+
             if(validateForm()) {
-                if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this) != CONSTANTES.VAZIO){
-                    endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
-                    endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
-                    Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroActivity.this);
-                    Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroActivity.this);
-                    //Montar Endereço
-                    endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
-                    endereco.setLogradouro(inputRua.getEditText().getText().toString());
-                    endereco.setNumero(inputNumero.getEditText().getText().toString());
-                    endereco.setBairro(inputBairro.getEditText().getText().toString());
-                    endereco.setCidade(inputCidade.getEditText().getText().toString());
-                    endereco.setUf(inputUF.getEditText().getText().toString());
 
-                    //Montar Usuario
-                    usuario.setNome_completo(nome);
-                    usuario.setData_nascimento(data);
-                    usuario.setCpf(cpf);
-                    usuario.setTelefone(telefone);
-                    usuario.setEmail(email);
-                    usuario.setPassword(password);
+                //Montar Endereço
+                endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
+                endereco.setLogradouro(inputRua.getEditText().getText().toString());
+                endereco.setNumero(inputNumero.getEditText().getText().toString());
+                endereco.setBairro(inputBairro.getEditText().getText().toString());
+                endereco.setCidade(inputCidade.getEditText().getText().toString());
+                endereco.setUf(inputUF.getEditText().getText().toString());
 
-                    if (hasCrpCrm) {
-                        usuario.setCrm_crp(crpCrm);
-                    } else {
-                        usuario.setCrm_crp(CONSTANTES.VAZIO);
-                    }
+                //Montar Usuario
+                usuario.setNome_completo(nome);
+                usuario.setData_nascimento(data);
+                usuario.setCpf(cpf);
+                usuario.setTelefone(telefone);
+                usuario.setEmail(email);
+                usuario.setPassword(password);
 
-                    cadastroEndereco(endereco);
-                }else {
-                    String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
-                    LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
-                    try {
-                        Helper.openModalMap(CadastroActivity.this, focoMap);
-                        return;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                if (hasCrpCrm) {
+                    usuario.setCrm_crp(crpCrm);
+                } else {
+                    usuario.setCrm_crp(CONSTANTES.VAZIO);
                 }
+
+                getAddressByParameters(endereco);
             }
         });
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
             buscaCep(cep);
+        });
+
+        labelCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputNome.getEditText().setText("Teste Address");
+                inputDataNasc.getEditText().setText("01/10/1997");
+                inputEmail.getEditText().setText("testeaddress@aa.aa");
+                inputPassword.getEditText().setText("Teste@1234");
+                inputTelefone.getEditText().setText("81912233333");
+                inputCpf.getEditText().setText("71157812066");
+            }
         });
 
     }
@@ -224,6 +230,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
+        labelCadastro = findViewById(R.id.labelCadastro);
     }
 
     private void buscaCep(String cep) {
@@ -388,6 +395,43 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         }
 
         return true;
+    }
+
+    private void getAddressByParameters(Endereco address){
+        Call<Endereco> getByParameters = retrofitInit.getService().getAddressByParameters(address);
+        getByParameters.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if(response.isSuccessful()){
+                    usuario.setEndereco(response.body());
+                    cadastroUsuario(usuario);
+                }else {
+                    if(endereco.getLatitude() == null){
+                        if(Helper.getSharedPreferences(CONSTANTES.LAT_END, "", 2, CadastroActivity.this) != CONSTANTES.VAZIO){
+                            endereco.setLatitude((String)Helper.getSharedPreferences(CONSTANTES.LAT_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
+                            endereco.setLongitude((String)Helper.getSharedPreferences(CONSTANTES.LON_END, CONSTANTES.VAZIO, 2, CadastroActivity.this));
+                            Helper.removeSharedPreferences(CONSTANTES.LAT_END, CadastroActivity.this);
+                            Helper.removeSharedPreferences(CONSTANTES.LON_END, CadastroActivity.this);
+                        }else {
+                            String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
+                            LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
+                            try {
+                                Helper.openModalMap(CadastroActivity.this, focoMap);
+                                return;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    cadastroEndereco(endereco);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+
+            }
+        });
     }
 
     private void cadastroUsuario(Usuario usuario){

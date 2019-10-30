@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -44,6 +45,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
     private Integer codigo;
     private ListView listaDeConsultas;
     private TextView labelNenhumaConsulta;
+    long mLastClickTime;
 
 
     @Nullable
@@ -62,8 +64,20 @@ public class ConsultasFragment extends Fragment implements Serializable{
 
 
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemDoubleClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // DOUBLE CLICK
+            }
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                long currTime = System.currentTimeMillis();
+                if (currTime - mLastClickTime < 1000) {
+                    onItemDoubleClick(parent, view, position, id);
+                    return;
+                }
+                mLastClickTime = currTime;
+
                 String nome = (String) ((TextView)view.findViewById(R.id.nome)).getText();
                 String data = (String) ((TextView)view.findViewById(R.id.data)).getText();
                 String hora = (String) ((TextView)view.findViewById(R.id.hora)).getText();
