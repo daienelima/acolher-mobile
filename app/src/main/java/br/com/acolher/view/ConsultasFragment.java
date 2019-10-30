@@ -44,7 +44,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
     private Integer codigo;
     private ListView listaDeConsultas;
     private TextView labelNenhumaConsulta;
-    TextView labelPergunta, labelSim, labelNao;
+
 
     @Nullable
     @Override
@@ -56,9 +56,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
         pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
         codigo = pref.getInt("USERCODE",0);
 
-        labelPergunta = mView.findViewById(R.id.labelPergunta);
-        labelSim = mView.findViewById(R.id.sim);
-        labelNao = mView.findViewById(R.id.nao);
 
         loadLista();
 
@@ -85,18 +82,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
                 startActivity(intent);
             }
         });
-/*
-        labelSim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String cod = (String) ((TextView) mView.findViewById(R.id.cod)).getText();
 
-                Consulta c = new Consulta();
-                c.setCodigo(Integer.parseInt(cod));
-
-
-            }
-        });*/
 
         return mView;
     }
@@ -127,9 +113,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
                             Date horaConsulta = new SimpleDateFormat("HH:mm").parse(con.getHora());
 
                             if(dataConsulta.before(data) || (dataConsulta.equals(data) && horaConsulta.before(data))){
-                                labelPergunta.setVisibility(View.VISIBLE);
-                                labelSim.setVisibility(View.VISIBLE);
-                                labelNao.setVisibility(View.VISIBLE);
                             }
                             if(!con.getStatusConsulta().equals("REALIZADA") && (dataConsulta.before(data))){
                                 con.setStatusConsulta(Status.CANCELADA);

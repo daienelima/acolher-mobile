@@ -36,8 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/labelPerguntaConsultaRealizada"
-                android:textSize="14dp"
-                android:layout_marginLeft="200dp"
+                android:textSize="13dp"
+                android:layout_marginLeft="180dp"
                 android:visibility="gone" />
         </LinearLayout>
 
@@ -59,8 +59,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/labelSim"
-                android:textSize="14dp"
-                android:layout_marginLeft="230dp"
+                android:textSize="13dp"
+                android:layout_marginLeft="275dp"
+                android:layout_marginTop="-7dp"
                 android:clickable="true"
                 android:visibility="gone" />
 
@@ -69,8 +70,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/labelNao"
-                android:textSize="14dp"
+                android:textSize="13dp"
                 android:layout_marginLeft="14dp"
+                android:layout_marginTop="-7dp"
                 android:clickable="true"
                 android:visibility="gone" />
         </LinearLayout>
