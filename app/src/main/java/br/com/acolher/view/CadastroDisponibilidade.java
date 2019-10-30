@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.DisponibilidadeController;
 import br.com.acolher.controller.UsuarioController;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Consulta;
@@ -55,6 +57,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
     private Double lon, lat;
     private Integer codigoEnderecoRecente;
     private Endereco enderecoConsulta = new Endereco();
+    private Consulta novaConsulta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
 
                 Helper.openProgressDialog("Cadastrando disponibilidade", CadastroDisponibilidade.this);
                 if ( validateForm() ){
-                    Consulta novaConsulta = new Consulta();
+                    novaConsulta = new Consulta();
                     enderecoConsulta.setNumero(inputNumero.getEditText().getText().toString());
                     String typeUser = (String) Helper.getSharedPreferences("TYPE", "", 2, getApplicationContext());
                     if(typeUser.equals("VOLUNTARIO")){
@@ -113,28 +116,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     novaConsulta.setStatusConsulta(Status.DISPONIVEL);
 
                     if(codigoEnderecoRecente == 0){
-                        Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);
-                        cadastroEndereco.enqueue(new Callback<Endereco>() {
-                            @Override
-                            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
-                                if (response.isSuccessful()) {
-                                    Log.d(TAG, String.valueOf(response.code()));
-                                    enderecoConsulta = response.body();
-                                    codigoEnderecoRecente = enderecoConsulta.getCodigo();
-                                    Helper.setSharedPreferences("COD_END_RECENT", enderecoConsulta.getCodigo(), 1, CadastroDisponibilidade.this);
-                                    novaConsulta.setEndereco(enderecoConsulta);
-                                    cadastroConsulta(novaConsulta);
-                                } else {
-                                    Log.d(TAG, String.valueOf(response.code()));
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<Endereco> call, Throwable t) {
-                                Log.d(TAG, t.getMessage());
-                            }
-                        });
+                        getAddressByParameters(enderecoConsulta);
                     }else{
                         enderecoConsulta.setCodigo(codigoEnderecoRecente);
                         novaConsulta.setEndereco(enderecoConsulta);
@@ -184,6 +166,49 @@ public class CadastroDisponibilidade extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void getAddressByParameters(Endereco address){
+        Call<Endereco> getByParameters = retrofitInit.getService().getAddressByParameters(address);
+        getByParameters.enqueue(new Callback<Endereco>() {
+            @Override
+            public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                if(response.isSuccessful()){
+                    enderecoConsulta = response.body();
+                    codigoEnderecoRecente = enderecoConsulta.getCodigo();
+                    Helper.setSharedPreferences("COD_END_RECENT", enderecoConsulta.getCodigo(), 1, CadastroDisponibilidade.this);
+                    novaConsulta.setEndereco(enderecoConsulta);
+                    cadastroConsulta(novaConsulta);
+                }else {
+                    Call<Endereco> cadastroEndereco = retrofitInit.getService().cadastroEndereco(enderecoConsulta);
+                    cadastroEndereco.enqueue(new Callback<Endereco>() {
+                        @Override
+                        public void onResponse(Call<Endereco> call, Response<Endereco> response) {
+                            if (response.isSuccessful()) {
+                                Log.d(TAG, String.valueOf(response.code()));
+                                enderecoConsulta = response.body();
+                                codigoEnderecoRecente = enderecoConsulta.getCodigo();
+                                Helper.setSharedPreferences("COD_END_RECENT", enderecoConsulta.getCodigo(), 1, CadastroDisponibilidade.this);
+                                novaConsulta.setEndereco(enderecoConsulta);
+                                cadastroConsulta(novaConsulta);
+                            } else {
+                                Log.d(TAG, String.valueOf(response.code()));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Endereco> call, Throwable t) {
+                            Log.d(TAG, t.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Endereco> call, Throwable t) {
+
+            }
+        });
     }
 
     private void pegaIdCampos() {

@@ -150,7 +150,7 @@ public class Login extends AppCompatActivity {
                     }else{
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
-                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo());
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -184,7 +184,7 @@ public class Login extends AppCompatActivity {
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                    salvarDadosInstituicao(response.body().getCodigo());
+                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getEndereco().getCodigo());
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -217,19 +217,21 @@ public class Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco) {
         sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
+        editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.apply();
     }
 
-    public void salvarDadosInstituicao(Integer codigoUsuario) {
+    public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco) {
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
         editor.putString("TYPE", "INSTITUICAO");
+        editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.apply();
     }
     /**
