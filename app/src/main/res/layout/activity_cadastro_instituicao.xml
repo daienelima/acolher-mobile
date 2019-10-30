@@ -37,6 +37,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/buttonSalvarDados"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
