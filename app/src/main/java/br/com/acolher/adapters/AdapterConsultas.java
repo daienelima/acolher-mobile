@@ -19,6 +19,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
+import br.com.acolher.model.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -93,12 +94,11 @@ public class AdapterConsultas extends BaseAdapter {
         data.setText(consulta.getData());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
         cod.setText(""+consulta.getCodigo().toString());
-        status.setText(consulta.getStatusConsulta().toString());
-        if(consulta.getStatusConsulta().toString().equals("CANCELADA")){
-            status.setTextColor(Color.RED);
-        }else{
-            status.setTextColor(Color.GRAY);
-        }
+
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
+        SimpleDateFormat sdfH = new SimpleDateFormat("HH:mm");
 
         Date dataConsulta = null;
         try {
@@ -110,14 +110,33 @@ public class AdapterConsultas extends BaseAdapter {
         Date dataAtual = new Date();
 
         if(dataConsulta.before(dataAtual)){
-            if(consulta.getStatusConsulta().equals("DISPONIVEL")){
-                cancelarConsulta(consulta);
-            }else if(consulta.getStatusConsulta().equals("CONFIRMADA")){
+            if(consulta.getStatusConsulta().equals(Status.DISPONIVEL)){
+                consulta.setStatusConsulta(Status.CANCELADA);
+                //cancelarConsulta(consulta);
+            }else if(consulta.getStatusConsulta().equals(Status.CONFIRMADA)){
+                labelPergunta.setVisibility(View.VISIBLE);
+                labelSim.setVisibility(View.VISIBLE);
+                labelNao.setVisibility(View.VISIBLE);
+            }
+        } else if(consulta.getData().equals(sdf.format(gc.getTime()))){
+            int horaAtual = Integer.valueOf(sdfH.format(gc.getTime()).replace(":", ""));
+            int horaConsulta = Integer.valueOf(consulta.getHora().replace(":", ""));
+            if (horaConsulta <= horaAtual){
                 labelPergunta.setVisibility(View.VISIBLE);
                 labelSim.setVisibility(View.VISIBLE);
                 labelNao.setVisibility(View.VISIBLE);
             }
         }
+
+
+        status.setText(consulta.getStatusConsulta().toString());
+
+        if(consulta.getStatusConsulta().equals(Status.CANCELADA)){
+            status.setTextColor(Color.RED);
+        }else{
+            status.setTextColor(Color.GRAY);
+        }
+
 
         labelSim.setOnClickListener(new View.OnClickListener() {
             @Override

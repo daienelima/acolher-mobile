@@ -119,7 +119,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
                 if(response.isSuccessful()){
                     consultas = response.body();
-
+/*
                     //Verificar consulta, caso não vigente mudar status para CANCELADA
                     for(Consulta con : consultas){
                         try {
@@ -136,7 +136,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
                         }
 
 
-                    }
+                    }*/
 
                     if(consultas == null){
                         consultas = new ArrayList<Consulta>();
