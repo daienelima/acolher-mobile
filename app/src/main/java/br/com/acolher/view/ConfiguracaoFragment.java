@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConfiguracoes;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
@@ -31,13 +31,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ConfiguracaoFragment extends Fragment {
 
-    private final static String TAG = "API";
     private View mView;
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private RetrofitInit retrofitInit = new RetrofitInit();
-    Usuario usuarioLogado;
     AlertDialog alertDialog;
     AlertDialog.Builder builder;
 
@@ -47,7 +45,7 @@ public class ConfiguracaoFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_listview_opcoes, null);
         listView = mView.findViewById(R.id.menu_item_id);
 
-        sharedPreferences = getContext().getSharedPreferences("USERDATA",MODE_PRIVATE);
+        sharedPreferences = getContext().getSharedPreferences(CONSTANTES.USERDATA,MODE_PRIVATE);
         ArrayList<String> opces = MontarMenu();
         AdapterConfiguracoes adapter = new AdapterConfiguracoes(opces, getContext());
         listView.setAdapter(adapter);
@@ -85,7 +83,7 @@ public class ConfiguracaoFragment extends Fragment {
     }
 
     private void meusDados(){
-        if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+        if (sharedPreferences.getString(CONSTANTES.TYPE, CONSTANTES.VAZIO).equals(CONSTANTES.INSTITUICAO)) {
             Intent intent = new Intent(getContext(), MeusDadosInstituicao.class);
             startActivity(intent);
         }else{
@@ -105,7 +103,7 @@ public class ConfiguracaoFragment extends Fragment {
         builder.setMessage("Tem certeza que deseja desativar a conta ?");
 
         builder.setPositiveButton("Sim", (dialogInterface, i) -> {
-            if (sharedPreferences.getString("TYPE", "").equals("INSTITUICAO")) {
+            if (sharedPreferences.getString(CONSTANTES.TYPE, CONSTANTES.VAZIO).equals(CONSTANTES.INSTITUICAO)) {
                 desativarContaInstituicao();
                 this.sair();
             }else{
@@ -132,32 +130,32 @@ public class ConfiguracaoFragment extends Fragment {
     }
 
     private void desativarContaUsuario(){
-        Integer codeUser = (Integer) Helper.getSharedPreferences("USERCODE",  0, 1, getContext());
+        Integer codeUser = (Integer) Helper.getSharedPreferences(CONSTANTES.USERCODE,  0, 1, getContext());
         Call<Usuario> call = retrofitInit.getService().desativarUsuario(codeUser);
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-
+                Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
             }
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
+                Log.d(CONSTANTES.TAG, t.getMessage());
             }
         });
     }
 
     private void desativarContaInstituicao(){
-        Call<Instituicao> call = retrofitInit.getService().desativarInstituicao(sharedPreferences.getInt("USERCODE", 1));
+        Call<Instituicao> call = retrofitInit.getService().desativarInstituicao(sharedPreferences.getInt(CONSTANTES.USERCODE, 1));
         call.enqueue(new Callback<Instituicao>() {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
-
+                Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
             }
 
             @Override
             public void onFailure(Call<Instituicao> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
+                Log.d(CONSTANTES.TAG, t.getMessage());
             }
         });
     }

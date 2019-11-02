@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +49,7 @@ public class AdapterConsultas extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -65,31 +66,31 @@ public class AdapterConsultas extends BaseAdapter {
         labelSim = view.findViewById(R.id.sim);
         labelNao = view.findViewById(R.id.nao);
 
-        SharedPreferences pref = act.getApplicationContext().getSharedPreferences("USERDATA", act.getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TYPE","tipo não encontrado");
+        SharedPreferences pref = act.getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, act.getApplicationContext().MODE_PRIVATE);
+        String tipo = pref.getString(CONSTANTES.TYPE,"tipo não encontrado");
 
         Consulta consulta = consultas.get(position);
 
-        if(tipo.equals("PACIENTE")) {
+        if(tipo.equals(CONSTANTES.PACIENTE)) {
             try {
                 nome.setText(consulta.getProfissional().getNome_completo());
             } catch (Exception e) {
                 nome.setText(consulta.getInstituicao().getNome());
             }
-        }else if (tipo.equals("VOLUNTARIO")){
+        }else if (tipo.equals(CONSTANTES.VOLUNTARIO)){
             try {
                 nome.setText(consulta.getPaciente().getNome_completo());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if (tipo.equals("INSTITUICAO")){
+        }else if (tipo.equals(CONSTANTES.INSTITUICAO)){
             try {
                 nome.setText(consulta.getPaciente().getNome_completo());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
         }
+
         hora.setText(consulta.getHora());
         data.setText(consulta.getData());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
@@ -108,26 +109,31 @@ public class AdapterConsultas extends BaseAdapter {
             e.printStackTrace();
         }
         Date dataAtual = new Date();
+        int horaAtual = Integer.valueOf(sdfH.format(gc.getTime()).replace(":", ""));
+        int horaConsulta = Integer.valueOf(consulta.getHora().replace(":", ""));
 
-        if(dataConsulta.before(dataAtual)){
+        String horaExa = String.valueOf(horaAtual).substring(0,2);
+        String horaConsultaExa = String.valueOf(horaConsulta).length() != 3 ?
+                String.valueOf(horaConsulta).substring(0,2) : String.valueOf(horaConsulta).substring(0,1);
+
+        //Toast.makeText(act, consulta.getStatusConsulta().toString(), Toast.LENGTH_SHORT).show();
+        if(dataConsulta.before(dataAtual) && Integer.parseInt(horaExa) > Integer.parseInt(horaConsultaExa)){
             if(consulta.getStatusConsulta().equals(Status.DISPONIVEL)){
                 consulta.setStatusConsulta(Status.CANCELADA);
-                //cancelarConsulta(consulta);
+                cancelarConsulta(consulta);
             }else if(consulta.getStatusConsulta().equals(Status.CONFIRMADA)){
                 labelPergunta.setVisibility(View.VISIBLE);
                 labelSim.setVisibility(View.VISIBLE);
                 labelNao.setVisibility(View.VISIBLE);
             }
         } else if(consulta.getData().equals(sdf.format(gc.getTime()))){
-            int horaAtual = Integer.valueOf(sdfH.format(gc.getTime()).replace(":", ""));
-            int horaConsulta = Integer.valueOf(consulta.getHora().replace(":", ""));
+
             if (horaConsulta <= horaAtual){
                 labelPergunta.setVisibility(View.VISIBLE);
                 labelSim.setVisibility(View.VISIBLE);
                 labelNao.setVisibility(View.VISIBLE);
             }
         }
-
 
         status.setText(consulta.getStatusConsulta().toString());
 
@@ -138,27 +144,21 @@ public class AdapterConsultas extends BaseAdapter {
         }
 
 
-        labelSim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String cod = (String) ((TextView) view.findViewById(R.id.cod)).getText();
+        labelSim.setOnClickListener(v -> {
+            String cod1 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
 
-                Consulta c = new Consulta();
-                c.setCodigo(Integer.parseInt(cod));
-                confirmarRealizacaoConsulta(c);
-            }
+            Consulta c = new Consulta();
+            c.setCodigo(Integer.parseInt(cod1));
+            confirmarRealizacaoConsulta(c);
         });
 
-        labelNao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String cod = (String) ((TextView) view.findViewById(R.id.cod)).getText();
+        labelNao.setOnClickListener(v -> {
+            String cod12 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
 
-                Consulta c = new Consulta();
-                c.setCodigo(Integer.parseInt(cod));
-                confirmarRealizacaoConsulta(c);
-                cancelarConsulta(c);
-            }
+            Consulta c = new Consulta();
+            c.setCodigo(Integer.parseInt(cod12));
+            confirmarRealizacaoConsulta(c);
+            cancelarConsulta(c);
         });
         return view;
     }

@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -180,16 +179,13 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             buscaCep(cep);
         });
 
-        labelCadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                inputNome.getEditText().setText("Teste Address");
-                inputDataNasc.getEditText().setText("01/10/1997");
-                inputEmail.getEditText().setText("testeaddress@aa.aa");
-                inputPassword.getEditText().setText("Teste@1234");
-                inputTelefone.getEditText().setText("81912233333");
-                inputCpf.getEditText().setText("71157812066");
-            }
+        labelCadastro.setOnClickListener(v -> {
+            inputNome.getEditText().setText("Teste Address");
+            inputDataNasc.getEditText().setText("01/10/1997");
+            inputEmail.getEditText().setText("testeaddress@aa.aa");
+            inputPassword.getEditText().setText("Teste@1234");
+            inputTelefone.getEditText().setText("81912233333");
+            inputCpf.getEditText().setText("71157812066");
         });
 
     }
