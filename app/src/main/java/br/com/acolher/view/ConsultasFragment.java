@@ -31,13 +31,13 @@ import retrofit2.Response;
 public class ConsultasFragment extends Fragment implements Serializable{
 
     View mView;
-    private List<Consulta> consultas;
+    List<Consulta> consultas;
     Call<List<Consulta>> call;
-    private RetrofitInit retrofitInit = new RetrofitInit();
-    private SharedPreferences sharedPreferences;
-    private Integer codigo;
-    private ListView listaDeConsultas;
-    private TextView labelNenhumaConsulta;
+    RetrofitInit retrofitInit = new RetrofitInit();
+    SharedPreferences sharedPreferences;
+    Integer codigo;
+    ListView listaDeConsultas;
+    TextView labelNenhumaConsulta;
     long mLastClickTime;
 
 
@@ -79,7 +79,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
                 startActivity(intent);
             }
         });
-
 
         return mView;
     }

@@ -1,19 +1,18 @@
 package br.com.acolher.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import br.com.acolher.R;
@@ -29,12 +28,11 @@ public class AdapterConsultas extends BaseAdapter {
 
     private RetrofitInit retrofitInit = new RetrofitInit();
     private final List<Consulta> consultas;
-    private final Activity act;
-    private TextView labelPergunta, labelSim, labelNao;
-
+    private final Activity context;
+    TextView confirmacao ;
     public AdapterConsultas(List<Consulta> consultas, Activity act) {
         this.consultas = consultas;
-        this.act = act;
+        this.context = act;
     }
 
     @Override
@@ -54,23 +52,19 @@ public class AdapterConsultas extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final View view = act.getLayoutInflater().inflate(R.layout.listview_consultas, parent, false);
+        final View view = context.getLayoutInflater().inflate(R.layout.listview_consultas, parent, false);
 
+        TextView confirmacao = view.findViewById(R.id.confirmacao);
         TextView nome = view.findViewById(R.id.nome);
         TextView data = view.findViewById(R.id.data);
         TextView hora = view.findViewById(R.id.hora);
         TextView endereco = view.findViewById(R.id.endereco);
         TextView cod =  view.findViewById(R.id.cod);
         TextView status =  view.findViewById(R.id.status);
-        labelPergunta = view.findViewById(R.id.labelPergunta);
-        labelSim = view.findViewById(R.id.sim);
-        labelNao = view.findViewById(R.id.nao);
-
-        SharedPreferences pref = act.getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, act.getApplicationContext().MODE_PRIVATE);
+        SharedPreferences pref = context.getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, context.getApplicationContext().MODE_PRIVATE);
         String tipo = pref.getString(CONSTANTES.TYPE,"tipo não encontrado");
 
         Consulta consulta = consultas.get(position);
-
         if(tipo.equals(CONSTANTES.PACIENTE)) {
             try {
                 nome.setText(consulta.getProfissional().getNome_completo());
@@ -94,71 +88,79 @@ public class AdapterConsultas extends BaseAdapter {
         hora.setText(consulta.getHora());
         data.setText(consulta.getData());
         endereco.setText(consulta.getEndereco().getLogradouro()+ ",n° " + consulta.getEndereco().getNumero() + " "+consulta.getEndereco().getBairro());
-        cod.setText(""+consulta.getCodigo().toString());
+        cod.setText(CONSTANTES.VAZIO + consulta.getCodigo().toString());
 
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
-        SimpleDateFormat sdfH = new SimpleDateFormat("HH:mm");
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
 
-        Date dataConsulta = null;
-        try {
-            dataConsulta = new SimpleDateFormat("dd/MM/yyyy").parse(consulta.getData());
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        String dia = String.valueOf(dataHoraAtual.getDayOfMonth());
+        if(dia.length() == 1){
+            dia = "0" + dia;
         }
-        Date dataAtual = new Date();
-        int horaAtual = Integer.valueOf(sdfH.format(gc.getTime()).replace(":", ""));
-        int horaConsulta = Integer.valueOf(consulta.getHora().replace(":", ""));
+        String mes = String.valueOf(dataHoraAtual.getMonthValue());
+        if(mes.length() == 1){
+            mes = "0" + mes;
+        }
+        String ano = String.valueOf(dataHoraAtual.getYear());
+        String horaAtual = String.valueOf(dataHoraAtual.getHour());
+        if(horaAtual.length() == 1){
+            horaAtual = "0" + horaAtual;
+        }
+        String minuto = String.valueOf(dataHoraAtual.getMinute());
+        if(minuto.length()==1){
+            minuto =  "0" + minuto;
+        }
+        String horaAtualAxu = dia + "/" + mes + "/" + ano + " " + horaAtual + ":" + minuto;
 
-        String horaExa = String.valueOf(horaAtual).substring(0,2);
-        String horaConsultaExa = String.valueOf(horaConsulta).length() != 3 ?
-                String.valueOf(horaConsulta).substring(0,2) : String.valueOf(horaConsulta).substring(0,1);
+        //Conveter consulta
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String dataUxi = consulta.getData() + " " +  consulta.getHora();
+        LocalDateTime dataConsultaFormatada = LocalDateTime.parse(dataUxi, formatter);
+        LocalDateTime dataAtualFormatada = LocalDateTime.parse(horaAtualAxu, formatter);
 
-        //Toast.makeText(act, consulta.getStatusConsulta().toString(), Toast.LENGTH_SHORT).show();
-        if(dataConsulta.before(dataAtual) && Integer.parseInt(horaExa) > Integer.parseInt(horaConsultaExa)){
+        if(dataConsultaFormatada.isBefore(dataAtualFormatada)){
             if(consulta.getStatusConsulta().equals(Status.DISPONIVEL)){
                 consulta.setStatusConsulta(Status.CANCELADA);
                 cancelarConsulta(consulta);
             }else if(consulta.getStatusConsulta().equals(Status.CONFIRMADA)){
-                labelPergunta.setVisibility(View.VISIBLE);
-                labelSim.setVisibility(View.VISIBLE);
-                labelNao.setVisibility(View.VISIBLE);
-            }
-        } else if(consulta.getData().equals(sdf.format(gc.getTime()))){
-
-            if (horaConsulta <= horaAtual){
-                labelPergunta.setVisibility(View.VISIBLE);
-                labelSim.setVisibility(View.VISIBLE);
-                labelNao.setVisibility(View.VISIBLE);
+                confirmacao.setVisibility(View.VISIBLE);
             }
         }
 
         status.setText(consulta.getStatusConsulta().toString());
-
         if(consulta.getStatusConsulta().equals(Status.CANCELADA)){
             status.setTextColor(Color.RED);
-        }else{
+        }else if(consulta.getStatusConsulta().equals(Status.REALIZADA)){
             status.setTextColor(Color.GRAY);
+        }else if(consulta.getStatusConsulta().equals(Status.CONFIRMADA)){
+            status.setTextColor(Color.BLUE);
+        }else{
+            status.setTextColor(Color.GREEN);
         }
 
-
-        labelSim.setOnClickListener(v -> {
-            String cod1 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
-
-            Consulta c = new Consulta();
-            c.setCodigo(Integer.parseInt(cod1));
-            confirmarRealizacaoConsulta(c);
-        });
-
-        labelNao.setOnClickListener(v -> {
-            String cod12 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
-
-            Consulta c = new Consulta();
-            c.setCodigo(Integer.parseInt(cod12));
-            confirmarRealizacaoConsulta(c);
-            cancelarConsulta(c);
+        confirmacao.setOnClickListener(view1 -> {
+//            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+//            View viewDialog = context.getLayoutInflater().inflate(R.layout.modal_disponibilidades, null);
+//            mBuilder.setView(viewDialog);
+//            final AlertDialog dialog = mBuilder.create();
+//
+//            Button sim = viewDialog.findViewById(R.id.sim);
+//            Button nao = viewDialog.findViewById(R.id.nao);
+//
+//            sim.setOnClickListener(view2 -> {
+//                String cod1 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
+//                Consulta c = new Consulta();
+//                c.setCodigo(Integer.parseInt(cod1));
+//                c.setStatusConsulta(Status.REALIZADA);
+//                confirmarRealizacaoConsulta(c);
+//            });
+//            nao.setOnClickListener(view22 -> {
+//                String cod12 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
+//                Consulta c = new Consulta();
+//                c.setCodigo(Integer.parseInt(cod12));
+//                c.setStatusConsulta(Status.CANCELADA);
+//                cancelarConsulta(c);
+//            });
+//            dialog.show();
         });
         return view;
     }
@@ -168,11 +170,9 @@ public class AdapterConsultas extends BaseAdapter {
         atualizarParaRealizada.enqueue(new Callback<Consulta>() {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 if (response.isSuccessful()) {
-                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                    labelPergunta.setVisibility(View.GONE);
-                    labelSim.setVisibility(View.GONE);
-                    labelNao.setVisibility(View.GONE);
+                    //confirmacao.setVisibility(View.INVISIBLE);
                 } else {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 }
@@ -190,11 +190,9 @@ public class AdapterConsultas extends BaseAdapter {
         atualizarParaCancelada.enqueue(new Callback<Consulta>() {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 if (response.isSuccessful()) {
-                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                    labelPergunta.setVisibility(View.GONE);
-                    labelSim.setVisibility(View.GONE);
-                    labelNao.setVisibility(View.GONE);
+
                 } else {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 }
