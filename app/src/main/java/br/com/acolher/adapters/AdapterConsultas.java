@@ -29,7 +29,6 @@ public class AdapterConsultas extends BaseAdapter {
     private RetrofitInit retrofitInit = new RetrofitInit();
     private final List<Consulta> consultas;
     private final Activity context;
-    TextView confirmacao ;
     public AdapterConsultas(List<Consulta> consultas, Activity act) {
         this.consultas = consultas;
         this.context = act;
@@ -138,31 +137,36 @@ public class AdapterConsultas extends BaseAdapter {
         }
 
         confirmacao.setOnClickListener(view1 -> {
-//            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-//            View viewDialog = context.getLayoutInflater().inflate(R.layout.modal_disponibilidades, null);
-//            mBuilder.setView(viewDialog);
-//            final AlertDialog dialog = mBuilder.create();
-//
-//            Button sim = viewDialog.findViewById(R.id.sim);
-//            Button nao = viewDialog.findViewById(R.id.nao);
-//
-//            sim.setOnClickListener(view2 -> {
-//                String cod1 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
-//                Consulta c = new Consulta();
-//                c.setCodigo(Integer.parseInt(cod1));
-//                c.setStatusConsulta(Status.REALIZADA);
-//                confirmarRealizacaoConsulta(c);
-//            });
-//            nao.setOnClickListener(view22 -> {
-//                String cod12 = (String) ((TextView) view.findViewById(R.id.cod)).getText();
-//                Consulta c = new Consulta();
-//                c.setCodigo(Integer.parseInt(cod12));
-//                c.setStatusConsulta(Status.CANCELADA);
-//                cancelarConsulta(c);
-//            });
-//            dialog.show();
+            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+            View viewDialog = context.getLayoutInflater().inflate(R.layout.custom_dialog_confirmar_consulta, null);
+            mBuilder.setView(viewDialog);
+            final AlertDialog dialog = mBuilder.create();
+
+            Button sim = viewDialog.findViewById(R.id.sim);
+            Button nao = viewDialog.findViewById(R.id.nao);
+
+            Consulta c = new Consulta();
+            String codigo = (String) ((TextView) view.findViewById(R.id.cod)).getText();
+            c.setCodigo(Integer.parseInt(codigo));
+            c.setPaciente(consulta.getPaciente());
+            c.setInstituicao(consulta.getInstituicao());
+            c.setProfissional(consulta.getProfissional());
+            c.setData(consulta.getData());
+            c.setHora(consulta.getHora());
+            c.setEndereco(consulta.getEndereco());
+
+            sim.setOnClickListener(view2 -> {
+                confirmarRealizacaoConsulta(c);
+                dialog.dismiss();
+            });
+            nao.setOnClickListener(view22 -> {
+                cancelarConsulta(c);
+                dialog.dismiss();
+            });
+            dialog.show();
         });
         return view;
+
     }
 
     private void confirmarRealizacaoConsulta(Consulta consulta){
@@ -172,7 +176,6 @@ public class AdapterConsultas extends BaseAdapter {
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 if (response.isSuccessful()) {
-                    //confirmacao.setVisibility(View.INVISIBLE);
                 } else {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 }
