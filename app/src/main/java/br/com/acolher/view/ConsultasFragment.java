@@ -105,8 +105,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
             call = retrofitInit.getService().getConsultasPorVoluntario(codigo);
         }else if(tipo.equals("INSTITUICAO")){
             call = retrofitInit.getService().getConsultasPorInstituicao(codigo);
-        }else {
-            //tem q tratar
         }
 
 
