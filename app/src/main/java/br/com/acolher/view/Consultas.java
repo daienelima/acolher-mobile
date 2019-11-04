@@ -66,11 +66,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         String tipo = pref.getString(CONSTANTES.TYPE,"tipo não encontrado");
 
         if(tipo.equals(CONSTANTES.PACIENTE)){
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("USERDATA", getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TYPE","tipo não encontrado");
-
-        final Bundle bundle = getIntent().getExtras();
-        if(tipo.equals("PACIENTE")){
             try {
                 nomeLabel.setText("Nome do voluntário");
                 nome.setText(c.getProfissional().getNome_completo());
@@ -102,6 +97,13 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         hora.setText(c.getHora());
         endereco.setText(c.getEndereco().getLogradouro()+", n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
 
+        chat.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ConversaActivity.class );
+            intent.putExtra("idDestinatario", idDestinatario);
+            intent.putExtra("nomeDestinatario", nome.getText());
+            startActivity(intent);
+        });
+
         cancelarConsulta.setOnClickListener(v -> {
             if(tipo.equals(CONSTANTES.PACIENTE)){
                 call = retrofitInit.getService().cancelarConsultaPaciente(c);
@@ -114,23 +116,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             call.enqueue(new Callback<Consulta>() {
                 @Override
                 public void onResponse(Call<Consulta> call, Response<Consulta> response) {
-               chat.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ConversaActivity.class );
-                intent.putExtra("idDestinatario", idDestinatario);
-                intent.putExtra("nomeDestinatario", nome.getText());
-                startActivity(intent);
-            }
-        });
-
-        cancelarConsulta.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(tipo.equals("PACIENTE")){
-                    call = retrofitInit.getService().cancelarConsultaPaciente(c);
-                }else if(tipo.equals("VOLUNTARIO")){
-                    call = retrofitInit.getService().cancelarConsulta(c);
-                }else{
-                    call = retrofitInit.getService().cancelarConsulta(c);
                     finish();
                 }
 
