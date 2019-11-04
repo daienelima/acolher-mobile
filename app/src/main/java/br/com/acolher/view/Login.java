@@ -145,12 +145,15 @@ public class Login extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     String tipoUsuario;
+                    String nomeUsuario;
                     if(response.body().getCrm_crp().isEmpty()){
                         tipoUsuario = CONSTANTES.PACIENTE;
+                        nomeUsuario = response.body().getNome_completo();
                     }else{
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
+                        nomeUsuario = response.body().getNome_completo();
                     }
-                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo());
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo(),nomeUsuario);
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -184,7 +187,8 @@ public class Login extends AppCompatActivity {
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getEndereco().getCodigo());
+                    String nomeUsuario = response.body().getNome();
+                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getEndereco().getCodigo(),nomeUsuario);
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -217,21 +221,23 @@ public class Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco) {
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco, String nomeUsuario) {
         sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
+	editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
 
-    public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco) {
+    public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco, String nomeUsuario) {
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
         editor.putString("TYPE", "INSTITUICAO");
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
+        editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
     /**

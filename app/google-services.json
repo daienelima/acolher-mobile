@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "555630534593",
+    "firebase_url": "https://acolher-62814.firebaseio.com",
+    "project_id": "acolher-62814",
+    "storage_bucket": "acolher-62814.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555630534593:android:03c4c54e5fc2b0390c9940",
+        "android_client_info": {
+          "package_name": "br.com.acolher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555630534593-81bka64h2rhsmhg50m7655c07jsfqr5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.acolher",
+            "certificate_hash": "b5714059501927f8c6ff65424531af09af7e8b61"
+          }
+        },
+        {
+          "client_id": "555630534593-eiort57amk2v4croe6hbrt2kvnais6ac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuE_vkf3T5pWlbbSMFe7eLoo9ZXz3XpgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555630534593-eiort57amk2v4croe6hbrt2kvnais6ac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

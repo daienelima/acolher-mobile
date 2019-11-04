@@ -38,7 +38,7 @@
     <string name="label_numero">Numero</string>
     <string name="button_localizacao">Utilizar endereço atual</string>
 
-    <string name="label_button_cancelar_consulta">Cancelar consulta</string>
+    <string name="label_button_cancelar_consulta">Cancelar</string>
     <string name="label_return_consultas">Voltar para a tela de consultas</string>
     <string name="error_nome_completo">Insira o seu nome completo</string>
 
@@ -100,5 +100,7 @@
     <string name="labelSim">Sim</string>
     <string name="labelNao">Não</string>
 
-
+    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!s</string>
+    <string name="label_button_chat">Chat</string>
+    <string name="labelNenhumaConversa">Nenhuma conversa!</string>
 </resources>
