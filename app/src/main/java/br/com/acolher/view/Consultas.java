@@ -1,12 +1,18 @@
 package br.com.acolher.view;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -15,13 +21,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
+
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
+import br.com.acolher.model.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static java.security.AccessController.getContext;
 
 public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -30,6 +42,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
     private RetrofitInit retrofitInit = new RetrofitInit();
     Call<Consulta> call;
     Consulta c;
+    Usuario u;
     String idDestinatario;
 
     @Override
@@ -55,6 +68,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         TextView nomeLabel =  findViewById(R.id.nomeLabel);
         Button cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
         Button chat = findViewById(R.id.buttonChat);
+        Button ligar = findViewById(R.id.buttonLigar);
         TextView voltar =  findViewById(R.id.labelRetornarConsultas) ;
 
         if(c.getStatusConsulta().equals(Status.CANCELADA)){
@@ -136,6 +150,45 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 finish();
             }
         });
+
+        //Botão para ligar dentro da API
+        ligar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapsActivity maps = new MapsActivity();
+                HomeMapFragment home = new HomeMapFragment();
+                /*if(tipo.equals("PACIENTE")){
+
+                   String numero = c.getPaciente().getTelefone();
+                    Uri uri = Uri.parse("tel:" + numero);
+                    Intent intent = new Intent(Intent.ACTION_CALL, uri);
+
+                }else if(tipo.equals("VOLUNTARIO")){
+                    String numero = c.getProfissional().getTelefone();
+                    Uri uri = Uri.parse("tel:" + numero);
+                    Intent intent = new Intent(Intent.ACTION_CALL, uri);
+                }*/
+
+                String numero = c.getPaciente().getTelefone();
+                Uri uri = Uri.parse("tel:" + numero);
+                Intent intent = new Intent(Intent.ACTION_CALL, uri);
+
+                if (ActivityCompat.checkSelfPermission(maps, Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
+                    //ActivityCompat.checkSelfPermission(maps, new String[](Manifest.permission.CALL_PHONE), 1);
+                    return;
+                }
+
+                startActivity(intent);
+
+
+            }
+
+
+
+
+        });
+
+
     }
 
     @Override
@@ -147,4 +200,5 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local,15.0f ));
     }
+
 }

@@ -17,6 +17,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import br.com.acolher.R;
+import br.com.acolher.helper.Alerta;
 
 public class MapsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -24,7 +25,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private ActionBar actionBar;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
+    private Alerta alerta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,14 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         return loadFragment(fragment);
+    }
+
+    @Override
+    public void onBackPressed(){
+        alerta.caixaAlerta();
+
+        return;
+
     }
 
     /**
