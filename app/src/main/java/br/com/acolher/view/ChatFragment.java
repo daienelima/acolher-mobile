@@ -46,19 +46,15 @@ public class ChatFragment extends Fragment {
             idUser = "i" + idUser;
         }
 
-        // Monta listview e adapter
         conversas = new ArrayList<>();
         listView = (ListView) mView.findViewById(R.id.lv_conversas);
         adapter = new ConversaAdapter(getContext(), conversas );
         listView.setAdapter(adapter);
         labelNenhumaConversa = mView.findViewById(R.id.labelNenhumaConversa);
 
-        // Recuperar conversas do Firebase
         firebase = ConfiguracaoFirebase.getFirebase()
                 .child("conversas")
                 .child(idUser);
-
-        System.out.println("firebase url: "+firebase);
 
         valueEventListenerConversas = new ValueEventListener() {
             @Override
@@ -66,7 +62,6 @@ public class ChatFragment extends Fragment {
 
                 conversas.clear();
                 for ( DataSnapshot dados: dataSnapshot.getChildren() ){
-                    System.out.println("passou aq");
                     Conversa conversa = dados.getValue( Conversa.class );
                     conversas.add(conversa);
                 }
