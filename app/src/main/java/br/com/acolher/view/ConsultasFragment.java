@@ -3,9 +3,9 @@ package br.com.acolher.view;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,34 +16,30 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConsultas;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
-import br.com.acolher.model.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import java.text.SimpleDateFormat;
 
 public class ConsultasFragment extends Fragment implements Serializable{
 
     View mView;
-    private List<Consulta> consultas;
+    List<Consulta> consultas;
     Call<List<Consulta>> call;
-    private SimpleDateFormat formataData = new SimpleDateFormat("dd-MM-yyyy");
-    Date data = new Date();
-    private RetrofitInit retrofitInit = new RetrofitInit();
-    private SharedPreferences pref;
-    private Integer codigo;
-    private ListView listaDeConsultas;
-    private TextView labelNenhumaConsulta;
+    RetrofitInit retrofitInit = new RetrofitInit();
+    SharedPreferences sharedPreferences;
+    Integer codigo;
+    ListView listaDeConsultas;
+    TextView labelNenhumaConsulta;
     long mLastClickTime;
+
 
     @Nullable
     @Override
@@ -51,59 +47,49 @@ public class ConsultasFragment extends Fragment implements Serializable{
         mView = inflater.inflate(R.layout.fragment_consultas, null);
         labelNenhumaConsulta = mView.findViewById(R.id.labelNenhumaConsulta);
         consultas = new ArrayList<>();
-        listaDeConsultas = (ListView) mView.findViewById(R.id.listaConsultas);
-        pref = getActivity().getApplicationContext().getSharedPreferences("USERDATA", getActivity().getApplicationContext().MODE_PRIVATE);
-        codigo = pref.getInt("USERCODE",0);
+        listaDeConsultas = mView.findViewById(R.id.listaConsultas);
+        sharedPreferences = getActivity().getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, getActivity().getApplicationContext().MODE_PRIVATE);
+        codigo = sharedPreferences.getInt(CONSTANTES.USERCODE,0);
 
         loadLista();
 
-
-
         listaDeConsultas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemDoubleClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // DOUBLE CLICK
+            public void onItemDoubleClick(View view, int position, long l) {
             }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 long currTime = System.currentTimeMillis();
                 if (currTime - mLastClickTime < 1000) {
-                    onItemDoubleClick(parent, view, position, id);
+                    onItemDoubleClick(view, position, id);
                     return;
                 }
                 mLastClickTime = currTime;
-
-                String nome = (String) ((TextView)view.findViewById(R.id.nome)).getText();
-                String data = (String) ((TextView)view.findViewById(R.id.data)).getText();
-                String hora = (String) ((TextView)view.findViewById(R.id.hora)).getText();
-                String endereco = (String) ((TextView)view.findViewById(R.id.endereco)).getText();
                 String cod = (String) ((TextView)view.findViewById(R.id.cod)).getText();
 
-                Consulta c = new Consulta();
-                c.setCodigo(Integer.parseInt(cod));
+                Consulta consulta = new Consulta();
+                consulta.setCodigo(Integer.parseInt(cod));
                 for(Consulta con : consultas){
-                    if(con.getCodigo().equals(c.getCodigo())){
-                        c = con;
+                    if(con.getCodigo().equals(consulta.getCodigo())){
+                        consulta = con;
                     }
                 }
                 Intent intent = new Intent(view.getContext(), Consultas.class);
-                intent.putExtra("consulta",c);
+                intent.putExtra("consulta", consulta);
                 startActivity(intent);
             }
         });
-
 
         return mView;
     }
 
     public void loadLista(){
-        String tipo = pref.getString("TYPE","erro");
-        if(tipo.equals("PACIENTE")) {
+        String tipo = sharedPreferences.getString(CONSTANTES.TYPE,"tipo não encontrado");
+        if(tipo.equals(CONSTANTES.PACIENTE)) {
             call = retrofitInit.getService().getConsultasPorPacientes(codigo);
-        }else if(tipo.equals("VOLUNTARIO")){
+        }else if(tipo.equals(CONSTANTES.VOLUNTARIO)){
             call = retrofitInit.getService().getConsultasPorVoluntario(codigo);
-        }else if(tipo.equals("INSTITUICAO")){
+        }else if(tipo.equals(CONSTANTES.INSTITUICAO)){
             call = retrofitInit.getService().getConsultasPorInstituicao(codigo);
         }
 
@@ -111,26 +97,11 @@ public class ConsultasFragment extends Fragment implements Serializable{
         call.enqueue(new Callback<List<Consulta>>() {
             @Override
             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
+                Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 if(response.isSuccessful()){
                     consultas = response.body();
-
-                    //Verificar consulta, caso não vigente mudar status para CANCELADA
-                    for(Consulta con : consultas){
-                        try {
-                            Date dataConsulta=new SimpleDateFormat("dd/MM/yyyy").parse(con.getData());
-
-                            if(!con.getStatusConsulta().equals("REALIZADA") && (dataConsulta.before(data))){
-                                con.setStatusConsulta(Status.CANCELADA);
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-
                     if(consultas == null){
-                        consultas = new ArrayList<Consulta>();
+                        consultas = new ArrayList<>();
                     }else if(consultas.size() == 0){
                         labelNenhumaConsulta.setVisibility(View.VISIBLE);
                     }
@@ -144,7 +115,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
 
             }
         });
-
 
     }
 
