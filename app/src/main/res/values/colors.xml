@@ -7,5 +7,7 @@
     <color name="buttonCadastroProsseguir">#7a91ca</color>
     <color name="buttonSalvarDados">#7a91ca</color>
     <color name="blue">#3232CD</color>
+    <color name="cinza">#808080</color>
     <color name="corLink">#FF7A91CA</color>
+    <color name="branco">#FFFFFF</color>
 </resources>

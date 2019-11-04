@@ -30,6 +30,7 @@
         <activity android:name=".view.MapsActivity" />
         <activity android:name=".view.ModalDisponibilidades" />
         <activity android:name=".view.Consultas" />
+        <activity android:name=".view.ConversaActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.version"
