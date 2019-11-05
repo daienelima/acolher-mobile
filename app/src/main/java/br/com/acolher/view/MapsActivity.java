@@ -1,6 +1,8 @@
 package br.com.acolher.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,7 +19,6 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import br.com.acolher.R;
-import br.com.acolher.helper.Alerta;
 
 public class MapsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -25,7 +26,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private ActionBar actionBar;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private Alerta alerta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,10 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
-
         loadFragment(new HomeMapFragment());
 
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
-
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -101,11 +99,32 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onBackPressed(){
-        alerta.caixaAlerta();
 
-        return;
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
 
+        msgBox.setTitle("Confirmação.");
+        msgBox.setCancelable(true);
+
+        msgBox.setMessage("Deseja realmente sair do aplicativo?");
+        msgBox.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                finish();
+            }
+        });
+
+        msgBox.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        AlertDialog alerta = msgBox.create();
+        alerta.show();
     }
+
+
 
     /**
      * Manipulates the map once available.
