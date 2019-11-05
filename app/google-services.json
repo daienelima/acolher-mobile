@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "186425429681",
+    "firebase_url": "https://acolher-mobile.firebaseio.com",
+    "project_id": "acolher-mobile",
+    "storage_bucket": "acolher-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186425429681:android:afc3c1c8f980147c431c90",
+        "android_client_info": {
+          "package_name": "br.com.acolher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186425429681-0fl5num4u86ra5fk1kp4ojcurvri0h3v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.acolher",
+            "certificate_hash": "94526fbeea3761a7d4e244a378cf3a440e8e0a6f"
+          }
+        },
+        {
+          "client_id": "186425429681-135a5qapvug52ggh54or57ovtjsi47iu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8QHIiqwl4WidF0VZKeizLygEAPaQcyUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186425429681-135a5qapvug52ggh54or57ovtjsi47iu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
