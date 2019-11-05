@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,14 +13,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+
 import br.com.acolher.R;
 import br.com.acolher.adapters.ConversaAdapter;
 import br.com.acolher.apiconfig.ConfiguracaoFirebase;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Conversa;
 
@@ -40,14 +43,14 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_chat, null);
-        String typeUser = Helper.getSharedPreferences("TYPE",  "", 2, getContext()).toString();
-        String idUser = Helper.getSharedPreferences("USERCODE",  0, 1, getContext()).toString();
-        if(typeUser.equals("INSTITUICAO")){
+        String typeUser = Helper.getSharedPreferences(CONSTANTES.TYPE,  "", 2, getContext()).toString();
+        String idUser = Helper.getSharedPreferences(CONSTANTES.USERCODE,  0, 1, getContext()).toString();
+        if(typeUser.equals(CONSTANTES.INSTITUICAO)){
             idUser = "i" + idUser;
         }
 
         conversas = new ArrayList<>();
-        listView = (ListView) mView.findViewById(R.id.lv_conversas);
+        listView = mView.findViewById(R.id.lv_conversas);
         adapter = new ConversaAdapter(getContext(), conversas );
         listView.setAdapter(adapter);
         labelNenhumaConversa = mView.findViewById(R.id.labelNenhumaConversa);
@@ -82,21 +85,17 @@ public class ChatFragment extends Fragment {
             }
         };
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
 
-                Conversa conversa = conversas.get(position);
-                Intent intent = new Intent(getActivity(), ConversaActivity.class );
+            Conversa conversa = conversas.get(position);
+            Intent intent = new Intent(getActivity(), ConversaActivity.class );
 
-                intent.putExtra("idDestinatario", conversa.getIdUsuario());
-                intent.putExtra("nomeDestinatario", conversa.getNome());
+            intent.putExtra("idDestinatario", conversa.getIdUsuario());
+            intent.putExtra("nomeDestinatario", conversa.getNome());
 
-                startActivity(intent);
+            startActivity(intent);
 
-            }
         });
-
 
         return mView;
     }

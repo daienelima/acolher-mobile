@@ -11,6 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,6 +22,7 @@ import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
+import br.com.acolher.view.ConsultasFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -154,7 +157,6 @@ public class AdapterConsultas extends BaseAdapter {
             c.setData(consulta.getData());
             c.setHora(consulta.getHora());
             c.setEndereco(consulta.getEndereco());
-
             sim.setOnClickListener(view2 -> {
                 confirmarRealizacaoConsulta(c);
                 dialog.dismiss();
@@ -175,10 +177,6 @@ public class AdapterConsultas extends BaseAdapter {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                if (response.isSuccessful()) {
-                } else {
-                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                }
             }
 
             @Override
@@ -194,11 +192,6 @@ public class AdapterConsultas extends BaseAdapter {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                if (response.isSuccessful()) {
-
-                } else {
-                    Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                }
             }
 
             @Override
