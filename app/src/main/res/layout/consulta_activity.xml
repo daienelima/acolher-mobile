@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="620dp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
@@ -107,12 +107,14 @@
                 android:layout_width="300dp"
                 android:layout_height="200dp"
                 android:layout_gravity="center_horizontal"></com.google.android.gms.maps.MapView>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="5dp"
-                android:gravity="center_horizontal">
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
                 <Button
                     android:id="@+id/buttonChat"
                     android:layout_width="145dp"
@@ -124,31 +126,46 @@
                     android:text="@string/label_button_chat"
                     android:textColor="#FFF"
                     android:textSize="18dp" />
+
                 <Button
-                    android:id="@+id/buttonCancelarConsulta"
+                    android:id="@+id/buttonLigar"
                     android:layout_width="145dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
-                    android:padding="10dp"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/button_cadastro_radius"
-                    android:text="@string/label_button_cancelar_consulta"
+                    android:text="@string/label_button_ligar"
                     android:textColor="#FFF"
                     android:textSize="18dp" />
+
             </LinearLayout>
 
+
+            <Button
+                android:id="@+id/buttonCancelarConsulta"
+                android:layout_width="145dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button_cadastro_radius"
+                android:padding="10dp"
+                android:text="@string/label_button_cancelar_consulta"
+                android:textColor="#FFF"
+                android:textSize="18dp" />
 
             <TextView
                 android:id="@+id/labelRetornarConsultas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:gravity="center_horizontal"
                 android:text="@string/label_return_consultas"
                 android:textColor="@color/corLink"
                 android:textSize="20dp"
                 android:textStyle="bold" />
+
 
         </LinearLayout>
 
