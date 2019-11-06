@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,6 +25,7 @@ import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
 import br.com.acolher.view.ConsultasFragment;
+import br.com.acolher.view.MapsActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +39,7 @@ public class AdapterConsultas extends BaseAdapter {
         this.consultas = consultas;
         this.context = act;
     }
+    BottomNavigationView navigationView;
 
     @Override
     public int getCount() {
@@ -55,7 +59,7 @@ public class AdapterConsultas extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final View view = context.getLayoutInflater().inflate(R.layout.listview_consultas, parent, false);
-
+        navigationView = this.context.findViewById(R.id.bottom_navigation);
         TextView confirmacao = view.findViewById(R.id.confirmacao);
         TextView nome = view.findViewById(R.id.nome);
         TextView data = view.findViewById(R.id.data);
@@ -177,11 +181,13 @@ public class AdapterConsultas extends BaseAdapter {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                navigationView.setSelectedItemId(navigationView.getSelectedItemId());
             }
 
             @Override
             public void onFailure(Call<Consulta> call, Throwable t) {
                 Log.d(CONSTANTES.TAG, t.getMessage());
+                navigationView.setSelectedItemId(navigationView.getSelectedItemId());
             }
         });
     }
@@ -192,11 +198,13 @@ public class AdapterConsultas extends BaseAdapter {
             @Override
             public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
+                navigationView.setSelectedItemId(navigationView.getSelectedItemId());
             }
 
             @Override
             public void onFailure(Call<Consulta> call, Throwable t) {
                 Log.d(CONSTANTES.TAG, t.getMessage());
+                navigationView.setSelectedItemId(navigationView.getSelectedItemId());
             }
         });
     }
