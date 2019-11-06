@@ -96,5 +96,7 @@
 
     <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!s</string>
 
+    <string name="msg_token_fmt">InstanceID Token: %s</string>
+
 
 </resources>

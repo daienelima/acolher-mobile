@@ -38,4 +38,10 @@
         app:backgroundTint="@color/buttonSalvarDados"
         app:maxImageSize="40dp" />
 
+    <Button
+        android:id="@+id/btnGetCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
 </FrameLayout>

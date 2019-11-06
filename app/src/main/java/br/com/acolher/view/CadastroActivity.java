@@ -27,7 +27,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -37,6 +41,7 @@ import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
@@ -172,6 +177,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 }
 
                 getAddressByParameters(endereco);
+
             }
         });
 
@@ -449,6 +455,25 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if(!task.isSuccessful()){
+                                        Log.w("CODE", "getInstangeId Failed", task.getException());
+                                        return;
+                                    }
+
+                                    // Get new Instance ID token
+                                    String token = task.getResult().getToken();
+                                    FireStore.insertUserId(response.body().getCodigo(), response.body().getNome_completo(), token);
+                                    // Log and toast
+                                    String msg = getString(R.string.msg_token_fmt, token);
+                                    Log.d("CODE", msg);
+                                    Toast.makeText(CadastroActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                     Intent home = new Intent(CadastroActivity.this, MapsActivity.class);
                     startActivity(home);

@@ -40,9 +40,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +58,7 @@ import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Usuario;
@@ -84,6 +92,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private AlertDialog alerta;
     private Double latDisp;
     private Double longDisp;
+    private Button button;
     BottomNavigationView navigationView;
 
     @Nullable
@@ -118,18 +127,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         }
 
-        /**
-         * Shared Preferences Mocado
-         */
-
-        //sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
-
-        /*SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", 4);
-        editor.putString("TYPE", "PACIENTE");
-        editor.apply();*/
-
-
         latDisp = 0.0;
         longDisp = 0.0;
         codeUser = (Integer) Helper.getSharedPreferences("USERCODE",  0, 1, getContext());
@@ -142,8 +139,31 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FireStore.getUserId((Integer) Helper.getSharedPreferences(CONSTANTES.USERCODE, 0, 1, getContext()));
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                if(!task.isSuccessful()){
+                                    Log.w("CODE", "getInstangeId Failed", task.getException());
+                                    return;
+                                }
 
+                                // Get new Instance ID token
+                                String token = task.getResult().getToken();
+                                FireStore.enviarNotificacaoVoluntario(token);
+                                // Log and toast
+                                String msg = getString(R.string.msg_token_fmt, token);
+                                Log.d("CODE", msg);
+                                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
+            }
+        });
 
     }
 
@@ -369,6 +389,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
         btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
         mMapView = (MapView) mView.findViewById(R.id.map);
+        button = view.findViewById(R.id.btnGetCode);
     }
 
     public void callCadastroDisp(Integer codigo){
