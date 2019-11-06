@@ -26,6 +26,7 @@ import org.w3c.dom.Text;
 
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
+import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
@@ -39,7 +40,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
     GoogleMap mMap;
     Marker myMarker;
-    private RetrofitInit retrofitInit = new RetrofitInit();
+    RetrofitInit retrofitInit = new RetrofitInit();
     Call<Consulta> call;
     Consulta c;
     Usuario u;
@@ -49,12 +50,11 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-
         setContentView(R.layout.consulta_activity);
 
         c = (Consulta) getIntent().getSerializableExtra("consulta");
 
-        MapView mMapView = (MapView) findViewById(R.id.map);
+        MapView mMapView = findViewById(R.id.map);
         if(mMapView != null){
             mMapView.onCreate(null);
             mMapView.onResume();
@@ -76,11 +76,10 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             chat.setVisibility(View.INVISIBLE);
         }
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("USERDATA", getApplicationContext().MODE_PRIVATE);
-        String tipo = pref.getString("TYPE","tipo não encontrado");
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, getApplicationContext().MODE_PRIVATE);
+        String tipo = pref.getString(CONSTANTES.TYPE,"tipo não encontrado");
 
-        final Bundle bundle = getIntent().getExtras();
-        if(tipo.equals("PACIENTE")){
+        if(tipo.equals(CONSTANTES.PACIENTE)){
             try {
                 nomeLabel.setText("Nome do voluntário");
                 nome.setText(c.getProfissional().getNome_completo());
@@ -90,7 +89,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 nome.setText(c.getInstituicao().getNome());
                 idDestinatario = "i" + c.getInstituicao().getCodigo().toString();
             }
-        }else if(tipo.equals("VOLUNTARIO")){
+        }else if(tipo.equals(CONSTANTES.VOLUNTARIO)){
             nomeLabel.setText("Nome do paciente");
             try {
                 nome.setText(c.getPaciente().getNome_completo());
@@ -112,43 +111,33 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         hora.setText(c.getHora());
         endereco.setText(c.getEndereco().getLogradouro()+", n° "+c.getEndereco().getNumero()+" "+c.getEndereco().getBairro());
 
-        chat.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ConversaActivity.class );
-                intent.putExtra("idDestinatario", idDestinatario);
-                intent.putExtra("nomeDestinatario", nome.getText());
-                startActivity(intent);
-            }
+        chat.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ConversaActivity.class );
+            intent.putExtra("idDestinatario", idDestinatario);
+            intent.putExtra("nomeDestinatario", nome.getText());
+            startActivity(intent);
         });
 
-        cancelarConsulta.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(tipo.equals("PACIENTE")){
-                    call = retrofitInit.getService().cancelarConsultaPaciente(c);
-                }else if(tipo.equals("VOLUNTARIO")){
-                    call = retrofitInit.getService().cancelarConsulta(c);
-                }else{
-                    call = retrofitInit.getService().cancelarConsulta(c);
-                    finish();
-                }
-                call.enqueue(new Callback<Consulta>() {
-                    @Override
-                    public void onResponse(Call<Consulta> call, Response<Consulta> response) {
-                        finish();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Consulta> call, Throwable t) {
-                        finish();
-                    }
-                });
-            }
-        });
-
-        voltar.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        cancelarConsulta.setOnClickListener(v -> {
+            if(tipo.equals(CONSTANTES.PACIENTE)){
+                call = retrofitInit.getService().cancelarConsultaPaciente(c);
+            }else if(tipo.equals(CONSTANTES.VOLUNTARIO)){
+                call = retrofitInit.getService().cancelarConsulta(c);
+            }else{
+                call = retrofitInit.getService().cancelarConsulta(c);
                 finish();
             }
+            call.enqueue(new Callback<Consulta>() {
+                @Override
+                public void onResponse(Call<Consulta> call, Response<Consulta> response) {
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<Consulta> call, Throwable t) {
+                    finish();
+                }
+            });
         });
 
         //Botão para ligar dentro da API
@@ -187,8 +176,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
 
         });
-
-
+        voltar.setOnClickListener(v -> finish());
     }
 
     @Override
