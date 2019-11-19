@@ -227,7 +227,7 @@ public class Login extends AppCompatActivity {
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
-	editor.putString(CONSTANTES.NOME, nomeUsuario);
+	    editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
 

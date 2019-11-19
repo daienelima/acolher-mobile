@@ -1,12 +1,20 @@
 package br.com.acolher.view;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -15,14 +23,20 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
+
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
+import br.com.acolher.model.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static java.security.AccessController.getContext;
 
 public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -31,7 +45,9 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
     RetrofitInit retrofitInit = new RetrofitInit();
     Call<Consulta> call;
     Consulta c;
+    Usuario u;
     String idDestinatario;
+    private static final int REQUEST_PHONE_CALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +71,7 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         TextView nomeLabel =  findViewById(R.id.nomeLabel);
         Button cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
         Button chat = findViewById(R.id.buttonChat);
+        Button ligar = findViewById(R.id.buttonLigar);
         TextView voltar =  findViewById(R.id.labelRetornarConsultas) ;
 
         if(c.getStatusConsulta().equals(Status.CANCELADA)){
@@ -126,6 +143,42 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             });
         });
 
+        //Botão para ligar dentro da API
+        ligar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //MapsActivity maps = new MapsActivity();
+                String tell = "";
+                if(tipo.equals("PACIENTE")){
+                    if(c.getInstituicao() != null){
+                        tell = c.getInstituicao().getTelefone();
+                    }else {
+                        tell = c.getProfissional().getTelefone();
+                    }
+                }else if(tipo.equals("VOLUNTARIO")){
+                    tell = c.getPaciente().getTelefone();
+                }
+
+                final Intent intentCall = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+tell));
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE);
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(Consultas.this, Manifest.permission.CALL_PHONE)) {
+
+                        } else {
+                            ActivityCompat.requestPermissions(Consultas.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                        }
+                    }
+                    else{
+                        startActivity(intentCall);
+                    }
+                }else {
+                    startActivity(intentCall);
+                }
+            }
+
+        });
         voltar.setOnClickListener(v -> finish());
     }
 
@@ -138,4 +191,5 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local,15.0f ));
     }
+
 }

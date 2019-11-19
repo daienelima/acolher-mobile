@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,6 @@ public class ConsultasFragment extends Fragment implements Serializable{
     ListView listaDeConsultas;
     TextView labelNenhumaConsulta;
     long mLastClickTime;
-
 
     @Nullable
     @Override
