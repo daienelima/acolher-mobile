@@ -25,6 +25,7 @@ import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterConsultas;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +48,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_consultas, null);
         labelNenhumaConsulta = mView.findViewById(R.id.labelNenhumaConsulta);
+        Helper.openProgressDialog("Carregando...", getContext());
         consultas = new ArrayList<>();
         listaDeConsultas = mView.findViewById(R.id.listaConsultas);
         sharedPreferences = getActivity().getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, getActivity().getApplicationContext().MODE_PRIVATE);
@@ -100,6 +102,7 @@ public class ConsultasFragment extends Fragment implements Serializable{
             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
                 Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                 if(response.isSuccessful()){
+                    Helper.closeProgressDialog();
                     consultas = response.body();
                     if(consultas == null){
                         consultas = new ArrayList<>();
