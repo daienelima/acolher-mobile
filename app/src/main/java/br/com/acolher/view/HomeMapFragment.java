@@ -256,6 +256,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
                 if(marker.equals(myMarker)){
                     return false;
+                }else if(marker.getSnippet() == null){
+                    return false;
                 }
 
                 if(consPorUser != null){
