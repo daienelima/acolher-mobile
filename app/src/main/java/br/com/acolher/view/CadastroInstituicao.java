@@ -48,7 +48,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CadastroInstituicao extends AppCompatActivity{
 
     private Address address;
-    InstituicaoController ic;
+    private InstituicaoController ic;
     private boolean hasCnpj;
     private EnderecoController ec;
     SharedPreferences.Editor editor;
