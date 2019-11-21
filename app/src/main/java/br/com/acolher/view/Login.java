@@ -158,8 +158,8 @@ public class Login extends AppCompatActivity {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
                     }
-                    startActivity(home);
                     finish();
+                    startActivity(home);
                 } else {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -193,6 +193,7 @@ public class Login extends AppCompatActivity {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
                     }
+                    finish();
                     startActivity(home);
                 } else {
                     if(response.code() == 403){
@@ -261,9 +262,9 @@ public class Login extends AppCompatActivity {
     private void usuarioLogado() {
         sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
         if (sharedPreferences.getBoolean("logado", false)) {
+            finish();
             Intent home = new Intent(this, MapsActivity.class);
             startActivity(home);
-            finish();
         } else {
             inputEmail.getEditText().setText(sharedPreferences.getString("email", null));
         }
