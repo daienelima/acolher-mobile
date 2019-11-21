@@ -125,9 +125,10 @@ public class ConfiguracaoFragment extends Fragment {
         editor.putBoolean("logado", false);
         editor.clear();
         editor.apply();
+        getActivity().finish();
         Intent intent = new Intent(getContext(), Login.class);
         startActivity(intent);
-        getActivity().finish();
+
     }
 
     private void desativarContaUsuario(){
