@@ -123,6 +123,7 @@ public class ConfiguracaoFragment extends Fragment {
         sharedPreferences = this.getContext().getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putBoolean("logado", false);
+        editor.clear();
         editor.apply();
         Intent intent = new Intent(getContext(), Login.class);
         startActivity(intent);
