@@ -348,6 +348,18 @@ public class MeusDadosUsuario extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
+
+                if(response.code() > 299 && response.code() < 400){
+                    msgErro("Problema de redirecionamento");
+                }
+
+                if(response.code() > 399 && response.code() < 500 ){
+                    msgErro("Problema de redirecionamento");
+                }
+
+                if(response.code() > 499 && response.code() < 600 ){
+                    msgErro("Erro em servidor");
+                }
             }
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
@@ -365,6 +377,18 @@ public class MeusDadosUsuario extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, String.valueOf(response.code()));
                 }
+
+                if(response.code() > 299 && response.code() < 400){
+                    msgErro("Problema de redirecionamento");
+                }
+
+                if(response.code() > 399 && response.code() < 500 ){
+                    msgErro("Problema de redirecionamento");
+                }
+
+                if(response.code() > 499 && response.code() < 600 ){
+                    msgErro("Erro em servidor");
+                }
             }
             @Override
             public void onFailure(Call<Endereco> call, Throwable t) {
@@ -373,6 +397,13 @@ public class MeusDadosUsuario extends AppCompatActivity {
             }
         });
 
+    }
+    private void msgErro(String msg){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
+        alertDialog.setTitle("ERRO");
+        alertDialog.setMessage(msg);
+        alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
+        alertDialog.show();
     }
 
 }
