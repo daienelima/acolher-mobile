@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -29,6 +31,7 @@ import org.w3c.dom.Text;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Status;
 import br.com.acolher.model.Usuario;
@@ -45,7 +48,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
     RetrofitInit retrofitInit = new RetrofitInit();
     Call<Consulta> call;
     Consulta c;
-    Usuario u;
     String idDestinatario;
     private static final int REQUEST_PHONE_CALL = 1;
 
@@ -69,14 +71,25 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
         TextView hora =  findViewById(R.id.hora);
         TextView endereco =  findViewById(R.id.endereco);
         TextView nomeLabel =  findViewById(R.id.nomeLabel);
-        Button cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
-        Button chat = findViewById(R.id.buttonChat);
-        Button ligar = findViewById(R.id.buttonLigar);
-        TextView voltar =  findViewById(R.id.labelRetornarConsultas) ;
+        ImageButton cancelarConsulta = findViewById(R.id.buttonCancelarConsulta) ;
+        ImageButton chat = findViewById(R.id.buttonChat);
+        ImageButton ligar = findViewById(R.id.buttonLigar);
 
-        if(c.getStatusConsulta().equals(Status.CANCELADA)){
-            cancelarConsulta.setVisibility(View.INVISIBLE);
-            chat.setVisibility(View.INVISIBLE);
+        switch (c.getStatusConsulta()){
+            case CANCELADA:
+                cancelarConsulta.setVisibility(View.INVISIBLE);
+                chat.setVisibility(View.INVISIBLE);
+                ligar.setVisibility(View.INVISIBLE);
+                break;
+            case REALIZADA:
+                cancelarConsulta.setVisibility(View.GONE);
+                break;
+            case DISPONIVEL:
+                chat.setVisibility(View.GONE);
+                ligar.setVisibility(View.GONE);
+                break;
+            default:
+                break;
         }
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(CONSTANTES.USERDATA, getApplicationContext().MODE_PRIVATE);
@@ -91,14 +104,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
                 nomeLabel.setText("Nome da instituicao");
                 nome.setText(c.getInstituicao().getNome());
                 idDestinatario = "i" + c.getInstituicao().getCodigo().toString();
-            }
-        }else if(tipo.equals(CONSTANTES.VOLUNTARIO)){
-            nomeLabel.setText("Nome do paciente");
-            try {
-                nome.setText(c.getPaciente().getNome_completo());
-                idDestinatario = c.getPaciente().getCodigo().toString();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }else{
             nomeLabel.setText("Nome do paciente");
@@ -123,12 +128,25 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
 
         cancelarConsulta.setOnClickListener(v -> {
             if(tipo.equals(CONSTANTES.PACIENTE)){
-                call = retrofitInit.getService().cancelarConsultaPaciente(c);
+                try {
+                    call = retrofitInit.getService().cancelarConsultaPaciente(c);
+                }catch (Exception e){
+                    Helper.msgErroServidor(Consultas.this);
+                }
             }else if(tipo.equals(CONSTANTES.VOLUNTARIO)){
-                call = retrofitInit.getService().cancelarConsulta(c);
+                try {
+                    call = retrofitInit.getService().cancelarConsulta(c);
+                }catch (Exception e){
+                    Helper.msgErroServidor(Consultas.this);
+                }
             }else{
-                call = retrofitInit.getService().cancelarConsulta(c);
-                finish();
+                try {
+                    call = retrofitInit.getService().cancelarConsulta(c);
+                    finish();
+                }catch (Exception e){
+                    Helper.msgErroServidor(Consultas.this);
+                }
+
             }
             call.enqueue(new Callback<Consulta>() {
                 @Override
@@ -179,7 +197,6 @@ public class Consultas extends AppCompatActivity implements OnMapReadyCallback {
             }
 
         });
-        voltar.setOnClickListener(v -> finish());
     }
 
     @Override
