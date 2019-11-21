@@ -3,12 +3,16 @@ package br.com.acolher.helper;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +22,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.List;
 
@@ -30,6 +38,7 @@ public class Helper implements OnMapReadyCallback{
     private static ProgressDialog progressDialog;
     private static LatLng latLng = null;
     static Marker markerLocale = null;
+    static String token = "";
 
     /**
      *
@@ -130,7 +139,7 @@ public class Helper implements OnMapReadyCallback{
      *
      */
     public static void closeProgressDialog(){
-        if(progressDialog.isShowing()){
+        if(progressDialog != null && progressDialog.isShowing()){
             progressDialog.dismiss();
         }
     }
@@ -246,6 +255,20 @@ public class Helper implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+    }
+
+    public static void openGenericModal(String title, String text, Context context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(text);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
     }
 
 }
