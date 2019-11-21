@@ -451,7 +451,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
                             try {
 
-                                Helper.openProgressDialog("Validando", getApplicationContext());
+                                Helper.openProgressDialog("Validando", CadastroActivity.this);
 
                                 Helper.openModalMap(CadastroActivity.this, focoMap);
 
@@ -460,6 +460,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
 
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                Helper.closeProgressDialog();
                             }
                         }
                     }

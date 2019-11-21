@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:screenOrientation="portrait"
             android:name=".Introdução.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,17 +24,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.CadastroDisponibilidade" />
-        <activity android:name=".view.Login"></activity>
-        <activity android:name=".view.AlterarSenha" />
-        <activity android:name=".view.CadastroActivity" />
-        <activity android:name=".view.MeusDadosInstituicao" />
-        <activity android:name=".view.MeusDadosUsuario" />
-        <activity android:name=".view.CadastroInstituicao" />
-        <activity android:name=".view.MapsActivity" />
-        <activity android:name=".view.ModalDisponibilidades" />
-        <activity android:name=".view.Consultas" />
-        <activity android:name=".view.ConversaActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".view.CadastroDisponibilidade"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.Login"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name=".view.AlterarSenha"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.CadastroActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.MeusDadosInstituicao"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.MeusDadosUsuario"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.CadastroInstituicao"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.MapsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".view.ModalDisponibilidades"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.Consultas"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.ConversaActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            />
 
         <meta-data
             android:name="com.google.android.gms.version"
