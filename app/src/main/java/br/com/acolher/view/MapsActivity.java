@@ -1,6 +1,8 @@
 package br.com.acolher.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,7 +27,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +34,10 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7a91ca")));
-
         loadFragment(new HomeMapFragment());
 
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
-
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -97,6 +96,35 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         return loadFragment(fragment);
     }
+
+    @Override
+    public void onBackPressed(){
+
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
+
+        msgBox.setTitle("Confirmação.");
+        msgBox.setCancelable(true);
+
+        msgBox.setMessage("Deseja realmente sair do aplicativo?");
+        msgBox.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                finish();
+            }
+        });
+
+        msgBox.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        AlertDialog alerta = msgBox.create();
+        alerta.show();
+    }
+
+
 
     /**
      * Manipulates the map once available.

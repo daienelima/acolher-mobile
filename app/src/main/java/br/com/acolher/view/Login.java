@@ -21,6 +21,7 @@ import br.com.acolher.R;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Instituicao;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -60,7 +61,6 @@ public class Login extends AppCompatActivity {
                 login.setEmail(email);
                 login.setSenha(senha);
 
-                salvarLogin(login.getEmail());
                 validarLoginUsuario(login);
             }
         });
@@ -98,7 +98,7 @@ public class Login extends AppCompatActivity {
             });
             btnProfissional.setOnClickListener(view12 -> {
                 Intent intent = new Intent(login.getContext(), CadastroActivity.class);
-                String perfil = CONSTANTES.PROFISSIONAL;
+                String perfil = CONSTANTES.VOLUNTARIO;
                 intent.putExtra(CONSTANTES.PERFIL, perfil);
                 startActivity(intent);
             });
@@ -145,18 +145,24 @@ public class Login extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     String tipoUsuario;
+                    String nomeUsuario;
                     if(response.body().getCrm_crp().isEmpty()){
                         tipoUsuario = CONSTANTES.PACIENTE;
+                        nomeUsuario = response.body().getNome_completo();
                     }else{
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
+                        nomeUsuario = response.body().getNome_completo();
                     }
-                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo(), response.body().getEndereco().getCidade());
+                    
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo(),nomeUsuario, response.body().getEndereco().getCidade());
+                    salvarLogin(login.getEmail());
+                    
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
                     }
-                    startActivity(home);
                     finish();
+                    startActivity(home);
                 } else {
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -164,8 +170,12 @@ public class Login extends AppCompatActivity {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
                     if(response.code() == 403){
                         validarLoginInstituicao(login);
+                    }else{
+                        if(progressDialogLogin.isShowing()){
+                            progressDialogLogin.dismiss();
+                        }
+                        Helper.msgErroServidor(Login.this);
                     }
-
                 }
             }
             @Override
@@ -184,15 +194,23 @@ public class Login extends AppCompatActivity {
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 if (response.isSuccessful()) {
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
-                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getEndereco().getCodigo());
+                    String nomeUsuario = response.body().getNome();
+                    salvarLogin(login.getEmail());
+                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getEndereco().getCodigo(),nomeUsuario);
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
                     }
+                    finish();
                     startActivity(home);
                 } else {
                     if(response.code() == 403){
                         msgLoginInvalido();
+                    }else{
+                        if(progressDialogLogin.isShowing()){
+                            progressDialogLogin.dismiss();
+                        }
+                        Helper.msgErroServidor(Login.this);
                     }
                 }
             }
@@ -217,22 +235,24 @@ public class Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco, String regiao) {
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco, String nomeUsuario, String regiao) {
         sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.putString(CONSTANTES.REGIAO, regiao);
+	      editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
 
-    public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco) {
+    public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco, String nomeUsuario) {
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
         editor.putString("TYPE", "INSTITUICAO");
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
+        editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
     /**
@@ -256,11 +276,12 @@ public class Login extends AppCompatActivity {
     private void usuarioLogado() {
         sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
         if (sharedPreferences.getBoolean("logado", false)) {
+            finish();
             Intent home = new Intent(this, MapsActivity.class);
             startActivity(home);
-            finish();
         } else {
             inputEmail.getEditText().setText(sharedPreferences.getString("email", null));
         }
     }
+
 }

@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -186,16 +185,13 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             buscaCep(cep);
         });
 
-        labelCadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                inputNome.getEditText().setText("Teste Address");
-                inputDataNasc.getEditText().setText("01/10/1997");
-                inputEmail.getEditText().setText("testeaddress@aa.aa");
-                inputPassword.getEditText().setText("Teste@1234");
-                inputTelefone.getEditText().setText("81912233333");
-                inputCpf.getEditText().setText("71157812066");
-            }
+        labelCadastro.setOnClickListener(v -> {
+            inputNome.getEditText().setText("Teste Address");
+            inputDataNasc.getEditText().setText("01/10/1997");
+            inputEmail.getEditText().setText("testeaddress@aa.aa");
+            inputPassword.getEditText().setText("Teste@1234");
+            inputTelefone.getEditText().setText("81912233333");
+            inputCpf.getEditText().setText("71157812066");
         });
 
     }
@@ -336,68 +332,107 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         if(uc.validarNome(nome) != CONSTANTES.VAZIO){
             inputNome.setError(uc.validarNome(nome));
             return false;
+        }else{
+            inputNome.setError(null);
+            inputNome.clearFocus();
         }
 
         if(!UsuarioController.empty(data)){
             inputDataNasc.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputDataNasc.setError(null);
+            inputDataNasc.clearFocus();
         }
 
         if(!UsuarioController.validaEmail(email)){
             inputEmail.setError(CONSTANTES.EMAIL_INVALIDO);
             return false;
+        }else{
+            inputEmail.setError(null);
+            inputEmail.clearFocus();
         }
 
         if(uc.validaPassword(password) != CONSTANTES.VAZIO){
             inputPassword.setError(uc.validaPassword(password));
             return false;
+        }else{
+            inputPassword.setError(null);
+            inputPassword.clearFocus();
         }
 
         if(uc.validarTelefone(telefone) != CONSTANTES.VAZIO){
             inputTelefone.setError(uc.validarTelefone(telefone));
             return false;
+        }else{
+            inputTelefone.setError(null);
+            inputTelefone.clearFocus();
         }
 
         if(uc.validaCpf(cpf) != CONSTANTES.VAZIO){
             inputCpf.setError(uc.validaCpf(cpf));
             return false;
+        }else{
+            inputCpf.setError(null);
+            inputCpf.clearFocus();
         }
 
         if(hasCrpCrm){
             if(!UsuarioController.empty(crpCrm)){
                 inputCRM_CRP.setError(CONSTANTES.CAMPO_OBRIGATORIO);
                 return false;
+            }else{
+                inputCRM_CRP.setError(null);
+                inputCRM_CRP.clearFocus();
             }
         }
 
         if(ec.validaCep(cep) != CONSTANTES.VAZIO){
             inputCep.setError(ec.validaCep(cep));
             return false;
+        }else{
+            inputCep.setError(null);
+            inputCep.clearFocus();
         }
 
         if(!EnderecoController.empty(rua)){
             inputRua.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputRua.setError(null);
+            inputRua.clearFocus();
         }
 
         if(!EnderecoController.empty(numero)){
             inputNumero.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputNumero.setError(null);
+            inputNumero.clearFocus();
         }
 
         if(!EnderecoController.empty(bairro)){
             inputBairro.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputBairro.setError(null);
+            inputBairro.clearFocus();
         }
 
         if(!EnderecoController.empty(cidade)){
             inputCidade.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputCidade.setError(null);
+            inputCidade.clearFocus();
         }
 
         if(EnderecoController.validaUF(uf) != CONSTANTES.VAZIO){
             inputUF.setError(EnderecoController.validaUF(uf));
             return false;
+        }else{
+            inputUF.setError(null);
+            inputUF.clearFocus();
         }
 
         return true;

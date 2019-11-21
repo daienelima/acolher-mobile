@@ -294,6 +294,7 @@ public class CadastroDisponibilidade extends AppCompatActivity {
                     Log.d(TAG, String.valueOf(response.code()));
                     Intent home = new Intent(CadastroDisponibilidade.this, MapsActivity.class);
                     Helper.closeProgressDialog();
+                    finish();
                     startActivity(home);
                 } else {
                     Log.d(TAG, "erro");

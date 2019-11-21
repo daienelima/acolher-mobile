@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="620dp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="left"
                 android:text="Nome do Paciente"
-                android:textSize="15dp" />
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/nome"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:gravity="left"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -51,7 +51,7 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="left"
                 android:text="Data"
-                android:textSize="15dp" />
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/data"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:gravity="left"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -68,7 +68,7 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="left"
                 android:text="Horário"
-                android:textSize="15dp" />
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/hora"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:gravity="left"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -85,7 +85,7 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="left"
                 android:text="Endereço"
-                android:textSize="15dp" />
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/endereco"
@@ -93,43 +93,58 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:gravity="left"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/codigoConsulta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:visibility="invisible" />
 
             <com.google.android.gms.maps.MapView
                 android:id="@+id/map"
-                android:layout_width="300dp"
-                android:layout_height="200dp"
+                android:layout_width="350dp"
+                android:layout_height="250dp"
                 android:layout_gravity="center_horizontal"></com.google.android.gms.maps.MapView>
 
-            <Button
-                android:id="@+id/buttonCancelarConsulta"
-                android:layout_width="220dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/button_cadastro_radius"
-                android:text="@string/label_button_cancelar_consulta"
-                android:textColor="#FFF"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/labelRetornarConsultas"
+            <LinearLayout
+                android:id="@+id/acoes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="115dp"
                 android:gravity="center_horizontal"
-                android:text="@string/label_return_consultas"
-                android:textColor="@color/corLink"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/buttonChat"
+                    android:layout_width="70dp"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_cadastro_radius"
+                    android:src="@drawable/ic_chat" />
+
+                <ImageButton
+                    android:id="@+id/buttonLigar"
+                    android:layout_width="70dp"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_cadastro_radius"
+                    android:src="@drawable/ic_phone" />
+
+                <ImageButton
+                    android:id="@+id/buttonCancelarConsulta"
+                    android:layout_width="70dp"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_cadastro_radius"
+                    android:src="@drawable/ic_cancel_black_24dp" />
+            </LinearLayout>
 
         </LinearLayout>
 

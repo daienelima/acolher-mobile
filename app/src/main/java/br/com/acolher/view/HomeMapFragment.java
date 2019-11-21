@@ -252,6 +252,8 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
                 if(marker.equals(myMarker)){
                     return false;
+                }else if(marker.getSnippet() == null){
+                    return false;
                 }
 
                 if(consPorUser != null){
@@ -556,7 +558,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onClick(View v) {
 
-                final Intent intentCall = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+tell));
+                final Intent intentCall = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+tell));
 
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     int permissionCheck = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE);

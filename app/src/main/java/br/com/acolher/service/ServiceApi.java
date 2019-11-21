@@ -112,4 +112,7 @@ public interface ServiceApi {
     })
     @POST("send/")
     Call<ResponseBody> enviarNotificacao(@Body Notificacao notificacao);
+
+    @PUT("consulta/confirmarRealizacao")
+    Call<Consulta> confirmarRealizacaoConsulta(@Body Consulta consulta);
 }

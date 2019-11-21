@@ -30,6 +30,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import java.util.List;
 
 import br.com.acolher.R;
+import br.com.acolher.view.Login;
 
 public class Helper implements OnMapReadyCallback{
 
@@ -239,6 +240,16 @@ public class Helper implements OnMapReadyCallback{
             e.printStackTrace();
         }
         return coordinates;
+    }
+
+    public static void msgErroServidor(Context context){
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(context);
+
+        alertDialog.setTitle("Falha");
+        alertDialog.setMessage("Desculpe, não foi possível estabelecer a conexão. Por favor, tente mais tarde.");
+        alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
+
+        alertDialog.show();
     }
 
     @Override

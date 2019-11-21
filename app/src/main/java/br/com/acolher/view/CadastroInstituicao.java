@@ -224,58 +224,92 @@ public class CadastroInstituicao extends AppCompatActivity{
         uf = inputUF.getEditText().getText().toString();
         cidade = inputCidade.getEditText().getText().toString();
 
-
         if(ic.validarNome(nome) != ""){
             inputNome.setError(ic.validarNome(nome));
             return false;
+        }else{
+            inputNome.setError(null);
+            inputNome.clearFocus();
         }
+
 
         if(ic.validaCnpj(cnpj) != ""){
             inputCnpj.setError(ic.validaCnpj(cnpj));
             return false;
+        }else{
+            inputCnpj.setError(null);
+            inputCnpj.clearFocus();
         }
         if(ic.validarEmail(email) != ""){
             inputEmail.setError(ic.validarEmail(email));
             return false;
+        }else{
+            inputEmail.setError(null);
+            inputEmail.clearFocus();
         }
 
         if(ic.validaPassword(password) != ""){
             inputPassword.setError(ic.validaPassword(password));
             return false;
+        }else{
+            inputPassword.setError(null);
+            inputPassword.clearFocus();
         }
 
         if(ic.validarTelefone(telefone) != ""){
             inputTelefone.setError(ic.validarTelefone(telefone));
             return false;
+        }else{
+            inputTelefone.setError(null);
+            inputTelefone.clearFocus();
         }
+
         if(ec.validaCep(cep) != CONSTANTES.VAZIO){
             inputCep.setError(ec.validaCep(cep));
             return false;
+        }else{
+            inputCep.setError(null);
+            inputCep.clearFocus();
         }
 
         if(!EnderecoController.empty(rua)){
             inputRua.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputRua.setError(null);
+            inputRua.clearFocus();
         }
 
         if(!EnderecoController.empty(numero)){
             inputNumero.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputNumero.setError(null);
+            inputNumero.clearFocus();
         }
 
         if(!EnderecoController.empty(bairro)){
             inputBairro.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputBairro.setError(null);
+            inputBairro.clearFocus();
         }
 
         if(!EnderecoController.empty(cidade)){
             inputCidade.setError(CONSTANTES.CAMPO_OBRIGATORIO);
             return false;
+        }else{
+            inputCidade.setError(null);
+            inputCidade.clearFocus();
         }
 
         if(EnderecoController.validaUF(uf) != CONSTANTES.VAZIO){
             inputUF.setError(EnderecoController.validaUF(uf));
             return false;
+        }else{
+            inputUF.setError(null);
+            inputUF.clearFocus();
         }
 
 
