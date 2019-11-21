@@ -467,7 +467,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
 
                                     // Get new Instance ID token
                                     String token = task.getResult().getToken();
-                                    FireStore.insertUserId(response.body().getCodigo(), response.body().getNome_completo(), token);
+                                    FireStore.insertUserId(response.body().getCodigo(), token);
                                     // Log and toast
                                     String msg = getString(R.string.msg_token_fmt, token);
                                     Log.d("CODE", msg);

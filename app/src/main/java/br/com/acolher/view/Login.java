@@ -150,7 +150,7 @@ public class Login extends AppCompatActivity {
                     }else{
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
-                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo());
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, response.body().getEndereco().getCodigo(), response.body().getEndereco().getCidade());
                     Intent home = new Intent(Login.this, MapsActivity.class);
                     if(progressDialogLogin.isShowing()){
                         progressDialogLogin.dismiss();
@@ -217,12 +217,13 @@ public class Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco) {
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, Integer codigoEndereco, String regiao) {
         sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
+        editor.putString(CONSTANTES.REGIAO, regiao);
         editor.apply();
     }
 

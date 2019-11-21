@@ -3,6 +3,7 @@ package br.com.acolher.helper;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -137,7 +138,7 @@ public class Helper implements OnMapReadyCallback{
      *
      */
     public static void closeProgressDialog(){
-        if(progressDialog.isShowing()){
+        if(progressDialog != null && progressDialog.isShowing()){
             progressDialog.dismiss();
         }
     }
@@ -243,6 +244,20 @@ public class Helper implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+    }
+
+    public static void openGenericModal(String title, String text, Context context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(text);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
     }
 
 }
