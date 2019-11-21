@@ -55,6 +55,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static java.security.AccessController.getContext;
+
 public class CadastroActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private Calendar calendar;
@@ -77,6 +79,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private Endereco endereco = new Endereco();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private Helper helper = new Helper();
 
 
     @Override
@@ -151,6 +154,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             ec = new EnderecoController();
 
             if(validateForm()) {
+
 
                 //Montar Endereço
                 endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
@@ -446,10 +450,17 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                             String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
                             try {
+
+                                Helper.openProgressDialog("Validando", CadastroActivity.this);
+
                                 Helper.openModalMap(CadastroActivity.this, focoMap);
+
+                                Helper.closeProgressDialog();
                                 return;
+
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                Helper.closeProgressDialog();
                             }
                         }
                     }
