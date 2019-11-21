@@ -191,7 +191,14 @@ public class CadastroInstituicao extends AppCompatActivity{
                             String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroInstituicao.this);
                             try {
+
+                                Helper.openProgressDialog("Validando", getApplicationContext());
+
                                 Helper.openModalMap(CadastroInstituicao.this, focoMap);
+
+                                Helper.closeProgressDialog();
+
+
                                 return;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
