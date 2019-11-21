@@ -1,18 +1,27 @@
 package br.com.acolher.service;
 
 
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.Map;
 
 import br.com.acolher.dto.AlterarSenha;
 import br.com.acolher.dto.Login;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Endereco;
 import br.com.acolher.model.Instituicao;
+import br.com.acolher.model.Notificacao;
+import br.com.acolher.model.NotificacaoResponse;
 import br.com.acolher.model.Usuario;
 import br.com.acolher.model.ViaCep;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.HeaderMap;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -93,6 +102,16 @@ public interface ServiceApi {
 
     @POST("endereco/getByParameters")
     Call<Endereco> getAddressByParameters(@Body Endereco endereco);
+
+    @GET("consulta/regiao/{regiao}")
+    Call<List<Consulta>> getConsultasPorRegiao(@Path("regiao") String regiao);
+
+    @Headers({
+            "Authorization: key=AAAAK2fSTrE:APA91bGuwi9PRqK0pqAYF-UWoGjD3YQiC_UzfUg2cKPoneGmrLKPKUhB7WUiNPKB3vTG5xguvcY4Hd0dYbxTdsaK8sMBjhM5HuK6UWGT9r3fXNbxrC8SbDRi7V2A9rAmBuX3PdsXCStX",
+            "Content-Type:application/json"
+    })
+    @POST("send/")
+    Call<ResponseBody> enviarNotificacao(@Body Notificacao notificacao);
 
     @PUT("consulta/confirmarRealizacao")
     Call<Consulta> confirmarRealizacaoConsulta(@Body Consulta consulta);

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,7 +27,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -36,6 +41,7 @@ import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
@@ -71,8 +77,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private Endereco endereco = new Endereco();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
-    private TextView labelCadastro;
 
 
     @Override
@@ -171,21 +175,13 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 }
 
                 getAddressByParameters(endereco);
+
             }
         });
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
             buscaCep(cep);
-        });
-
-        labelCadastro.setOnClickListener(v -> {
-            inputNome.getEditText().setText("Teste Address");
-            inputDataNasc.getEditText().setText("01/10/1997");
-            inputEmail.getEditText().setText("testeaddress@aa.aa");
-            inputPassword.getEditText().setText("Teste@1234");
-            inputTelefone.getEditText().setText("81912233333");
-            inputCpf.getEditText().setText("71157812066");
         });
 
     }
@@ -226,7 +222,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
-        labelCadastro = findViewById(R.id.labelCadastro);
     }
 
     private void buscaCep(String cep) {
@@ -484,6 +479,25 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if(!task.isSuccessful()){
+                                        Log.w("CODE", "getInstangeId Failed", task.getException());
+                                        return;
+                                    }
+
+                                    // Get new Instance ID token
+                                    String token = task.getResult().getToken();
+                                    FireStore.insertUserId(response.body().getCodigo(), token);
+                                    // Log and toast
+                                    String msg = getString(R.string.msg_token_fmt, token);
+                                    Log.d("CODE", msg);
+                                    Toast.makeText(CadastroActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                     Intent home = new Intent(CadastroActivity.this, MapsActivity.class);
                     startActivity(home);
