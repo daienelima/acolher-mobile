@@ -78,8 +78,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private TextView labelCadastro;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,15 +184,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             buscaCep(cep);
         });
 
-        labelCadastro.setOnClickListener(v -> {
-            inputNome.getEditText().setText("Teste Address");
-            inputDataNasc.getEditText().setText("01/10/1997");
-            inputEmail.getEditText().setText("testeaddress@aa.aa");
-            inputPassword.getEditText().setText("Teste@1234");
-            inputTelefone.getEditText().setText("81912233333");
-            inputCpf.getEditText().setText("71157812066");
-        });
-
     }
 
     @Override
@@ -233,7 +222,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
-        labelCadastro = findViewById(R.id.labelCadastro);
     }
 
     private void buscaCep(String cep) {
