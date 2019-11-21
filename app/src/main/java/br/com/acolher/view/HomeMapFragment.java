@@ -371,20 +371,27 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     public void callCadastroDisp(Integer codigo){
         Helper.openProgressDialog("Validando endereço...", getContext());
         try {
-            if(checkValidAddress(latDisp, longDisp)){
-                Helper.closeProgressDialog();
-                Helper.openProgressDialog("Redirecionando...", getContext());
+            if(codigo == 0){
+                if(checkValidAddress(latDisp, longDisp)){
+                    Helper.closeProgressDialog();
+                    Helper.openProgressDialog("Redirecionando...", getContext());
+                    Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
+                    telaCadastroDisp.putExtra("lat", latDisp);
+                    telaCadastroDisp.putExtra("long", longDisp);
+                    telaCadastroDisp.putExtra("codigoRecente", codigo);
+                    latDisp = 0.0;
+                    longDisp = 0.0;
+                    Helper.closeProgressDialog();
+                    startActivity(telaCadastroDisp);
+                }else {
+                    Helper.closeProgressDialog();
+                    Helper.openGenericModal("Local inválido", "Insira o marker em uma região acessível para criar uma consulta!", getContext());
+                }
+            }else{
                 Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
-                telaCadastroDisp.putExtra("lat", latDisp);
-                telaCadastroDisp.putExtra("long", longDisp);
                 telaCadastroDisp.putExtra("codigoRecente", codigo);
-                latDisp = 0.0;
-                longDisp = 0.0;
                 Helper.closeProgressDialog();
                 startActivity(telaCadastroDisp);
-            }else {
-                Helper.closeProgressDialog();
-                Helper.openGenericModal("Local inválido", "Insira o marker em uma região acessível para criar uma consulta!", getContext());
             }
         } catch (IOException e) {
             e.printStackTrace();
