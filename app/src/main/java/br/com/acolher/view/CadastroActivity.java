@@ -227,11 +227,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     private void buscaCep(String cep) {
-
-        if(ec.validaCep(cep) != ""){
-            Helper.openGenericModal("Cep Invalido", ec.validaCep(cep), CadastroActivity.this);
-        }
-
+        
         if(EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
