@@ -98,7 +98,7 @@ public class Login extends AppCompatActivity {
             });
             btnProfissional.setOnClickListener(view12 -> {
                 Intent intent = new Intent(login.getContext(), CadastroActivity.class);
-                String perfil = CONSTANTES.VOLUNTARIO;
+                String perfil = CONSTANTES.PROFISSIONAL;
                 intent.putExtra(CONSTANTES.PERFIL, perfil);
                 startActivity(intent);
             });

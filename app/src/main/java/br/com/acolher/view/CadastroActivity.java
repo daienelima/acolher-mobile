@@ -104,11 +104,9 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         findById();
 
         Intent intent = getIntent();
-        if(intent.getStringExtra(CONSTANTES.PERFIL) != null){
-            if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.PROFISSIONAL)) {
-                hasCrpCrm = true;
-                inputCRM_CRP.setVisibility(View.VISIBLE);
-            }
+        if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.PROFISSIONAL)) {
+            hasCrpCrm = true;
+            inputCRM_CRP.setVisibility(View.VISIBLE);
         }
 
         btnCalendar.setOnClickListener(view -> openCalendar());
@@ -209,7 +207,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         btnCalendar = findViewById(R.id.btnCalendar);
         inputPassword = findViewById(R.id.inputPassword);
         inputCpf = findViewById(R.id.inputCPFCad);
-        inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+        inputCpf.getEditText().addTextChangedListener(new MaskWatcher("###.###.###-##"));
         inputCRM_CRP = findViewById(R.id.inputCRM);
         inputCRM_CRP.setVisibility(View.GONE);
         inputTelefone = findViewById(R.id.inputTelefone);
@@ -229,6 +227,11 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     private void buscaCep(String cep) {
+
+        if(ec.validaCep(cep) != ""){
+            Helper.openGenericModal("Cep Invalido", ec.validaCep(cep), CadastroActivity.this);
+        }
+
         if(EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
