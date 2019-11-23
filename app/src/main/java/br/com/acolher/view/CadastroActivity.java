@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,32 +54,29 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static java.security.AccessController.getContext;
-
 public class CadastroActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private Calendar calendar;
-    private DatePickerDialog datePickerDialog;
-    private Address address;
-    private double latitude, longitude = 0;
-    private FusedLocationProviderClient fusedLocation;
-    private GoogleApiClient googleApiClient;
-    private ImageButton btnCalendar;
-    private Button pesquisarEndereco, btnFinalizarCadastro, btnBuscaCep;
-    private TextInputLayout inputDataNasc, inputPassword, inputTelefone, inputCpf, inputCRM_CRP, inputNome, inputEmail;
-    private TextInputLayout inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
-    private UsuarioController uc;
-    private EnderecoController ec;
-    private String nome, data, email, password, cpf, telefone, crpCrm;
-    private String cep, rua, bairro, cidade, uf, numero;
-    private boolean hasCrpCrm;
-    private RetrofitInit retrofitInit = new RetrofitInit();
-    private Usuario usuario = new Usuario();
-    private Endereco endereco = new Endereco();
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private Helper helper = new Helper();
-
+    Calendar calendar;
+    DatePickerDialog datePickerDialog;
+    Address address;
+    double latitude, longitude = 0;
+    FusedLocationProviderClient fusedLocation;
+    GoogleApiClient googleApiClient;
+    ImageButton btnCalendar;
+    Button pesquisarEndereco, btnFinalizarCadastro, btnBuscaCep;
+    TextInputLayout inputDataNasc, inputPassword, inputTelefone, inputCpf, inputCRM_CRP, inputNome, inputEmail;
+    TextInputLayout inputRua ,inputCep, inputNumero, inputBairro, inputUF, inputCidade;
+    String nome, data, email, password, cpf, telefone, crpCrm;
+    String cep, rua, bairro, cidade, uf, numero;
+    boolean hasCrpCrm;
+    RetrofitInit retrofitInit = new RetrofitInit();
+    Usuario usuario = new Usuario();
+    Endereco endereco = new Endereco();
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    UsuarioController usuarioController;
+    EnderecoController enderecoController;
+    TextView voltarPagina;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +84,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         getSupportActionBar().hide();
 
         fusedLocation = LocationServices.getFusedLocationProviderClient(this);
-
         if(googleApiClient == null){
-
             googleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(CadastroActivity.this)
                     .addOnConnectionFailedListener(CadastroActivity.this)
@@ -99,7 +93,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         }
 
         hasCrpCrm = false;
-        //Configurações da activity
         setContentView(R.layout.activity_cadastro_basico);
         findById();
 
@@ -110,7 +103,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         }
 
         btnCalendar.setOnClickListener(view -> openCalendar());
-
         inputDataNasc.getEditText().setOnFocusChangeListener((view, b) -> {
             if (b){
                 inputDataNasc.getEditText().clearFocus();
@@ -147,14 +139,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         });
 
         btnFinalizarCadastro.setOnClickListener(view -> {
-
-            uc = new UsuarioController();
-            ec = new EnderecoController();
-
             if(validateForm()) {
-
-
-                //Montar Endereço
                 endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
                 endereco.setLogradouro(inputRua.getEditText().getText().toString());
                 endereco.setNumero(inputNumero.getEditText().getText().toString());
@@ -162,7 +147,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 endereco.setCidade(inputCidade.getEditText().getText().toString());
                 endereco.setUf(inputUF.getEditText().getText().toString());
 
-                //Montar Usuario
                 usuario.setNome_completo(nome);
                 usuario.setData_nascimento(data);
                 usuario.setCpf(cpf);
@@ -175,17 +159,23 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 } else {
                     usuario.setCrm_crp(CONSTANTES.VAZIO);
                 }
-
                 getAddressByParameters(endereco);
-
             }
         });
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-            buscaCep(cep);
+            if(cep.length() == 8){
+                buscaCep(cep);
+            }else{
+                inputCep.setError("CEP Invalido");
+            }
         });
-
+        voltarPagina.setOnClickListener(view -> {
+            Intent paginaLogin = new Intent(CadastroActivity.this, Login.class);
+            startActivity(paginaLogin);
+            finish();
+        });
     }
 
     @Override
@@ -218,17 +208,18 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         btnBuscaCep = findViewById(R.id.btnBuscaCep);
         inputRua = findViewById(R.id.inputRua);
         inputCep =  findViewById(R.id.inputCep);
-        inputCep.getEditText().addTextChangedListener(new MaskWatcher("##.###-###"));
+        inputCep.getEditText().addTextChangedListener(MaskWatcher.buildCep());
         btnFinalizarCadastro = findViewById(R.id.btnFinalizarCadastro);
         inputBairro = findViewById(R.id.inputBairro);
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
+        voltarPagina = findViewById(R.id.labelRetornarLogin);
     }
 
     private void buscaCep(String cep) {
         
-        if(EnderecoController.empty(cep)){
+        if(!EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -287,26 +278,24 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 ActivityCompat.requestPermissions((Activity) context, new String[]{
                                 Manifest.permission.ACCESS_FINE_LOCATION},
                         REQUEST_PERMISSION_LOCALIZATION);
-
             }
         }
         return res;
     }
 
     public void openCalendar(){
-
         inputDataNasc.setErrorEnabled(false);
         calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-
         datePickerDialog = new DatePickerDialog(CadastroActivity.this, (datePicker, mYear, mMonth, mDay) -> inputDataNasc.getEditText().setText(mDay + "/" + (mMonth + 1) + "/" + mYear), year, month, day);
         datePickerDialog.show();
     }
 
     public boolean validateForm(){
-
+        usuarioController = new UsuarioController();
+        enderecoController = new EnderecoController();
         nome = inputNome.getEditText().getText().toString();
         data = inputDataNasc.getEditText().getText().toString();
         email = inputEmail.getEditText().getText().toString();
@@ -321,8 +310,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         uf = inputUF.getEditText().getText().toString();
         cidade = inputCidade.getEditText().getText().toString();
 
-        if(uc.validarNome(nome) != CONSTANTES.VAZIO){
-            inputNome.setError(uc.validarNome(nome));
+        if(usuarioController.validarNome(nome) != CONSTANTES.VAZIO){
+            inputNome.setError(usuarioController.validarNome(nome));
             return false;
         }else{
             inputNome.setError(null);
@@ -345,24 +334,24 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             inputEmail.clearFocus();
         }
 
-        if(uc.validaPassword(password) != CONSTANTES.VAZIO){
-            inputPassword.setError(uc.validaPassword(password));
+        if(usuarioController.validaPassword(password) != CONSTANTES.VAZIO){
+            inputPassword.setError(usuarioController.validaPassword(password));
             return false;
         }else{
             inputPassword.setError(null);
             inputPassword.clearFocus();
         }
 
-        if(uc.validarTelefone(telefone) != CONSTANTES.VAZIO){
-            inputTelefone.setError(uc.validarTelefone(telefone));
+        if(usuarioController.validarTelefone(telefone) != CONSTANTES.VAZIO){
+            inputTelefone.setError(usuarioController.validarTelefone(telefone));
             return false;
         }else{
             inputTelefone.setError(null);
             inputTelefone.clearFocus();
         }
 
-        if(uc.validaCpf(cpf) != CONSTANTES.VAZIO){
-            inputCpf.setError(uc.validaCpf(cpf));
+        if(usuarioController.validaCpf(cpf) != CONSTANTES.VAZIO){
+            inputCpf.setError(usuarioController.validaCpf(cpf));
             return false;
         }else{
             inputCpf.setError(null);
@@ -379,8 +368,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             }
         }
 
-        if(ec.validaCep(cep) != CONSTANTES.VAZIO){
-            inputCep.setError(ec.validaCep(cep));
+        if(enderecoController.validaCep(cep) != CONSTANTES.VAZIO){
+            inputCep.setError(enderecoController.validaCep(cep));
             return false;
         }else{
             inputCep.setError(null);
@@ -426,7 +415,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
             inputUF.setError(null);
             inputUF.clearFocus();
         }
-
         return true;
     }
 
@@ -449,11 +437,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                             String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
                             try {
-
                                 Helper.openProgressDialog("Validando", CadastroActivity.this);
-
                                 Helper.openModalMap(CadastroActivity.this, focoMap);
-
                                 Helper.closeProgressDialog();
                                 return;
 
@@ -498,14 +483,10 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                                         Log.w("CODE", "getInstangeId Failed", task.getException());
                                         return;
                                     }
-
-                                    // Get new Instance ID token
                                     String token = task.getResult().getToken();
                                     FireStore.insertUserId(response.body().getCodigo(), token);
-                                    // Log and toast
                                     String msg = getString(R.string.msg_token_fmt, token);
                                     Log.d("CODE", msg);
-                                    Toast.makeText(CadastroActivity.this, msg, Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -536,8 +517,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         alertDialog.setTitle("Atenção");
         alertDialog.setMessage(campo + " " + "já cadastrado.");
         alertDialog.setPositiveButton("Ok", (dialog, which) -> dialog.cancel());
-
-        // visualizacao do dialogo
         alertDialog.show();
     }
 

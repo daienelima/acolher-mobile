@@ -33,7 +33,7 @@
     <string name="label_button_continuar_cadastro">Continuar cadastro</string>
     <string name="label_return_login">Voltar para a tela principal</string>
     <string name="label_rua">Rua</string>
-    <string name="label_cep">Cep</string>
+    <string name="label_cep">CEP</string>
     <string name="label_bairro">Bairro</string>
     <string name="label_numero">Numero</string>
     <string name="button_localizacao">Utilizar endereço atual</string>
@@ -97,7 +97,7 @@
 
     <string name="msg_token_fmt">InstanceID Token: %s</string>
     <!--Textos - Listview Consultas-->
-    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!</string>
+    <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada</string>
     <string name="label_button_chat">Chat</string>
-    <string name="labelNenhumaConversa">Nenhuma conversa!</string>
+    <string name="labelNenhumaConversa">Nenhuma conversa</string>
 </resources>
