@@ -3,10 +3,10 @@ package br.com.acolher.view;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -40,9 +40,20 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
+import com.google.rpc.Help;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +62,9 @@ import br.com.acolher.R;
 import br.com.acolher.adapters.AdapterDisponibilidades;
 import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
+import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Consulta;
 import br.com.acolher.model.Usuario;
 import retrofit2.Call;
@@ -78,7 +91,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     private static final int REQUEST_PHONE_CALL = 1;
     private Integer codeUser;
     private String typeUser;
-    private ProgressDialog progressDialog;
     private HashMap<Integer, Consulta> mapConsulta;
     private FloatingActionButton btnAddConsulta, btnAddLastConsulta;
     private AlertDialog alerta;
@@ -115,20 +127,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-
         }
-
-        /**
-         * Shared Preferences Mocado
-         */
-
-        //sharedPreferences = getContext().getSharedPreferences("USERDATA",Context.MODE_PRIVATE);
-
-        /*SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", 4);
-        editor.putString("TYPE", "PACIENTE");
-        editor.apply();*/
-
 
         latDisp = 0.0;
         longDisp = 0.0;
@@ -142,8 +141,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             }
         }
 
-
-
+        updateToken();
 
     }
 
@@ -194,19 +192,15 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         }
 
         if(typeUser.equals("PACIENTE")){
-
-            progressDialog.setMessage("Carregando");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
+            Helper.openProgressDialog("Carregando", getContext());
             consultaPorPaciente = retrofitInit.getService().getConsultasPorPaciente(codeUser);
-
             consultaPorPaciente.enqueue(new Callback<Consulta>() {
                 @Override
                 public void onResponse(Call<Consulta> call, Response<Consulta> response) {
                     consPorUser = response.body();
                     if(consPorUser == null){
-                        callGetConsultas = retrofitInit.getService().getConsultas();
+                        String regiao = (String) Helper.getSharedPreferences(CONSTANTES.REGIAO, "", 2, getContext());
+                        callGetConsultas = retrofitInit.getService().getConsultasPorRegiao(regiao);
                         callGetConsultas.enqueue(new Callback<List<Consulta>>() {
                             @Override
                             public void onResponse(Call<List<Consulta>> call, Response<List<Consulta>> response) {
@@ -216,31 +210,23 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                                 }else {
                                     Toast.makeText(getContext(), "Não existem consultas disponíveis nessa região!", Toast.LENGTH_LONG).show();
                                 }
-                                if(progressDialog.isShowing()){
-                                    progressDialog.dismiss();
-                                }
+                                Helper.closeProgressDialog();
                             }
 
                             @Override
                             public void onFailure(Call<List<Consulta>> call, Throwable t) {
-                                if(progressDialog.isShowing()){
-                                    progressDialog.dismiss();
-                                }
+                                Helper.closeProgressDialog();
                             }
                         });
                     }else{
-                        if(progressDialog.isShowing()){
-                            progressDialog.dismiss();
-                        }
+                        Helper.closeProgressDialog();
                         generateMarkers(null, consPorUser);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Consulta> call, Throwable t) {
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+                    Helper.closeProgressDialog();
                 }
             });
         }else{
@@ -253,6 +239,16 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
+                Address address;
+                try {
+                     address = Validacoes.buscarEndereco(marker.getPosition().latitude, marker.getPosition().longitude, getContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(typeUser.equals(CONSTANTES.VOLUNTARIO)){
+                    return false;
+                }
 
                 if(marker.equals(myMarker)){
                     return false;
@@ -329,7 +325,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onClick(View v) {
                 if(latDisp == 0.0 && longDisp == 0.0){
-                    openGenericModal("Selecione o local", "Selecione no mapa o local que será realizada a consulta!", "Ou, usar endereço de cadastro", getContext() );
+                    genericAddressModal("Selecione o local", "Selecione no mapa o local que será realizada a consulta!", "Ou, usar endereço de cadastro", getContext() );
                 }else{
                     callCadastroDisp(0);
                 }
@@ -366,7 +362,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     }
 
     public void findById(View view){
-        progressDialog = new ProgressDialog(getContext());
         navigationView = getActivity().findViewById(R.id.bottom_navigation);
         btnAddConsulta = view.findViewById(R.id.btnAddConsulta);
         btnAddLastConsulta = view.findViewById(R.id.btnAddConsultaRecente);
@@ -374,16 +369,33 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
     }
 
     public void callCadastroDisp(Integer codigo){
-        Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
-        telaCadastroDisp.putExtra("lat", latDisp);
-        telaCadastroDisp.putExtra("long", longDisp);
-        telaCadastroDisp.putExtra("codigoRecente", codigo);
-        progressDialog.setMessage("Redirecionando");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        latDisp = 0.0;
-        longDisp = 0.0;
-        startActivity(telaCadastroDisp);
+        Helper.openProgressDialog("Validando endereço...", getContext());
+        try {
+            if(codigo == 0){
+                if(checkValidAddress(latDisp, longDisp)){
+                    Helper.closeProgressDialog();
+                    Helper.openProgressDialog("Redirecionando...", getContext());
+                    Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
+                    telaCadastroDisp.putExtra("lat", latDisp);
+                    telaCadastroDisp.putExtra("long", longDisp);
+                    telaCadastroDisp.putExtra("codigoRecente", codigo);
+                    latDisp = 0.0;
+                    longDisp = 0.0;
+                    Helper.closeProgressDialog();
+                    startActivity(telaCadastroDisp);
+                }else {
+                    Helper.closeProgressDialog();
+                    Helper.openGenericModal("Local inválido", "Insira o marker em uma região acessível para criar uma consulta!", getContext());
+                }
+            }else{
+                Intent telaCadastroDisp = new Intent(getContext(), CadastroDisponibilidade.class);
+                telaCadastroDisp.putExtra("codigoRecente", codigo);
+                Helper.closeProgressDialog();
+                startActivity(telaCadastroDisp);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void generateMarkers(List<Consulta> consultas, Consulta consultaPorUsuario){
@@ -414,7 +426,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_heart))
             );
         }else{
-            progressDialog.dismiss();
+            Helper.closeProgressDialog();
             Toast.makeText(getContext(), "Não existem consultas disponíveis nesta localidade!", Toast.LENGTH_LONG).show();
         }
     }
@@ -428,7 +440,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
             markerConsulta.remove();
         }
         googleApiClient.connect();
-        progressDialog.dismiss();
+        Helper.closeProgressDialog();
         if(typeUser.equals("PACIENTE")){
             //btnAddLastConsulta.show();
         }
@@ -524,7 +536,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
                         @Override
                         public void onFailure(Call<Consulta> call, Throwable t) {
-                            //openGenericModal("Erro!", "Não foi possivel agendar a consulta, tente novamente mais tarde!", getContext());
+                            //Helper.openGenericModal("Erro!", "Não foi possivel agendar a consulta, tente novamente mais tarde!", getContext());
                         }
                     });
                     navigationView.setSelectedItemId(navigationView.getSelectedItemId());
@@ -582,7 +594,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
         startActivity(telaConsulta);
     }
 
-    public void openGenericModal(String title, String text, String btnEndereco, Context context){
+    public void genericAddressModal(String title, String text, String btnEndereco, Context context){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(text);
@@ -645,5 +657,33 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback, Goo
 
         return consultasPorLocalz;
 
+    }
+
+    public void updateToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if(!task.isSuccessful()){
+                            Log.w("CODE", "getInstangeId Failed", task.getException());
+                            return;
+                        }
+                        String token = task.getResult().getToken();
+                        FireStore.updateToken((Integer) Helper.getSharedPreferences(CONSTANTES.USERCODE, 0,1,getContext()), token);
+                    }
+                });
+    }
+
+    public boolean checkValidAddress(double lat, double lon) throws IOException {
+        Address address;
+        address = Validacoes.buscarEndereco(lat, lon, getContext());
+        if(address.getThoroughfare() == null
+                || address.getPostalCode() == null
+                || address.getAdminArea() == null
+                || address.getSubLocality() == null
+                || address.getSubAdminArea() == null){
+            return false;
+        }
+        return true;
     }
 }

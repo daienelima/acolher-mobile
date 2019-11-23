@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,7 +27,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -36,6 +41,7 @@ import br.com.acolher.apiconfig.RetrofitInit;
 import br.com.acolher.controller.EnderecoController;
 import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
@@ -48,6 +54,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static java.security.AccessController.getContext;
 
 public class CadastroActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -71,8 +79,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     private Endereco endereco = new Endereco();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
-    private TextView labelCadastro;
+    private Helper helper = new Helper();
 
 
     @Override
@@ -97,11 +104,9 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         findById();
 
         Intent intent = getIntent();
-        if(intent.getStringExtra(CONSTANTES.PERFIL) != null){
-            if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.PROFISSIONAL)) {
-                hasCrpCrm = true;
-                inputCRM_CRP.setVisibility(View.VISIBLE);
-            }
+        if(intent.getStringExtra(CONSTANTES.PERFIL).equals(CONSTANTES.PROFISSIONAL)) {
+            hasCrpCrm = true;
+            inputCRM_CRP.setVisibility(View.VISIBLE);
         }
 
         btnCalendar.setOnClickListener(view -> openCalendar());
@@ -148,6 +153,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
 
             if(validateForm()) {
 
+
                 //Montar Endereço
                 endereco.setCep(Validacoes.cleanCep(inputCep.getEditText().getText().toString()));
                 endereco.setLogradouro(inputRua.getEditText().getText().toString());
@@ -171,21 +177,13 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                 }
 
                 getAddressByParameters(endereco);
+
             }
         });
 
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
             buscaCep(cep);
-        });
-
-        labelCadastro.setOnClickListener(v -> {
-            inputNome.getEditText().setText("Teste Address");
-            inputDataNasc.getEditText().setText("01/10/1997");
-            inputEmail.getEditText().setText("testeaddress@aa.aa");
-            inputPassword.getEditText().setText("Teste@1234");
-            inputTelefone.getEditText().setText("81912233333");
-            inputCpf.getEditText().setText("71157812066");
         });
 
     }
@@ -209,7 +207,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         btnCalendar = findViewById(R.id.btnCalendar);
         inputPassword = findViewById(R.id.inputPassword);
         inputCpf = findViewById(R.id.inputCPFCad);
-        inputCpf.getEditText().addTextChangedListener(MaskWatcher.buildCpf());
+        inputCpf.getEditText().addTextChangedListener(new MaskWatcher("###.###.###-##"));
         inputCRM_CRP = findViewById(R.id.inputCRM);
         inputCRM_CRP.setVisibility(View.GONE);
         inputTelefone = findViewById(R.id.inputTelefone);
@@ -226,10 +224,10 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         inputNumero = findViewById(R.id.inputNumero);
         inputUF = findViewById(R.id.inputUF);
         inputCidade = findViewById(R.id.inputCidade);
-        labelCadastro = findViewById(R.id.labelCadastro);
     }
 
     private void buscaCep(String cep) {
+        
         if(EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
@@ -451,10 +449,17 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                             String locationName = Validacoes.deParaUf(inputUF.getEditText().getText().toString()) + ", " + inputBairro.getEditText().getText().toString();
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroActivity.this);
                             try {
+
+                                Helper.openProgressDialog("Validando", CadastroActivity.this);
+
                                 Helper.openModalMap(CadastroActivity.this, focoMap);
+
+                                Helper.closeProgressDialog();
                                 return;
+
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                Helper.closeProgressDialog();
                             }
                         }
                     }
@@ -484,6 +489,25 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
                     }
                     salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if(!task.isSuccessful()){
+                                        Log.w("CODE", "getInstangeId Failed", task.getException());
+                                        return;
+                                    }
+
+                                    // Get new Instance ID token
+                                    String token = task.getResult().getToken();
+                                    FireStore.insertUserId(response.body().getCodigo(), token);
+                                    // Log and toast
+                                    String msg = getString(R.string.msg_token_fmt, token);
+                                    Log.d("CODE", msg);
+                                    Toast.makeText(CadastroActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                     Intent home = new Intent(CadastroActivity.this, MapsActivity.class);
                     startActivity(home);

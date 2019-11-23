@@ -123,10 +123,12 @@ public class ConfiguracaoFragment extends Fragment {
         sharedPreferences = this.getContext().getSharedPreferences("Login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putBoolean("logado", false);
+        editor.clear();
         editor.apply();
+        getActivity().finish();
         Intent intent = new Intent(getContext(), Login.class);
         startActivity(intent);
-        getActivity().finish();
+
     }
 
     private void desativarContaUsuario(){

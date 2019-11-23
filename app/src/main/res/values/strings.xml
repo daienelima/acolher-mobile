@@ -95,6 +95,7 @@
     <string name="labelData">Data: </string>
     <string name="labelHora">Hora: </string>
 
+    <string name="msg_token_fmt">InstanceID Token: %s</string>
     <!--Textos - Listview Consultas-->
     <string name="labelNenhumaConsultaAgendada">Nenhuma consulta agendada!</string>
     <string name="label_button_chat">Chat</string>

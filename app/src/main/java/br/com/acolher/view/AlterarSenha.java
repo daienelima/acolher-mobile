@@ -50,12 +50,15 @@ public class AlterarSenha extends AppCompatActivity {
 
                 if (sharedPreferences.getString(CONSTANTES.TYPE, CONSTANTES.VAZIO).equals(CONSTANTES.INSTITUICAO)) {
                     alterarSenhaInstituicao();
-                    msgSucesso();
+
                 }else{
                     alterarSenhaUsuario();
-                    msgSucesso();
                 }
+                /*if (status = true) {
+                    msgSucesso();
+                }*/
             }
+
         });
 
     }
@@ -66,16 +69,39 @@ public class AlterarSenha extends AppCompatActivity {
             @Override
             public void onResponse(Call<Instituicao> call, Response<Instituicao> response) {
                 Log.d(CONSTANTES.TAG,String.valueOf(response.code()));
+
+                if(response.code() > 199 && response.code() < 300){
+                    msgSucesso();
+                }
+
+                if(response.code() > 299 && response.code() < 400){
+                    msgErro("Problema de redirecionamento");
+                }
+
                 if(response.code() == 403){
                     msgErro("A senha atual está incorreta");
                 }
+
+                if(response.code() > 399 && response.code() < 500 && response.code() != 403 ){
+                    msgErro("Problema de redirecionamento");
+                }
+
+                if(response.code() > 499 && response.code() < 600 ){
+                    msgErro("Erro em servidor");
+                }
+
             }
+
 
             @Override
             public void onFailure(Call<Instituicao> call, Throwable t) {
                 Log.d(CONSTANTES.TAG, t.getMessage());
+                    if(t.getMessage().equals("End of input at line 1 column 1 path $")){
+                        msgSucesso();
+                    }
             }
         });
+
     }
 
     private void alterarSenhaUsuario(){
@@ -84,8 +110,10 @@ public class AlterarSenha extends AppCompatActivity {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 Log.d(CONSTANTES.TAG,String.valueOf(response.code()));
+
                 if(response.code() == 403){
                     msgErro("A senha atual está incorreta");
+
                 }
             }
 
