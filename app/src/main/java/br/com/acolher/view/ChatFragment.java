@@ -76,7 +76,9 @@ public class ChatFragment extends Fragment {
 
                 if(conversas.size() == 0){
                     labelNenhumaConversa.setVisibility(View.VISIBLE);
+                    progressDialogConversas.dismiss();
                 }
+                progressDialogConversas.dismiss();
             }
 
             @Override
@@ -109,6 +111,7 @@ public class ChatFragment extends Fragment {
         progressDialogConversas.setCancelable(false);
         progressDialogConversas.show();
         firebase.addValueEventListener(valueEventListenerConversas);
+        progressDialogConversas.dismiss();
     }
 
     @Override

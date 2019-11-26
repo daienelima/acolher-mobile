@@ -227,7 +227,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     private void buscaCep(String cep) {
-        
+
         if(EnderecoController.empty(cep)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
@@ -505,7 +505,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                                     // Log and toast
                                     String msg = getString(R.string.msg_token_fmt, token);
                                     Log.d("CODE", msg);
-                                    Toast.makeText(CadastroActivity.this, msg, Toast.LENGTH_SHORT).show();
                                 }
                             });
 
