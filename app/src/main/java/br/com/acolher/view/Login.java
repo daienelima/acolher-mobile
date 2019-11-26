@@ -30,14 +30,14 @@ import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
-    private TextInputLayout inputEmail, inputSenha;
-    private Button login;
-    private TextView cadastro;
-    private RetrofitInit retrofitInit = new RetrofitInit();
-    private ProgressDialog progressDialogLogin;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private ActionBar actionBar;
+    TextInputLayout inputEmail, inputSenha;
+    Button login;
+    TextView cadastro;
+    RetrofitInit retrofitInit = new RetrofitInit();
+    ProgressDialog progressDialogLogin;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +70,8 @@ public class Login extends AppCompatActivity {
             View viewDialog = getLayoutInflater().inflate(R.layout.custom_dialog_user_type, null);
             mBuilder.setView(viewDialog);
             final AlertDialog dialog = mBuilder.create();
-
             TextView btnClose = viewDialog.findViewById(R.id.closeDialogDisp);
-
             btnClose.setOnClickListener(view14 -> dialog.dismiss());
-
             TextView labelDescricao = viewDialog.findViewById(R.id.label_perfil);
 
             labelDescricao.setOnClickListener(view15 -> {
@@ -95,18 +92,21 @@ public class Login extends AppCompatActivity {
                 String perfil = CONSTANTES.PACIENTE;
                 intent.putExtra(CONSTANTES.PERFIL, perfil);
                 startActivity(intent);
+                finish();
             });
             btnProfissional.setOnClickListener(view12 -> {
                 Intent intent = new Intent(login.getContext(), CadastroActivity.class);
                 String perfil = CONSTANTES.PROFISSIONAL;
                 intent.putExtra(CONSTANTES.PERFIL, perfil);
                 startActivity(intent);
+                finish();
             });
             btnInstituicao.setOnClickListener(view13 -> {
                 Intent intent = new Intent(login.getContext(), CadastroInstituicao.class);
                 String perfil = CONSTANTES.INSTITUICAO;
                 intent.putExtra(CONSTANTES.PERFIL, perfil);
                 startActivity(intent);
+                finish();
             });
 
             dialog.show();
@@ -247,10 +247,10 @@ public class Login extends AppCompatActivity {
     }
 
     public void salvarDadosInstituicao(Integer codigoUsuario, Integer codigoEndereco, String nomeUsuario) {
-        sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        editor.putInt("USERCODE", codigoUsuario);
-        editor.putString("TYPE", "INSTITUICAO");
+        editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
+        editor.putString(CONSTANTES.TYPE, CONSTANTES.INSTITUICAO);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();

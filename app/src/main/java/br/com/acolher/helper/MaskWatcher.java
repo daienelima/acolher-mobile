@@ -1,14 +1,5 @@
 package br.com.acolher.helper;
 
-/*
-MIT License		
-Copyright (c) 2016 Diego Yasuhiko Kurisaki		
-*/		
-		
-/* Example:		
-  mEmailView.addTextChangedListener(new MaskWatcher("###-##"));		
-*/
-
 import android.text.Editable;
 import android.text.TextWatcher;
 
@@ -64,12 +55,15 @@ public class MaskWatcher implements TextWatcher {
         isRunning = false;
     }
 
-    //Adicionar mascara
-
+    /**
+     * Adiconar Mascara
+     * @param textoAFormatar
+     * @param mask
+     * @return
+     */
     public static String addMask(final String textoAFormatar, final String mask){
         String formatado = "";
         int i = 0;
-        // vamos iterar a mascara, para descobrir quais caracteres vamos adicionar e quando...
         for (char m : mask.toCharArray()) {
             if (m != '#') { // se não for um #, vamos colocar o caracter informado na máscara
                 formatado += m;
@@ -86,16 +80,15 @@ public class MaskWatcher implements TextWatcher {
         return formatado;
     }
 
-    //Remover mascara
 
+    /**
+     * Remover mascara
+     * @param textoAFormatar
+     * @return
+     */
     public static String removeMask(String textoAFormatar){
         String formatado = "";
-
         formatado = textoAFormatar.replaceAll("/[^0-9]+/g","");
-
-
         return formatado;
     }
-
-
 }
