@@ -7,6 +7,7 @@ public class MaskWatcher implements TextWatcher {
     private boolean isRunning = false;
     private boolean isDeleting = false;
     private final String mask;
+    public static final String FORMAT_CPF = "###.###.###-##";
 
     public MaskWatcher(String mask) {
         this.mask = mask;

@@ -192,7 +192,7 @@ public class CadastroInstituicao extends AppCompatActivity{
                             LatLng focoMap = Helper.getAddressForLocationName(locationName, CadastroInstituicao.this);
                             try {
 
-                                Helper.openProgressDialog("Validando", getApplicationContext());
+                                Helper.openProgressDialog("Validando", CadastroInstituicao.this);
 
                                 Helper.openModalMap(CadastroInstituicao.this, focoMap);
 

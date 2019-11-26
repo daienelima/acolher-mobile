@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ import br.com.acolher.controller.UsuarioController;
 import br.com.acolher.helper.CONSTANTES;
 import br.com.acolher.helper.FireStore;
 import br.com.acolher.helper.Helper;
+import br.com.acolher.helper.MaskEditUtil;
 import br.com.acolher.helper.MaskWatcher;
 import br.com.acolher.helper.Validacoes;
 import br.com.acolher.model.Endereco;
@@ -197,7 +199,7 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         btnCalendar = findViewById(R.id.btnCalendar);
         inputPassword = findViewById(R.id.inputPassword);
         inputCpf = findViewById(R.id.inputCPFCad);
-        inputCpf.getEditText().addTextChangedListener(new MaskWatcher("###.###.###-##"));
+        inputCpf.getEditText().addTextChangedListener(MaskEditUtil.mask(inputCpf.getEditText(), MaskEditUtil.FORMAT_CPF));
         inputCRM_CRP = findViewById(R.id.inputCRM);
         inputCRM_CRP.setVisibility(View.GONE);
         inputTelefone = findViewById(R.id.inputTelefone);
