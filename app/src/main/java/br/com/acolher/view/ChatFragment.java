@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 
@@ -25,8 +26,10 @@ import br.com.acolher.R;
 import br.com.acolher.adapters.ConversaAdapter;
 import br.com.acolher.apiconfig.ConfiguracaoFirebase;
 import br.com.acolher.helper.CONSTANTES;
+import br.com.acolher.helper.ChatApplication;
 import br.com.acolher.helper.Helper;
 import br.com.acolher.model.Conversa;
+import br.com.acolher.model.Token;
 
 public class ChatFragment extends Fragment {
     private ListView listView;
@@ -48,6 +51,24 @@ public class ChatFragment extends Fragment {
         if(typeUser.equals(CONSTANTES.INSTITUICAO)){
             idUser = "i" + idUser;
         }
+
+        ChatApplication application = (ChatApplication) getActivity().getApplication();
+
+        getActivity().getApplication().registerActivityLifecycleCallbacks(application);
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        System.out.println("token: " + token);
+
+
+        Token t = new Token();
+        t.setToken(token);
+        t.setId(idUser);
+        t.setOnline(true);
+
+        firebase = ConfiguracaoFirebase.getFirebase().child("users");
+
+        firebase.child(idUser)
+                .setValue(t);
 
         conversas = new ArrayList<>();
         listView = mView.findViewById(R.id.lv_conversas);

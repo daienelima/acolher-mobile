@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.github.AppIntro:AppIntro:5.1.0'
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -22,6 +22,7 @@ import br.com.acolher.model.Mensagem;
 import br.com.acolher.R;
 import br.com.acolher.apiconfig.ConfiguracaoFirebase;
 import br.com.acolher.model.Conversa;
+import br.com.acolher.model.NotificacaoChat;
 
 public class ConversaActivity extends AppCompatActivity {
 
@@ -119,6 +120,13 @@ public class ConversaActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG
                         ).show();
                     }else {
+                        NotificacaoChat n = new NotificacaoChat();
+                        n.setMensagem(textoMensagem);
+                        n.setIdUsuario(idUsuarioRemetente);
+                        n.setRemetente(nomeUsuarioRemetente);
+
+                        salvarNotificacao(idUsuarioDestinatario,idUsuarioRemetente,n);
+
                         Boolean retornoMensagemDestinatario = salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem );
                         if( !retornoMensagemDestinatario ){
                             Toast.makeText(
@@ -180,6 +188,28 @@ public class ConversaActivity extends AppCompatActivity {
             firebase.child( idRemetente )
                     .child( idDestinatario )
                     .setValue( conversa );
+            return true;
+        }catch ( Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean salvarNotificacao(String idDestinatario, String idRemetente, NotificacaoChat notificacao){
+        try {
+            firebase = ConfiguracaoFirebase.getFirebase().child("users").child(idDestinatario).child("token");
+            firebase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String token = dataSnapshot.getValue(String.class);
+                    firebase = ConfiguracaoFirebase.getFirebase().child("notificacao");
+                    firebase.child(token)
+                            .setValue(notificacao);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+
             return true;
         }catch ( Exception e){
             e.printStackTrace();
