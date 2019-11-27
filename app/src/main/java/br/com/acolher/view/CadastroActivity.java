@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -220,7 +221,8 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     private void buscaCep(String cep) {
-        if(!EnderecoController.empty(cep)){
+        Toast.makeText(CadastroActivity.this, cep, Toast.LENGTH_LONG).show();
+        if(!cep.isEmpty() && !cep.equals(null)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
                     .addConverterFactory(GsonConverterFactory.create())

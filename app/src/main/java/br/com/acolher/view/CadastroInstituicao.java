@@ -407,7 +407,7 @@ public class CadastroInstituicao extends AppCompatActivity{
     }
 
     private void buscaCep(String cep) {
-        if(EnderecoController.empty(cep)){
+        if(!cep.isEmpty() && !cep.equals(null)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
                     .addConverterFactory(GsonConverterFactory.create())
