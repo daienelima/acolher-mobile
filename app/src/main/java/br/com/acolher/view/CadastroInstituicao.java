@@ -337,7 +337,7 @@ public class CadastroInstituicao extends AppCompatActivity{
                     Log.d(TAG, String.valueOf(response.code()));
                     Log.d(TAG, response.body().toString());
 
-                    salvarDadosInstituicao(response.body().getCodigo());
+                    salvarDadosInstituicao(response.body().getCodigo(), response.body().getNome(), response.body().getEndereco().getCodigo());
 
                     Intent home = new Intent(CadastroInstituicao.this, MapsActivity.class);
                     startActivity(home);
@@ -377,11 +377,13 @@ public class CadastroInstituicao extends AppCompatActivity{
         alertDialog.show();
     }
 
-    public void salvarDadosInstituicao(Integer codigoUsuario) {
+    public void salvarDadosInstituicao(Integer codigoUsuario, String nomeUsuario, int codigoEndereco) {
         sharedPreferences = this.getSharedPreferences("USERDATA", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("USERCODE", codigoUsuario);
         editor.putString("TYPE", "INSTITUICAO");
+        editor.putString(CONSTANTES.NOME, nomeUsuario);
+        editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.apply();
     }
 

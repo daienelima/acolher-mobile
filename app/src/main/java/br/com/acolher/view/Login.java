@@ -242,7 +242,7 @@ public class Login extends AppCompatActivity {
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
         editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
         editor.putString(CONSTANTES.REGIAO, regiao);
-	      editor.putString(CONSTANTES.NOME, nomeUsuario);
+        editor.putString(CONSTANTES.NOME, nomeUsuario);
         editor.apply();
     }
 

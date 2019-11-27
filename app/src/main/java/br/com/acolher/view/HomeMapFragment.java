@@ -47,11 +47,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.rpc.Help;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;

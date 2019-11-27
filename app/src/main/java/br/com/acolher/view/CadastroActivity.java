@@ -470,12 +470,16 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
                     Log.d(CONSTANTES.TAG, String.valueOf(response.code()));
 
                     String tipoUsuario;
+                    String nomeUsuario;
+
                     if(response.body().getCrm_crp().isEmpty()){
                         tipoUsuario = CONSTANTES.PACIENTE;
+                        nomeUsuario = response.body().getNome_completo();
                     }else{
                         tipoUsuario = CONSTANTES.VOLUNTARIO;
+                        nomeUsuario = response.body().getNome_completo();
                     }
-                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario);
+                    salvarDadosUsuario(response.body().getCodigo(), tipoUsuario, nomeUsuario, response.body().getEndereco().getCodigo(), response.body().getEndereco().getCidade());
 
                     FirebaseInstanceId.getInstance().getInstanceId()
                             .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -522,11 +526,16 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
         alertDialog.show();
     }
 
-    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario) {
+    public void salvarDadosUsuario(Integer codigoUsuario, String tipoUsuario, String nomeUsuario, int codigoEndereco, String regiao) {
         sharedPreferences = this.getSharedPreferences(CONSTANTES.USERDATA, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt(CONSTANTES.USERCODE, codigoUsuario);
         editor.putString(CONSTANTES.TYPE, tipoUsuario);
+        editor.putString(CONSTANTES.REGIAO, regiao);
+        editor.putString(CONSTANTES.NOME, nomeUsuario);
+        if(tipoUsuario.equals(CONSTANTES.VOLUNTARIO)){
+            editor.putInt(CONSTANTES.CODIGO_ENDERECO, codigoEndereco);
+        }
         editor.apply();
     }
 
