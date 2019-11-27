@@ -110,31 +110,13 @@ public class CadastroInstituicao extends AppCompatActivity{
             }
         });
 
-        /*continuarCadastro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ic = new InstituicaoController();
-                if(validateForm()){
-                    Intent intent = getIntent();
-                    Endereco endereco = new Endereco();
-                    endereco.setCodigo(intent.getIntExtra("codigoEndereco", 0));
-
-                    instituicao.setEndereco(endereco);
-                    instituicao.setNome(nome);
-                    instituicao.setCnpj(cnpj);
-                    instituicao.setTelefone(telefone);
-                    instituicao.setEmail(email);
-                    instituicao.setSenha(password);
-
-                    cadastroInstituicao(instituicao);
-                }
-            }
-        });*/
-
         btnBuscaCep.setOnClickListener(v -> {
             String cep = Validacoes.cleanCep(inputCep.getEditText().getText().toString());
-            buscaCep(cep);
+            if(cep.length() == 8){
+                buscaCep(cep);
+            }else{
+                inputCep.setError("CEP Invalido");
+            }
         });
 
         btnFinalizarCadastro.setOnClickListener(view -> {
