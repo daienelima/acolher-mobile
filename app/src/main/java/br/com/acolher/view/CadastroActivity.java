@@ -221,7 +221,6 @@ public class CadastroActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     private void buscaCep(String cep) {
-        Toast.makeText(CadastroActivity.this, cep, Toast.LENGTH_LONG).show();
         if(!cep.isEmpty() && !cep.equals(null)){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://viacep.com.br/ws/")
